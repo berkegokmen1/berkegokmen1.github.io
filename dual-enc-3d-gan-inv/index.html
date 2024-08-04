@@ -101,9 +101,7 @@
               </div>
 
               <div class="is-size-5 publication-authors">
-                <span class="author-block"
-                  >Institution Name<br />Conferance name and year</span
-                >
+                <span class="author-block">Bilkent University<br />-</span>
                 <span class="eql-cntrb"
                   ><small
                     ><br /><sup>*</sup>Indicates Equal Contribution</small
@@ -144,7 +142,7 @@
                   <!-- Github link -->
                   <span class="link-block">
                     <a
-                      href="https://github.com/YOUR REPO HERE"
+                      href="https://github.com/berkegokmen1/dual-enc-3d-gan-inv"
                       target="_blank"
                       class="external-link button is-normal is-rounded is-dark"
                     >
@@ -203,15 +201,27 @@
             <h2 class="title is-3">Abstract</h2>
             <div class="content has-text-justified">
               <p>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
-                ullamcorper tellus sed ante aliquam tempus. Etiam porttitor urna
-                feugiat nibh elementum, et tempor dolor mattis. Donec accumsan
-                enim augue, a vulputate nisi sodales sit amet. Proin bibendum ex
-                eget mauris cursus euismod nec et nibh. Maecenas ac gravida
-                ante, nec cursus dui. Vivamus purus nibh, placerat ac purus
-                eget, sagittis vestibulum metus. Sed vestibulum bibendum lectus
-                gravida commodo. Pellentesque auctor leo vitae sagittis
-                suscipit.
+                3D GAN inversion aims to project a single image into the latent
+                space of a 3D Generative Adversarial Network (GAN), thereby
+                achieving 3D geometry reconstruction. While there exist encoders
+                that achieve good results in 3D GAN inversion, they are
+                predominantly built on EG3D, which specializes in synthesizing
+                near-frontal views and is limiting in synthesizing comprehensive
+                3D scenes from diverse viewpoints. In contrast to existing
+                approaches, we propose a novel framework built on PanoHead,
+                which excels in synthesizing images from a 360-degree
+                perspective. To achieve realistic 3D modeling of the input
+                image, we introduce a dual encoder system tailored for
+                high-fidelity reconstruction and realistic generation from
+                different viewpoints. Accompanying this, we propose a stitching
+                framework on the triplane domain to get the best predictions
+                from both. To achieve seamless stitching, both encoders must
+                output consistent results despite being specialized for
+                different tasks. For this reason, we carefully train these
+                encoders using specialized losses, including an adversarial loss
+                based on our novel occlusion-aware triplane discriminator.
+                Experiments reveal that our approach surpasses the existing
+                encoder training methods qualitatively and quantitatively.
               </p>
             </div>
           </div>
