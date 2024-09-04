@@ -1,600 +1,587 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8" />
-    <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
-    <!-- Replace the content tag with appropriate information -->
-    <meta
-      name="description"
-      content="Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images"
-    />
-    <meta
-      property="og:title"
-      content="Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images"
-    />
-    <meta
-      property="og:description"
-      content="Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images"
-    />
-    <meta
-      property="og:url"
-      content="https://berkegokmen1.github.io/dual-enc-3d-gan-inv/"
-    />
-    <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
-    <meta property="og:image" content="static/images/mesh.png" />
-    <meta property="og:image:width" content="856" />
-    <meta property="og:image:height" content="856" />
-
-    <meta
-      name="twitter:title"
-      content="Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images"
-    />
-    <meta
-      name="twitter:description"
-      content="Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images"
-    />
-    <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
-    <meta name="twitter:image" content="static/images/mesh.png" />
-    <meta name="twitter:card" content="static/images/mesh.png" />
-    <!-- Keywords for your paper to be indexed by-->
-    <meta
-      name="keywords"
-      content="3D GAN inversion, Latent space, 3D geometry reconstruction, Encoders, EG3D, PanoHead, 360-degree perspective, Dual encoder system, High-fidelity reconstruction, Triplane domain, Stitching framework, Occlusion-aware triplane discriminator, Adversarial loss, Viewpoint synthesis"
-    />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Dual Encoder 3D GAN Inversion</title>
-    <link rel="icon" type="image/x-icon" href="static/favicon/favicon.ico" />
-    <link
-      href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
-      rel="stylesheet"
-    />
-
-    <link rel="stylesheet" href="static/css/bulma.min.css" />
-    <link rel="stylesheet" href="static/css/bulma-carousel.min.css" />
-    <link rel="stylesheet" href="static/css/bulma-slider.min.css" />
-    <link rel="stylesheet" href="static/css/fontawesome.all.min.css" />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
-    />
-    <link rel="stylesheet" href="static/css/index.css" />
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
-    <script defer src="static/js/fontawesome.all.min.js"></script>
-    <script src="static/js/bulma-carousel.min.js"></script>
-    <script src="static/js/bulma-slider.min.js"></script>
-    <script src="static/js/index.js"></script>
-  </head>
-  <body>
-    <section class="hero">
-      <div class="hero-body">
-        <div class="container is-max-desktop">
-          <div class="columns is-centered">
-            <div class="column has-text-centered">
-              <h1 class="title is-1 publication-title">
-                Dual Encoder GAN Inversion for High-Fidelity 3D Head
-                Reconstruction from Single Images
-              </h1>
-              <div class="is-size-5 publication-authors">
-                <!-- Paper authors -->
-                <span class="author-block">
-                  <a
-                    href="https://www.linkedin.com/in/berkegokmen/"
-                    target="_blank"
-                    >Ahmet Berke Gökmen</a
-                  ><sup>*</sup>,</span
-                >
-                <span class="author-block">
-                  <a href="https://three-bee.github.io/" target="_blank"
-                    >Bahri Batuhan Bilecen</a
-                  ><sup>*</sup>,</span
-                >
-                <span class="author-block">
-                  <a
-                    href="https://www.cs.bilkent.edu.tr/~adundar/"
-                    target="_blank"
-                    >Ayşegül Dündar</a
-                  >
-                </span>
-              </div>
-
-              <div class="is-size-5 publication-authors">
-                <span class="author-block">Bilkent University<br />-</span>
-                <span class="eql-cntrb"
-                  ><small
-                    ><br /><sup>*</sup>Indicates Equal Contribution</small
-                  ></span
-                >
-              </div>
-
-              <div class="column has-text-centered">
-                <div class="publication-links">
-                  <!-- Arxiv PDF link -->
-                  <span class="link-block">
-                    <a
-                      href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf"
-                      target="_blank"
-                      class="external-link button is-normal is-rounded is-dark"
-                    >
-                      <span class="icon">
-                        <i class="fas fa-file-pdf"></i>
-                      </span>
-                      <span>Paper</span>
-                    </a>
-                  </span>
-
-                  <!-- Supplementary PDF link -->
-                  <span class="link-block">
-                    <a
-                      href="static/pdfs/supplementary_material.pdf"
-                      target="_blank"
-                      class="external-link button is-normal is-rounded is-dark"
-                    >
-                      <span class="icon">
-                        <i class="fas fa-file-pdf"></i>
-                      </span>
-                      <span>Supplementary</span>
-                    </a>
-                  </span>
-
-                  <!-- Github link -->
-                  <span class="link-block">
-                    <a
-                      href="https://github.com/berkegokmen1/dual-enc-3d-gan-inv"
-                      target="_blank"
-                      class="external-link button is-normal is-rounded is-dark"
-                    >
-                      <span class="icon">
-                        <i class="fab fa-github"></i>
-                      </span>
-                      <span>Code</span>
-                    </a>
-                  </span>
-
-                  <!-- ArXiv abstract Link -->
-                  <span class="link-block">
-                    <a
-                      href="https://arxiv.org/abs/<ARXIV PAPER ID>"
-                      target="_blank"
-                      class="external-link button is-normal is-rounded is-dark"
-                    >
-                      <span class="icon">
-                        <i class="ai ai-arxiv"></i>
-                      </span>
-                      <span>arXiv</span>
-                    </a>
-                  </span>
-                </div>
-              </div>
+   <head>
+      <meta charset="utf-8" />
+      <!-- Meta tags for social media banners, these should be filled in appropriatly as they are your "business card" -->
+      <!-- Replace the content tag with appropriate information -->
+      <meta
+         name="description"
+         content="Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images"
+         />
+      <meta
+         property="og:title"
+         content="Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images"
+         />
+      <meta
+         property="og:description"
+         content="Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images"
+         />
+      <meta
+         property="og:url"
+         content="https://berkegokmen1.github.io/dual-enc-3d-gan-inv/"
+         />
+      <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X630-->
+      <meta property="og:image" content="static/images/mesh.png" />
+      <meta property="og:image:width" content="856" />
+      <meta property="og:image:height" content="856" />
+      <meta
+         name="twitter:title"
+         content="Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images"
+         />
+      <meta
+         name="twitter:description"
+         content="Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images"
+         />
+      <!-- Path to banner image, should be in the path listed below. Optimal dimenssions are 1200X600-->
+      <meta name="twitter:image" content="static/images/mesh.png" />
+      <meta name="twitter:card" content="static/images/mesh.png" />
+      <!-- Keywords for your paper to be indexed by-->
+      <meta
+         name="keywords"
+         content="3D GAN inversion, Latent space, 3D geometry reconstruction, Encoders, EG3D, PanoHead, 360-degree perspective, Dual encoder system, High-fidelity reconstruction, Triplane domain, Stitching framework, Occlusion-aware triplane discriminator, Adversarial loss, Viewpoint synthesis"
+         />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <title>Dual Encoder 3D GAN Inversion</title>
+      <link rel="icon" type="image/x-icon" href="static/favicon/favicon.ico" />
+      <link
+         href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+         rel="stylesheet"
+         />
+      <link rel="stylesheet" href="static/css/bulma.min.css" />
+      <link rel="stylesheet" href="static/css/bulma-carousel.min.css" />
+      <link rel="stylesheet" href="static/css/bulma-slider.min.css" />
+      <link rel="stylesheet" href="static/css/fontawesome.all.min.css" />
+      <link
+         rel="stylesheet"
+         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css"
+         />
+      <link rel="stylesheet" href="static/css/index.css" />
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+      <script defer src="static/js/fontawesome.all.min.js"></script>
+      <script src="static/js/bulma-carousel.min.js"></script>
+      <script src="static/js/bulma-slider.min.js"></script>
+      <script src="static/js/index.js"></script>
+   </head>
+   <body>
+      <section class="hero">
+         <div class="hero-body">
+            <div class="container is-max-desktop">
+               <div class="columns is-centered">
+                  <div class="column has-text-centered">
+                     <h1 class="title is-1 publication-title">
+                        Dual Encoder GAN Inversion for High-Fidelity 3D Head
+                        Reconstruction from Single Images
+                     </h1>
+                     <div class="is-size-5 publication-authors">
+                        <!-- Paper authors -->
+                        <span class="author-block">
+                        <a
+                           href="https://www.linkedin.com/in/berkegokmen/"
+                           target="_blank"
+                           >Ahmet Berke Gökmen</a
+                           ><sup>*</sup>,</span
+                           >
+                        <span class="author-block">
+                        <a href="https://three-bee.github.io/" target="_blank"
+                           >Bahri Batuhan Bilecen</a
+                           ><sup>*</sup>,</span
+                           >
+                        <span class="author-block">
+                        <a
+                           href="https://www.cs.bilkent.edu.tr/~adundar/"
+                           target="_blank"
+                           >Ayşegül Dündar</a
+                           >
+                        </span>
+                     </div>
+                     <div class="is-size-5 publication-authors">
+                        <span class="author-block">Bilkent University<br />-</span>
+                        <span class="eql-cntrb"
+                           ><small
+                           ><br /><sup>*</sup>Indicates Equal Contribution</small
+                           ></span
+                           >
+                     </div>
+                     <div class="column has-text-centered">
+                        <div class="publication-links">
+                           <!-- Arxiv PDF link -->
+                           <span class="link-block">
+                           <a
+                              href="https://arxiv.org/pdf/<ARXIV PAPER ID>.pdf"
+                              target="_blank"
+                              class="external-link button is-normal is-rounded is-dark"
+                              >
+                           <span class="icon">
+                           <i class="fas fa-file-pdf"></i>
+                           </span>
+                           <span>Paper</span>
+                           </a>
+                           </span>
+                           <!-- Supplementary PDF link -->
+                           <span class="link-block">
+                           <a
+                              href="static/pdfs/supplementary_material.pdf"
+                              target="_blank"
+                              class="external-link button is-normal is-rounded is-dark"
+                              >
+                           <span class="icon">
+                           <i class="fas fa-file-pdf"></i>
+                           </span>
+                           <span>Supplementary</span>
+                           </a>
+                           </span>
+                           <!-- Github link -->
+                           <span class="link-block">
+                           <a
+                              href="https://github.com/berkegokmen1/dual-enc-3d-gan-inv"
+                              target="_blank"
+                              class="external-link button is-normal is-rounded is-dark"
+                              >
+                           <span class="icon">
+                           <i class="fab fa-github"></i>
+                           </span>
+                           <span>Code</span>
+                           </a>
+                           </span>
+                           <!-- ArXiv abstract Link -->
+                           <span class="link-block">
+                           <a
+                              href="https://arxiv.org/abs/<ARXIV PAPER ID>"
+                              target="_blank"
+                              class="external-link button is-normal is-rounded is-dark"
+                              >
+                           <span class="icon">
+                           <i class="ai ai-arxiv"></i>
+                           </span>
+                           <span>arXiv</span>
+                           </a>
+                           </span>
+                        </div>
+                     </div>
+                  </div>
+               </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-
-    <!-- Video carousel -->
-    <section class="hero is-small">
-      <div class="hero-body">
-        <div class="container">
-          <div id="results-carousel" class="carousel results-carousel">
-            <div class="item item-video1">
-              <video
-                poster=""
-                id="video1"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                <!-- Your video file here -->
-                <source src="static/videos/img00095358.jpg.mp4" type="video/mp4" />
-              </video>
+         </div>
+      </section>
+      <!-- Video carousel -->
+      <section class="hero is-small">
+         <div class="hero-body">
+            <div class="container">
+               <div id="results-carousel" class="carousel results-carousel">
+                  <div class="item item-video1">
+                     <video
+                        poster=""
+                        id="video1"
+                        autoplay
+                        muted
+                        playsinline
+                        preload
+                        loop
+                        height="100%"
+                        >
+                        <!-- Your video file here -->
+                        <source src="static/videos/img00095358.jpg.mp4" type="video/mp4" />
+                     </video>
+                  </div>
+                  <div class="item item-video2">
+                     <video
+                        poster=""
+                        id="video2"
+                        autoplay
+                        playsinline
+                        preload
+                        muted
+                        loop
+                        height="100%"
+                        >
+                        <!-- Your video file here -->
+                        <source src="static/videos/img00132348.jpg.mp4" type="video/mp4" />
+                     </video>
+                  </div>
+                  <div class="item item-video3">
+                     <video
+                        poster=""
+                        id="video3"
+                        autoplay
+                        playsinline
+                        preload
+                        muted
+                        loop
+                        height="100%"
+                        >
+                        \
+                        <!-- Your video file here -->
+                        <source src="static/videos/img00041068.jpg.mp4" type="video/mp4" />
+                     </video>
+                  </div>
+                  <div class="item item-video4">
+                     <video
+                        poster=""
+                        id="video4"
+                        autoplay
+                        playsinline
+                        preload
+                        muted
+                        loop
+                        height="100%"
+                        >
+                        \
+                        <!-- Your video file here -->
+                        <source src="static/videos/1342.jpg.mp4" type="video/mp4" />
+                     </video>
+                  </div>
+                  <div class="item item-video5">
+                     <video
+                        poster=""
+                        id="video5"
+                        autoplay
+                        playsinline
+                        preload
+                        muted
+                        loop
+                        height="100%"
+                        >
+                        \
+                        <!-- Your video file here -->
+                        <source src="static/videos/934.jpg.mp4" type="video/mp4" />
+                     </video>
+                  </div>
+                  <div class="item item-video6">
+                     <video
+                        poster=""
+                        id="video6"
+                        autoplay
+                        playsinline
+                        preload
+                        muted
+                        loop
+                        height="100%"
+                        >
+                        \
+                        <!-- Your video file here -->
+                        <source src="static/videos/img00064953.jpg.mp4" type="video/mp4" />
+                     </video>
+                  </div>
+               </div>
+               <h2 class="subtitle has-text-centered">
+                  <br>
+                  Qualitative results of our method on the different human faces and their corresponding meshes.
+               </h2>
             </div>
-            <div class="item item-video2">
-              <video
-                poster=""
-                id="video2"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                <!-- Your video file here -->
-                <source src="static/videos/img00132348.jpg.mp4" type="video/mp4" />
-              </video>
+         </div>
+      </section>
+      <!-- End video carousel -->
+      <!-- Teaser video-->
+      <!-- <section class="hero teaser">
+         <div class="container is-max-desktop">
+           <div class="hero-body">
+             <video poster="" id="tree" autoplay playsinline
+         preload muted loop height="100%">
+               <source src="static/videos/banner_video.mp4" type="video/mp4" />
+             </video>
+             
+           </div>
+         </div>
+         </section> -->
+      <!-- End teaser video -->
+      <!-- Paper abstract -->
+      <section class="section hero is-light">
+         <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+               <div class="column is-four-fifths">
+                  <h2 class="title is-3">Abstract</h2>
+                  <div class="content has-text-justified">
+                     <p>
+                        3D GAN inversion aims to project a single image into the latent
+                        space of a 3D Generative Adversarial Network (GAN), thereby
+                        achieving 3D geometry reconstruction. While there exist encoders
+                        that achieve good results in 3D GAN inversion, they are
+                        predominantly built on EG3D, which specializes in synthesizing
+                        near-frontal views and is limiting in synthesizing comprehensive
+                        3D scenes from diverse viewpoints. In contrast to existing
+                        approaches, we propose a novel framework built on PanoHead,
+                        which excels in synthesizing images from a 360-degree
+                        perspective. To achieve realistic 3D modeling of the input
+                        image, we introduce a dual encoder system tailored for
+                        high-fidelity reconstruction and realistic generation from
+                        different viewpoints. Accompanying this, we propose a stitching
+                        framework on the triplane domain to get the best predictions
+                        from both. To achieve seamless stitching, both encoders must
+                        output consistent results despite being specialized for
+                        different tasks. For this reason, we carefully train these
+                        encoders using specialized losses, including an adversarial loss
+                        based on our novel occlusion-aware triplane discriminator.
+                        Experiments reveal that our approach surpasses the existing
+                        encoder training methods qualitatively and quantitatively.
+                     </p>
+                  </div>
+               </div>
             </div>
-            <div class="item item-video3">
-              <video
-                poster=""
-                id="video3"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/img00041068.jpg.mp4" type="video/mp4" />
-              </video>
+         </div>
+      </section>
+      <!-- End paper abstract -->
+      <!-- Video carousel -->
+      <section class="hero is-small">
+         <div class="hero-body">
+         <div class="container">
+            <h2 class="title is-3">Visual Results</h2>
+            <div id="results-carousel" class="carousel results-carousel">
+               <div class="item item-video1">
+                  <video
+                     poster=""
+                     id="video1"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_1.mp4" type="video/mp4" />
+                  </video>
+               </div>
+               <div class="item item-video2">
+                  <video
+                     poster=""
+                     id="video2"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_4.mp4" type="video/mp4" />
+                  </video>
+               </div>
+               <div class="item item-video3">
+                  <video
+                     poster=""
+                     id="video3"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     \
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_0.mp4" type="video/mp4" />
+                  </video>
+               </div>
+               <div class="item item-video4">
+                  <video
+                     poster=""
+                     id="video4"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     \
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_2.mp4" type="video/mp4" />
+                  </video>
+               </div>
+               <div class="item item-video5">
+                  <video
+                     poster=""
+                     id="video5"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     \
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_5.mp4" type="video/mp4" />
+                  </video>
+               </div>
+               <div class="item item-video6">
+                  <video
+                     poster=""
+                     id="video6"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     \
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_6.mp4" type="video/mp4" />
+                  </video>
+               </div>
             </div>
-            
-            <div class="item item-video4">
-              <video
-                poster=""
-                id="video4"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/1342.jpg.mp4" type="video/mp4" />
-              </video>
+         </div>
+      </section>
+      <!-- End video carousel -->
+      <!-- Youtube video -->
+      <section class="hero is-small is-light">
+         <div class="hero-body">
+         <div class="container">
+            <h2 class="title is-3">Comparison With Other Methods</h2>
+            <div id="results-carousel" class="carousel results-carousel">
+               <div class="item item-video1">
+                  <video
+                     poster=""
+                     id="video1"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_1.mp4" type="video/mp4" />
+                  </video>
+               </div>
+               <div class="item item-video2">
+                  <video
+                     poster=""
+                     id="video2"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_4.mp4" type="video/mp4" />
+                  </video>
+               </div>
+               <div class="item item-video3">
+                  <video
+                     poster=""
+                     id="video3"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     \
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_0.mp4" type="video/mp4" />
+                  </video>
+               </div>
+               <div class="item item-video4">
+                  <video
+                     poster=""
+                     id="video4"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     \
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_2.mp4" type="video/mp4" />
+                  </video>
+               </div>
+               <div class="item item-video5">
+                  <video
+                     poster=""
+                     id="video5"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     \
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_5.mp4" type="video/mp4" />
+                  </video>
+               </div>
+               <div class="item item-video6">
+                  <video
+                     poster=""
+                     id="video6"
+                     autoplay
+                     playsinline
+                     preload
+                     muted
+                     loop
+                     height="100%"
+                     >
+                     \
+                     <!-- Your video file here -->
+                     <source src="static/videos/grid_6.mp4" type="video/mp4" />
+                  </video>
+               </div>
             </div>
-
-            <div class="item item-video5">
-              <video
-                poster=""
-                id="video5"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/934.jpg.mp4" type="video/mp4" />
-              </video>
+         </div>
+      </section>
+      <!-- End youtube video -->
+      <!-- Paper poster -->
+      <section class="hero is-small is-light">
+         <div class="hero-body">
+            <div class="container">
+               <h2 class="title">Poster</h2>
+               <iframe src="static/pdfs/sample.pdf" width="100%" height="550">
+               </iframe>
             </div>
-            
-            <div class="item item-video6">
-              <video
-                poster=""
-                id="video6"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/img00064953.jpg.mp4" type="video/mp4" />
-              </video>
+         </div>
+      </section>
+      <!--End paper poster -->
+      <!--BibTex citation -->
+      <section class="section" id="BibTeX">
+         <div class="container is-max-desktop content">
+            <h2 class="title">BibTeX</h2>
+            <pre><code>BibTex Code Here</code></pre>
+         </div>
+      </section>
+      <!--End BibTex citation -->
+      <footer class="footer">
+         <div class="container">
+            <div class="columns is-centered">
+               <div class="column is-8">
+                  <div class="content">
+                     <p>
+                        This page was built using the
+                        <a
+                           href="https://github.com/eliahuhorwitz/Academic-project-page-template"
+                           target="_blank"
+                           >Academic Project Page Template</a
+                           >
+                        which was adopted from the <a
+                           href="https://nerfies.github.io"
+                           target="_blank"
+                           >Nerfies</a
+                           > project page. You are free to borrow the of this website, we
+                        just ask that you link back to this page in the footer. <br />
+                        This website is licensed under a
+                        <a
+                           rel="license"
+                           href="http://creativecommons.org/licenses/by-sa/4.0/"
+                           target="_blank"
+                           >Creative Commons Attribution-ShareAlike 4.0 International
+                        License</a
+                           >.
+                     </p>
+                  </div>
+               </div>
             </div>
-          </div>
-          <h2 class="subtitle has-text-centered">
-            <br>
-            Qualitative results of our method on the different human faces and their corresponding meshes.
-          </h2>
-        </div>
-      </div>
-    </section>
-    <!-- End video carousel -->
-
-    <!-- Teaser video-->
-    <!-- <section class="hero teaser">
-      <div class="container is-max-desktop">
-        <div class="hero-body">
-          <video poster="" id="tree" autoplay controls muted loop height="100%">
-            <source src="static/videos/banner_video.mp4" type="video/mp4" />
-          </video>
-          
-        </div>
-      </div>
-    </section> -->
-    <!-- End teaser video -->
-
-    <!-- Paper abstract -->
-    <section class="section hero is-light">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered has-text-centered">
-          <div class="column is-four-fifths">
-            <h2 class="title is-3">Abstract</h2>
-            <div class="content has-text-justified">
-              <p>
-                3D GAN inversion aims to project a single image into the latent
-                space of a 3D Generative Adversarial Network (GAN), thereby
-                achieving 3D geometry reconstruction. While there exist encoders
-                that achieve good results in 3D GAN inversion, they are
-                predominantly built on EG3D, which specializes in synthesizing
-                near-frontal views and is limiting in synthesizing comprehensive
-                3D scenes from diverse viewpoints. In contrast to existing
-                approaches, we propose a novel framework built on PanoHead,
-                which excels in synthesizing images from a 360-degree
-                perspective. To achieve realistic 3D modeling of the input
-                image, we introduce a dual encoder system tailored for
-                high-fidelity reconstruction and realistic generation from
-                different viewpoints. Accompanying this, we propose a stitching
-                framework on the triplane domain to get the best predictions
-                from both. To achieve seamless stitching, both encoders must
-                output consistent results despite being specialized for
-                different tasks. For this reason, we carefully train these
-                encoders using specialized losses, including an adversarial loss
-                based on our novel occlusion-aware triplane discriminator.
-                Experiments reveal that our approach surpasses the existing
-                encoder training methods qualitatively and quantitatively.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- End paper abstract -->
-
-    <!-- Video carousel -->
-    <section class="hero is-small">
-      <div class="hero-body">
-        <div class="container">
-          <h2 class="title is-3">Visual Results</h2>
-          <div id="results-carousel" class="carousel results-carousel">
-            <div class="item item-video1">
-              <video
-                poster=""
-                id="video1"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                <!-- Your video file here -->
-                <source src="static/videos/grid_1.mp4" type="video/mp4" />
-              </video>
-            </div>
-            <div class="item item-video2">
-              <video
-                poster=""
-                id="video2"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                <!-- Your video file here -->
-                <source src="static/videos/grid_4.mp4" type="video/mp4" />
-              </video>
-            </div>
-            <div class="item item-video3">
-              <video
-                poster=""
-                id="video3"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/grid_0.mp4" type="video/mp4" />
-              </video>
-            </div>
-            
-            <div class="item item-video4">
-              <video
-                poster=""
-                id="video4"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/grid_2.mp4" type="video/mp4" />
-              </video>
-            </div>
-
-            <div class="item item-video5">
-              <video
-                poster=""
-                id="video5"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/grid_5.mp4" type="video/mp4" />
-              </video>
-            </div>
-            
-            <div class="item item-video6">
-              <video
-                poster=""
-                id="video6"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/grid_6.mp4" type="video/mp4" />
-              </video>
-            </div>
-        </div>
-      </div>
-    </section>
-    <!-- End video carousel -->
-
-    <!-- Youtube video -->
-    <section class="hero is-small is-light">
-      <div class="hero-body">
-        <div class="container">
-          <h2 class="title is-3">Comparison With Other Methods</h2>
-          <div id="results-carousel" class="carousel results-carousel">
-            <div class="item item-video1">
-              <video
-                poster=""
-                id="video1"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                <!-- Your video file here -->
-                <source src="static/videos/grid_1.mp4" type="video/mp4" />
-              </video>
-            </div>
-            <div class="item item-video2">
-              <video
-                poster=""
-                id="video2"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                <!-- Your video file here -->
-                <source src="static/videos/grid_4.mp4" type="video/mp4" />
-              </video>
-            </div>
-            <div class="item item-video3">
-              <video
-                poster=""
-                id="video3"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/grid_0.mp4" type="video/mp4" />
-              </video>
-            </div>
-            
-            <div class="item item-video4">
-              <video
-                poster=""
-                id="video4"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/grid_2.mp4" type="video/mp4" />
-              </video>
-            </div>
-
-            <div class="item item-video5">
-              <video
-                poster=""
-                id="video5"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/grid_5.mp4" type="video/mp4" />
-              </video>
-            </div>
-            
-            <div class="item item-video6">
-              <video
-                poster=""
-                id="video6"
-                autoplay
-                controls
-                muted
-                loop
-                height="100%"
-              >
-                \
-                <!-- Your video file here -->
-                <source src="static/videos/grid_6.mp4" type="video/mp4" />
-              </video>
-            </div>
-        </div>
-      </div>
-    </section>
-    <!-- End youtube video -->
-
-
-    <!-- Paper poster -->
-    <section class="hero is-small is-light">
-      <div class="hero-body">
-        <div class="container">
-          <h2 class="title">Poster</h2>
-
-          <iframe src="static/pdfs/sample.pdf" width="100%" height="550">
-          </iframe>
-        </div>
-      </div>
-    </section>
-    <!--End paper poster -->
-
-    <!--BibTex citation -->
-    <section class="section" id="BibTeX">
-      <div class="container is-max-desktop content">
-        <h2 class="title">BibTeX</h2>
-        <pre><code>BibTex Code Here</code></pre>
-      </div>
-    </section>
-    <!--End BibTex citation -->
-
-    <footer class="footer">
-      <div class="container">
-        <div class="columns is-centered">
-          <div class="column is-8">
-            <div class="content">
-              <p>
-                This page was built using the
-                <a
-                  href="https://github.com/eliahuhorwitz/Academic-project-page-template"
-                  target="_blank"
-                  >Academic Project Page Template</a
-                >
-                which was adopted from the <a
-                  href="https://nerfies.github.io"
-                  target="_blank"
-                  >Nerfies</a
-                > project page. You are free to borrow the of this website, we
-                just ask that you link back to this page in the footer. <br />
-                This website is licensed under a
-                <a
-                  rel="license"
-                  href="http://creativecommons.org/licenses/by-sa/4.0/"
-                  target="_blank"
-                  >Creative Commons Attribution-ShareAlike 4.0 International
-                  License</a
-                >.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <!-- Statcounter tracking code -->
-
-    <!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
-
-    <!-- End of Statcounter Code -->
-  </body>
+         </div>
+      </footer>
+      <!-- Statcounter tracking code -->
+      <!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+      <!-- End of Statcounter Code -->
+   </body>
 </html>
