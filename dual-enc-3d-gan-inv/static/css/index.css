@@ -22,6 +22,10 @@ body {
   font-variant: small-caps;
 }
 
+.justified-text {
+  text-align: justify;
+}
+
 .teaser .hero-body {
   padding-top: 0;
   padding-bottom: 3rem;
