@@ -231,17 +231,10 @@
       <section class="hero is-small">
          <div class="hero-body">
          <div class="container">
-            <h2 class="title is-3">Method</h2>
-            <div class="item item-video1">
-                  <h3 class="title is-4">Dual Encoder</h3>
-                  <img src="static/images/dual_enc.png" width="100%" class="center" alt="Training" />                  
-            <h2 class="has-text-centered">
-                  <br>
-         The pipeline with dual encoders for full 3D head reconstruction. Given a face portrait with pose π<sub>R</sub>, we can perform 360-degree rendering from any given pose π<sub>Novel</sub>.
-
-            </h2>
-         </div>
-         <br>
+            <!-- <h2 class="title is-3">Method</h2>
+            <h3 class="title is-4">Dual Encoder</h3>
+            sdssd
+            <br><br><br> -->
                <div class="item item-video1">
                   <h3 class="title is-4">Training</h3>
                   <img src="static/images/training.png" width="75%" class="center" alt="Training" />                  
@@ -251,7 +244,14 @@
     and producing in-domain triplanes using PanoHead. Fake samples are generated from encoded images. Despite the effectiveness of adversarial loss in enhancing reconstructions, challenges persist in achieving high fidelity to the input due to the origin of real samples from the generator. To address this, we propose an <b>occlusion-aware discriminator</b>, trained exclusively with features from occluded pixels. This ensures that visible regions, such as frontal faces, do not influence discriminator training. Additionally, a masking mechanism for synthesized triplanes is employed to alleviate distribution mismatches between encoded and synthesized samples.
             </h2>
          </div>
-         
+         <div class="item item-video1">
+                  <h3 class="title is-4">Inference</h3>
+                  <img src="static/images/inference.png" alt="Inference" />                  
+            <h2 class="has-text-centered">
+                  <br>
+                  The inference pipeline with dual encoders for full 3D head reconstruction. Given a face portrait with pose π<sub>R</sub>, we can perform 360-degree rendering from any given pose π<sub>Novel</sub>. Here E<sub>1</sub> refers to the encoder which is trained with <b>occlusion aware discriminator</b> whereas E<sub>2</sub> is trained without the discriminator to maximize reconstruction in visible regions.
+            </h2>
+         </div>
       </section>
 
       <!-- Youtube video -->
