@@ -181,7 +181,7 @@
                      height="100%"
                      >
                      <!-- Your video file here -->
-                     <source src="static/videos/grid_images_2.mp4" type="video/mp4" />
+                     <source src="static/videos/grid_images_last.mp4" type="video/mp4" />
                   </video>  
             </div>
 
@@ -225,51 +225,34 @@
          </div>
       </section>
       <!-- End paper abstract -->
-      <!-- Video carousel -->
-      <section class="hero is-small">
-         <div class="hero-body">
-         <div class="container">
-            <h2 class="title is-3">Visual Results</h2>
-               <div class="item item-video1">
-                  <video
-                     poster=""
-                     id="video11"
-                     autoplay
-                     playsinline
-                     preload
-                     muted
-                     loop
-                     height="100%"
-                     >
-                     <!-- Your video file here -->
-                     <source src="static/videos/grid_images.mp4" type="video/mp4" />
-                  </video>
-            </div>
-            <h2 class="subtitle has-text-centered">
-                  <br>
-                  Qualitative results of our method on the different human faces.
-            </h2>
-
-         </div>
-      </section>
-      <!-- End video carousel -->
+      
       <!-- Paper content -->
 
-      <section class="hero is-small is-light">
+      <section class="hero is-small">
          <div class="hero-body">
          <div class="container">
             <h2 class="title is-3">Method</h2>
                <div class="item item-video1">
-                  [image]
-            <h2 class="subtitle has-text-centered">
+                  <h3 class="title is-4">Training</h3>
+                  <img src="static/images/training.png" alt="Training" />                  
+            <h2 class="has-text-centered">
                   <br>
-                  Here is our pipeline...
+                  Our training methodology for the Triplane discriminator involves generating real samples by sampling latent vectors Z+
+    and producing in-domain triplanes using PanoHead. Fake samples are generated from encoded images. Despite the effectiveness of adversarial loss in enhancing reconstructions, challenges persist in achieving high fidelity to the input due to the origin of real samples from the generator. To address this, we propose an <b>occlusion-aware discriminator</b>, trained exclusively with features from occluded pixels. This ensures that visible regions, such as frontal faces, do not influence discriminator training. Additionally, a masking mechanism for synthesized triplanes is employed to alleviate distribution mismatches between encoded and synthesized samples.
+            </h2>
+         </div>
+         <div class="item item-video1">
+                  <h3 class="title is-4">Inference</h3>
+                  <img src="static/images/inference.png" alt="Training" />                  
+            <h2 class="has-text-centered">
+                  <br>
+                  The inference pipeline with dual encoders for full 3D head reconstruction. Given a face portrait with pose π<sub>R</sub>, we can perform 360-degree rendering from any given pose π<sub>Novel</sub>.
             </h2>
          </div>
       </section>
 
       <!-- Youtube video -->
-      <section class="hero is-small">
+      <section class="hero is-small  is-light">
          <div class="hero-body">
          <div class="container">
             <h2 class="title is-3">Mesh Visualization Results</h2>
@@ -285,7 +268,7 @@
                      height="100%"
                      >
                      <!-- Your video file here -->
-                     <source src="static/videos/mesh_grid.mp4" type="video/mp4" />
+                     <source src="static/videos/mesh_grid_last.mp4" type="video/mp4" />
                   </video>
             <h2 class="subtitle has-text-centered">
                   <br>
