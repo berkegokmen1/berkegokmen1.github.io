@@ -230,10 +230,7 @@
          <h2 class="title is-3">Method</h2>
          <h3 class="title is-4">Dual Encoder</h3>
          <p class="justified-text">
-         For our work, we have trained two separate encoders. Each encoder takes an input image and predicts the latent code W+, which is then passed to the generator to produce triplane features. These synthesized features are then fed into the renderer to generate a 2D image with a specified camera parameter π<sub>Novel</sub>. 
-         While the W+ space allows for leveraging priors embedded in the generator, its limited expressive power in reconstructing image details has been noted due to the information bottleneck of its 14x512 dimensions.
-         To address this limitation, both 2D inversion techniques and 3D GAN inversion methods permit higher-rate features to pass to the generators, facilitating the capture of fine details.
-         In 3D GAN inversion methods, these higher-rate features are encoded through a smaller second network and transmitted to the triplane features. We adopt a similar approach in our encoders.
+         We have opted to train two separate encoders rather than a single one, each with a specific focus. One encoder is dedicated to capturing visible regions, while the other specializes in occluded regions. This approach allows each encoder to excel at its respective task. By employing our novel stitching pipeline, we can effectively combine the strengths of both encoders, yielding superior results compared to a single encoder that would struggle to handle both tasks with the same level of precision.
          </p>
          <br><br><br>
          <div class="item item-video1">
