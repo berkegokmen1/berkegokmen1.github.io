@@ -1,0 +1,18 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+
+/* Other styles go below */
+a{
+  color:gray;
+  &:hover{
+    color: #555555;
+  }
+}
+
+video {
+  height: 100%;
+  width: 100%;
+}
