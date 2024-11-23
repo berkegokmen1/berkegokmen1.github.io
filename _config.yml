@@ -1,5 +1,5 @@
 theme: jekyll-theme-minimal
-title: Kelian Dascher-Cousineau
+title: A. Berke Gökmen
 description: <head>
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <!-- Google tag (gtag.js) -->
@@ -18,15 +18,11 @@ description: <head>
   </div>
 
   <div>
-  <i class="material-icons" style="vertical-align:middle">email</i> kdascher@berkeley.edu
+  <i class="material-icons" style="vertical-align:middle">email</i> berke.gokmen@ug.bilkent.edu.tr
   </div>
 
   <div>
-  <i class="material-icons" style="vertical-align:middle">school</i> <a href="https://scholar.google.ca/citations?hl=en&user=XsIHgIsAAAAJ">Google Scholar Profile</a>
-  </div>
-
-  <div>
-  <i class="material-icons" style="vertical-align:middle">bookmark</i> <a href="assets/docs/Kelian Dascher-Cousineau - Resume 2023.pdf">Resume</a>
+  <i class="material-icons" style="vertical-align:middle">school</i> <a href="https://scholar.google.com.tr/citations?user=rg7Vk-gAAAAJ&hl=tr">Google Scholar Profile</a>
   </div>
 
 plugins:
