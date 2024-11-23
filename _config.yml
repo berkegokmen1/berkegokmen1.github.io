@@ -18,7 +18,11 @@ description: <head>
   </div>
 
   <div>
-  <i class="material-icons" style="vertical-align:middle">email</i> berke.gokmen@ug.bilkent.edu.tr
+  <i class="material-icons" style="vertical-align:middle">pages</i> <a href="Blog">Blog</a>
+  </div>
+
+  <div>
+  <i class="material-icons" style="vertical-align:middle">linkedin</i> <a href="https://www.linkedin.com/in/berkegokmen/">in/berkegokmen</a>
   </div>
 
   <div>
