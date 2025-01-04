@@ -138,3 +138,28 @@ body {
 .eql-cntrb {
   font-size: smaller;
 }
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+.columns {
+  margin-top: 15px;
+}
+
+.collapsible-content {
+  display: none;
+  overflow: hidden;
+}
+
+.toggle-button {
+  cursor: pointer;
+  color: #3273dc;
+  text-decoration: underline;
+}
+
+.toggle-button:hover {
+  color: #2752a5;
+}

@@ -90,8 +90,9 @@
                      </div>
                      <div class="is-size-5 publication-authors">
                         <span class="author-block">ETH Zurich Computer Vision Lab</span>
+                        <br>
                         <span class="eql-cntrb"
-                           ></span
+                           >Work completed during an internship at Computer Vision Lab.</span
                            >
                      </div>
                      <div class="column has-text-centered">
@@ -136,6 +137,9 @@
          <div class="container">
             <div class="item item-video1">
                <img src="static/images/teaser.png" alt="Teaser" />
+               <h3 class="subtitle has-text-centered">
+                  Our Method is Able to Generate Clinically Accurate Counterfactual Images While Preserving Patient Identity.
+               </h3>
             </div>
          </div>
          <br>
@@ -164,36 +168,174 @@
          <div class="container">
          <h2 class="title is-3">Method</h2>
          <h3 class="title is-4">Fine Tuning Diffusion Models</h3>
+         <img src="static/images/method.png" alt="Method" />
          <p class="justified-text">
-         ...
+         The process begins with DDIM Inversion, which reconstructs the input image in the latent space. 
+         A Bone Segmentor generates a bone mask to isolate relevant structures for manipulation. 
+         At each diffusion step, Bone Masking combines the original and manipulated latent states, ensuring that the anatomical integrity of the bones is preserved. 
+         The Attention Fine-Tuning module iteratively refines the outputs with a classifier-guided approach, minimizing reconstruction errors using an  L<sub>1</sub> loss. 
+         This ensures accurate and identity-preserving manipulation, as highlighted by the feedback loop of loss backpropagation.
          </p>
          <br><br><br>
-         <div class="item item-video1">
-            <h3 class="title is-4">Training</h3>
-            
-         </div>
-         <div class="item item-video1">
-            <h3 class="title is-4">Inference</h3>
-            
-         </div>
+         
       </section>
       <!-- Youtube video -->
       <section class="hero is-small is-light">
          <div class="hero-body">
-         <div class="container">
-         <h2 class="title is-3">More Results</h2>
-         <div class="item item-video1">
-            
-            <h2 class="subtitle has-text-centered">
+            <div class="container">
+               <h2 class="title is-3">Qualitative Results of Disease Removal</h2>
+               <p class="has-text-centered is-small">
+                  First rows show the original image while second rows show the counterfactual one.
+                  Click on titles to expand images.
+               </p>
                <br>
-               Qualitative results of our method.
-            </h2>
+
+               <!-- Pleural Effusion -->
+               <div class="container">
+                  <h3 class="subtitle is-4 has-text-centered">
+                     <a class="toggle-button" onclick="toggleCollapse('pleural-effusion-removal')">Pleural Effusion Removal</a>
+                  </h3>
+                  <div id="pleural-effusion-removal" class="columns is-centered is-gapless collapsible-content " style="display: none;">
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/peff/0_final_denoising.jpg" alt="Pleural Effusion Original" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/peff/8_final_denoising.jpg" alt="Pleural Effusion Counterfactual" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/peff/52_final_denoising.jpg" alt="Pleural Effusion Original 2" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/peff/219_final_denoising.jpg" alt="Pleural Effusion Counterfactual 2" class="image">
+                     </div>
+                  </div>
+               </div>
+
+
+               <!-- Cardiomegaly -->
+               <div class="container">
+                  <h3 class="subtitle is-4 has-text-centered">
+                     <a class="toggle-button" onclick="toggleCollapse('cardiomegaly-removal')">Cardiomegaly Removal</a>
+                  </h3>
+                  <div id="cardiomegaly-removal" class="columns is-centered is-gapless collapsible-content " style="display: none;">
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/card/42_final_denoising.jpg" alt="Pleural Effusion Original" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/card/46_final_denoising.jpg" alt="Pleural Effusion Counterfactual" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/card/48_final_denoising.jpg" alt="Pleural Effusion Original 2" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/card/49_final_denoising.jpg" alt="Pleural Effusion Counterfactual 2" class="image">
+                     </div>
+                  </div>
+               </div>
+
+               <!-- Atelectasis -->
+               <div class="container">
+                  <h3 class="subtitle is-4 has-text-centered">
+                     <a class="toggle-button" onclick="toggleCollapse('atelectasis-removal')">Atelectasis Removal</a>
+                  </h3>
+                  <div id="atelectasis-removal" class="columns is-centered is-gapless collapsible-content " style="display: none;">
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/atel/92_final_denoising.jpg" alt="Pleural Effusion Original" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/atel/82_final_denoising.jpg" alt="Pleural Effusion Counterfactual" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/atel/4_final_denoising.jpg" alt="Pleural Effusion Original 2" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/removal/atel/9_final_denoising.jpg" alt="Pleural Effusion Counterfactual 2" class="image">
+                     </div>
+                  </div>
+               </div>
+            </div>
          </div>
       </section>
-      <!-- End youtube video -->
+
+      <section class="hero is-small is-light">
+         <div class="hero-body">
+            <div class="container">
+               <h2 class="title is-3">Qualitative Results of Disease Synthesis</h2>
+               <p class="has-text-centered is-small">
+                  First rows show the original image while second rows show the counterfactual one.
+                  Click on titles to expand images.
+               </p>
+               <br>
+
+               <!-- Pleural Effusion -->
+               <div class="container">
+                  <h3 class="subtitle is-4 has-text-centered">
+                     <a class="toggle-button" onclick="toggleCollapse('pleural-effusion-synthesis')">Pleural Effusion Synthesis</a>
+                  </h3>
+                  <div id="pleural-effusion-synthesis" class="columns is-centered is-gapless collapsible-content " style="display: none;">
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/peff/60_final_denoising.jpg" alt="Pleural Effusion Original" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/peff/55_final_denoising.jpg" alt="Pleural Effusion Counterfactual" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/peff/89_final_denoising.jpg" alt="Pleural Effusion Original 2" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/peff/120_final_denoising.jpg" alt="Pleural Effusion Counterfactual 2" class="image">
+                     </div>
+                  </div>
+               </div>
+
+
+               <!-- Cardiomegaly -->
+               <div class="container">
+                  <h3 class="subtitle is-4 has-text-centered">
+                     <a class="toggle-button" onclick="toggleCollapse('cardiomegaly-synthesis')">Cardiomegaly Synthesis</a>
+                  </h3>
+                  <div id="cardiomegaly-synthesis" class="columns is-centered is-gapless collapsible-content " style="display: none;">
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/card/40_final_denoising.jpg" alt="Pleural Effusion Original" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/card/61_final_denoising.jpg" alt="Pleural Effusion Counterfactual" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/card/103_final_denoising.jpg" alt="Pleural Effusion Original 2" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/card/8_final_denoising.jpg" alt="Pleural Effusion Counterfactual 2" class="image">
+                     </div>
+                  </div>
+               </div>
+
+               <!-- Atelectasis -->
+               <div class="container">
+                  <h3 class="subtitle is-4 has-text-centered">
+                     <a class="toggle-button" onclick="toggleCollapse('atelectasis-synthesis')">Atelectasis Synthesis</a>
+                  </h3>
+                  <div id="atelectasis-synthesis" class="columns is-centered is-gapless collapsible-content " style="display: none;">
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/atel/7_final_denoising.jpg" alt="Pleural Effusion Original" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/atel/28_final_denoising.jpg" alt="Pleural Effusion Counterfactual" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/atel/52_final_denoising.jpg" alt="Pleural Effusion Original 2" class="image">
+                     </div>
+                     <div class="column is-one-quarter">
+                        <img src="static/images/results/synthesis/atel/64_final_denoising.jpg" alt="Pleural Effusion Counterfactual 2" class="image">
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
       
       <!-- Paper poster -->
-      <section class="hero is-small">
+      <!-- <section class="hero is-small">
          <div class="hero-body">
          <div class="container">
          <h2 class="title is-3">Comparison With Other Methods</h2>
@@ -204,7 +346,7 @@
                Qualitative result comparions of our method with varying different methods.
             </h2>
          </div>
-      </section>
+      </section> -->
       <!--End paper poster -->
       <!--BibTex citation -->
       <section class="section" id="BibTeX">
