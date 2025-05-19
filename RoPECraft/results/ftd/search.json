@@ -1,0 +1,1 @@
+["Step 1: Random point sampling Step 2: Occlusion aware tracking Step 3: RMS FD over Trajectories Drop points if they never become visible again and map to Nearest Neighbor Keep partially occluded points Randomly sample n points inside and outside the mask "]

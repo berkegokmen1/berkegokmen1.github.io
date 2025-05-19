@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RoPECraft: Training-Free Motion Transfer with Trajectory-Guided RoPE Optimization on Diffusion Transformers</title>
+
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Plyr -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.7.8/plyr.min.css" />
+
+    <!--  ◂────────────────────  THEME + LAYOUT  ────────────────────▸  -->
+    <style>
+      /* ===== RESET ===== */
+      *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+      html{scroll-behavior:smooth}
+
+      /* ===== PALETTE ===== */
+      :root{
+        --accent:#00c5c5;
+        --accent-darker:#00a3a3;
+        --accent-light:#7feaea;
+        --bg-dark:#121212;
+        --surface1-dark:#1E1E1E;
+        --surface2-dark:#2C2C2C;
+        --fg-dark:#EAEAEA;
+        --fg-muted-dark:#9E9E9E;
+        --radius:.75rem;
+        --plyr-color-main:var(--accent);
+      }
+      body[data-theme="dark"]{
+        --bg:var(--bg-dark);
+        --surface-1:var(--surface1-dark);
+        --surface-2:var(--surface2-dark);
+        --fg:var(--fg-dark);
+        --fg-muted:var(--fg-muted-dark);
+      }
+      body{
+        font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+        background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E"),radial-gradient(ellipse at 60% 20%,#1e2a2a 0%,#121212 100%);
+        background-color:var(--bg);
+        color:var(--fg);
+        line-height:1.6;
+        letter-spacing:.01em;
+        transition:background .3s,color .3s;
+      }
+
+      /* ===== SCROLLBAR ===== */
+      ::-webkit-scrollbar{width:10px;height:10px}
+      ::-webkit-scrollbar-track{background:color-mix(in srgb,var(--bg) 95%,var(--fg) 5%)}
+      ::-webkit-scrollbar-thumb{background:color-mix(in srgb,var(--accent) 50%,var(--bg) 50%);border-radius:5px}
+      ::-webkit-scrollbar-thumb:hover{background:var(--accent)}
+
+      /* ===== HERO ===== */
+      .hero{
+        position:relative;
+        min-height:70vh;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        overflow:hidden;
+        isolation:isolate
+      }
+      .hero video{
+        position:absolute;
+        inset:0;
+        width:100%;
+        height:100%;
+        object-fit:cover;
+        opacity:.25;
+        transform: scale(1.1);
+      }
+      .hero::after{
+        content:"";
+        position:absolute;
+        inset:0;
+        background:linear-gradient(180deg,rgba(0,0,0,.75) 0%,rgba(0,0,0,.3) 40%,rgba(0,0,0,.75) 100%);
+        mix-blend-mode:multiply
+      }
+      .hero h1{
+        position:relative;
+        font-size:clamp(2rem,5vw,3.5rem);
+        text-align:center;
+        color:#00c5c5;
+        margin-bottom:2.2rem;
+        line-height: 1.2;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        transition: box-shadow 0.3s, filter 0.3s;
+      }
+      .hero h1:hover {
+        /* Remove glow effect on hover */
+        filter: none;
+        box-shadow: none;
+      }
+      
+      /* Header content container */
+      .header-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-width: 95%;
+        width: 1100px;
+        margin: 2.5rem auto 2.5rem auto;
+        z-index: 5;
+        position: relative;
+        padding: 2.2rem 2.5rem 2.2rem 2.5rem;
+        /* Animated gradient border */
+        border-radius: calc(var(--radius) * 1.5);
+        background: rgba(18, 18, 18, 0.10);
+        box-shadow: 0 8px 32px 0 rgba(0,0,0,0.18);
+        border: 6px solid transparent;
+        background-clip: padding-box, border-box;
+        background-origin: padding-box, border-box;
+        background-image: linear-gradient(rgba(18,18,18,0.85),rgba(18,18,18,0.85)),
+          linear-gradient(120deg, var(--accent), var(--accent-light), var(--accent-darker), var(--accent));
+        animation: borderMove 4s linear infinite;
+      }
+      @keyframes borderMove {
+        0% { background-position: 0 0, 0 0; }
+        100% { background-position: 0 0, 400% 0; }
+      }
+      
+      /* Authors section styling */
+      .authors-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.2rem 2rem;
+        background: rgba(18, 18, 18, 0.8);
+        backdrop-filter: blur(8px);
+        padding: 1.2rem 2.5rem;
+        border-radius: var(--radius);
+        width: auto;
+        max-width: 90%;
+        margin-bottom: 1.7rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transform: translateY(0);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      
+      .authors-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+      }
+      
+      /* Author name styling */
+      .author {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2em;
+        position: relative;
+        transition: all 0.2s ease;
+      }
+      
+      .author:hover {
+        color: var(--accent-light);
+      }
+      
+      .author sup {
+        color: var(--fg-muted);
+        font-weight: 400;
+      }
+      
+      /* Affiliations styling */
+      .affiliations-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: var(--fg-muted);
+        background: rgba(18, 18, 18, 0.7);
+        backdrop-filter: blur(5px);
+        padding: 0.9rem 2.5rem;
+        border-radius: var(--radius);
+        font-size: 0.95rem;
+        margin-bottom: 2.1rem;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        width: fit-content;
+      }
+      
+      .affiliation {
+        margin: 0.3rem 0;
+        transition: color 0.2s ease;
+      }
+      
+      .affiliation:hover {
+        color: var(--fg);
+      }
+      
+      /* Resource links styling */
+      .resource-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 0.5rem;
+        margin-bottom: 2.1rem;
+      }
+      
+      .resource-link {
+        display: inline-flex;
+        align-items: center;
+        background: var(--accent);
+        color: #121212;
+        font-weight: 600;
+        padding: 0.6rem 1.2rem;
+        border-radius: 0.375rem;
+        text-decoration: none;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.03em;
+        transition: all 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+        box-shadow: 0 4px 12px rgba(0, 197, 197, 0.3);
+        position: relative;
+        overflow: hidden;
+        user-select: none;
+      }
+      
+      .resource-link:hover {
+        background: var(--accent-darker);
+        transform: translateY(-3px);
+        box-shadow: 0 6px 18px rgba(0, 197, 197, 0.4);
+      }
+      
+      .resource-link:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(0, 197, 197, 0.3);
+      }
+      
+      .resource-link i {
+        margin-right: 0.4rem;
+        font-size: 1.05em;
+      }
+      
+      /* Responsive adjustments */
+      @media (max-width: 768px) {
+        .header-content {
+          padding: 0.5rem;
+          width: 100%;
+        }
+        
+        .hero h1 {
+          font-size: clamp(1.5rem, 4vw, 2.5rem);
+          padding: 0 1rem;
+        }
+        
+        .authors-container {
+          flex-direction: column;
+          align-items: center;
+          gap: 0.7rem;
+          padding: 1rem 1.5rem;
+          width: 90%;
+        }
+        
+        .affiliations-container {
+          padding: 0.8rem 1.5rem;
+          width: 90%;
+        }
+        
+        .resource-links {
+          flex-direction: column;
+          width: 90%;
+        }
+        
+        .resource-link {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+      
+      /* Animation for header elements */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      .fade-up {
+        animation: fadeUp 0.8s ease-out forwards;
+      }
+      
+      .delay-1 { animation-delay: 0.1s; }
+      .delay-2 { animation-delay: 0.3s; }
+      .delay-3 { animation-delay: 0.5s; }
+
+      /* ===== TOC ===== */
+      .toc{position:sticky;top:0;background:color-mix(in srgb,var(--bg) 80%,var(--accent) 2%,transparent);backdrop-filter:blur(12px);border-bottom:2px solid color-mix(in srgb,var(--fg) 15%,transparent);z-index:50;box-shadow:0 4px 24px 0 rgba(0,0,0,0.12)}
+      .toc-inner{max-width:1200px;margin-inline:auto;display:flex;justify-content:center;gap:1rem;align-items:center;padding:.75rem 1rem;overflow-x:auto}
+      .toc a{position:relative;padding:.35rem .75rem;border-radius:6px;text-decoration:none;font-weight:600;color:var(--fg);white-space:nowrap;transition:color .2s ease-in-out,opacity .2s ease-in-out,background-color .2s ease-in-out}
+      .toc a.active{color:var(--accent);background-color:color-mix(in srgb,var(--accent) 15%,transparent)}
+      .toc a.active::after{content:"";position:absolute;left:0;bottom:-4px;width:100%;height:2px;background:var(--accent);border-radius:1px}
+      .toc a:not(.active):hover{color:var(--accent);opacity:.85}
+
+      /* ===== SECTION ===== */
+      section{padding:4rem 1rem;max-width:1200px;margin-inline:auto;scroll-margin-top:80px;border-radius:var(--radius);box-shadow:0 2px 16px 0 rgba(0,0,0,0.10);border:1px solid color-mix(in srgb,var(--surface-2) 80%,var(--accent) 10%);margin-bottom:2.5rem;position:relative;overflow:hidden;z-index:1}
+      section:nth-of-type(even){background:var(--surface-1)}
+      section:nth-of-type(odd){background:var(--surface-2)}
+      section h2{
+        font-size:clamp(1.8rem,5vw,2.25rem);margin-bottom:1rem;letter-spacing:-0.02em;font-weight:700;position:relative;z-index:1;text-align:center;
+      }
+      section h2::after{content:'';display:block;width:60px;height:4px;margin-top:.5rem;border-radius:2px;background:linear-gradient(90deg,var(--accent),#AFEEEE 80%);transition:width .3s cubic-bezier(.4,2,.6,1);margin-left:auto;margin-right:auto}
+      section:hover h2::after{width:90px}
+      section p.lead{color:var(--fg-muted);margin-bottom:2rem}
+
+      /* ===== VIDEO GRID / CARD ===== */
+      .video-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.25rem}
+      .clip-card{position:relative;overflow:hidden;border-radius:var(--radius);background:#000;aspect-ratio:16/9;transition:transform .5s cubic-bezier(0.23,1,0.32,1),box-shadow .5s cubic-bezier(0.23,1,0.32,1);box-shadow:0 6px 24px 0 rgba(0,0,0,0.18);transform-style:preserve-3d;perspective:1000px}
+      .clip-card:hover{transform:translateY(-5px) scale(1.02) rotateX(2deg);box-shadow:0 14px 28px rgba(0,0,0,0.25),0 0 0 1px var(--accent);z-index:1}
+      .clip-card::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 80%,rgba(0,0,0,0.2));pointer-events:none;opacity:.6}
+      .clip-card video,.clip-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s ease}
+      .clip-card:hover video,.clip-card:hover img{transform:scale(1.05)}
+      .clip-card figcaption{position:absolute;inset-block-end:0;inset-inline:0;background:linear-gradient(90deg,rgba(0,0,0,.55) 60%,rgba(0,197,197,.18) 100%);color:#fff;font-size:.875rem;padding:.5rem .75rem;backdrop-filter:blur(4px);border-bottom-left-radius:var(--radius);border-bottom-right-radius:var(--radius);box-shadow:0 2px 8px 0 rgba(0,0,0,0.12)}
+
+      /* ===== CAROUSEL ===== */
+      .carousel-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        overflow: hidden;
+        width: 100%;
+        height: fit-content;
+        background: none;
+      }
+      .carousel-track {
+        display: flex;
+        align-items: center;
+        transition: transform 0.5s ease-in-out;
+        gap: 1.25rem;
+        height: 100%;
+        width: 100%;
+      }
+      .carousel-card {
+        flex: 0 0 100%;
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--radius);
+        background: none;
+        transition: box-shadow 0.5s cubic-bezier(0.23,1,0.32,1);
+        box-shadow: 0 6px 24px 0 rgba(0,0,0,0.18);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        width: 100%;
+      }
+      .carousel-card video {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background: none;
+        margin: 0;
+        border-radius: 0;
+      }
+      .carousel-card figcaption {
+        position: relative;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        background: linear-gradient(90deg, rgba(0,0,0,.55) 60%, rgba(0,197,197,.18) 100%);
+        color: #fff;
+        font-size: .875rem;
+        padding: .5rem .75rem;
+        backdrop-filter: blur(4px);
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.12);
+        margin: 0;
+      }
+      .carousel-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.5);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+        z-index: 2;
+      }
+      .carousel-button:hover {
+        background: var(--accent);
+        transform: translateY(-50%) scale(1.1);
+      }
+      .carousel-button.prev {
+        left: 10px;
+      }
+      .carousel-button.next {
+        right: 10px;
+      }
+      .loading-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--accent);
+        animation: spin 1s ease-in-out infinite;
+        z-index: 1;
+      }
+      @keyframes spin {
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+
+      /* ===== TABLE ===== */
+      table{width:100%;border-collapse:collapse;margin-bottom:2rem;font-size:.9rem}
+      th,td{padding:.6rem .75rem;border:1px solid rgba(0,0,0,.1);text-align:left}
+      th{background:var(--surface-1);font-weight:600}
+      tbody tr:nth-child(even){background:var(--surface-2)}
+      tbody tr:hover{background-color:color-mix(in srgb,var(--surface-2) 80%,var(--accent) 5%)}
+
+      /* ===== DETAILS (Collapsible) ===== */
+      details{margin-bottom:1.5rem;border:1px solid color-mix(in srgb,var(--fg) 8%,transparent);border-radius:var(--radius);background:color-mix(in srgb,var(--bg) 95%,var(--accent) 5%);box-shadow:0 2px 8px rgba(0,0,0,0.08);transition:box-shadow .3s ease}
+      details:hover{box-shadow:0 4px 12px rgba(0,0,0,0.12)}
+      summary{cursor:pointer;padding:.85rem 1.15rem;padding-right:2.5rem;font-weight:600;list-style:none;background:color-mix(in srgb,var(--surface-1) 95%,var(--accent) 5%);border-radius:var(--radius);letter-spacing:.01em;transition:background-color .2s ease;position:relative}
+      summary:hover{background:color-mix(in srgb,var(--surface-1) 85%,var(--accent) 15%)}
+      summary::-webkit-details-marker{display:none}
+      summary::after{content:'▸';position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:1.2em;color:var(--accent);transition:transform .2s ease-in-out}
+      details[open]>summary::after{transform:translateY(-50%) rotate(90deg)}
+      details[open] summary{border-bottom:1px solid rgba(0,0,0,.08)}
+      details .content{padding:1rem 1.25rem 1.5rem}
+
+      /* ===== SCROLL TOP BUTTON ===== */
+      .scroll-to-top{position:fixed;bottom:20px;right:20px;background-color:var(--accent);color:var(--bg-dark);width:40px;height:40px;border-radius:50%;text-align:center;line-height:40px;text-decoration:none;font-size:1.5rem;opacity:0;transform:translateY(100px);transition:opacity .3s ease,transform .3s ease,visibility .3s ease,box-shadow .3s ease;visibility:hidden;z-index:1000}
+      .scroll-to-top:hover{transform:translateY(-2px) scale(1.1);box-shadow:0 6px 12px color-mix(in srgb,var(--accent) 50%,black 50%)}
+      .scroll-to-top.visible{opacity:1;transform:translateY(0);visibility:visible}
+      .scroll-to-top:focus-visible{outline:2px solid var(--accent);outline-offset:2px;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 30%,transparent)}
+
+      /* ===== ANIMATE SECTION CHILDREN ===== */
+      section>*{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}
+      section>*.visible{opacity:1;transform:translateY(0)}
+      section>:nth-child(1){transition-delay:.1s}section>:nth-child(2){transition-delay:.2s}section>:nth-child(3){transition-delay:.3s}section>:nth-child(4){transition-delay:.4s}section>:nth-child(5){transition-delay:.5s}
+
+      @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+      a,button{position:relative;overflow:hidden}
+      a::after,button::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:linear-gradient(90deg,var(--accent),#AFEEEE 80%);transform:scaleX(0);transition:transform .3s cubic-bezier(.4,2,.6,1);border-radius:1px}
+      a:hover::after,button:hover::after,a:focus-visible::after,button:focus-visible::after{transform:scaleX(1)}
+
+      .hero video {
+        opacity: 0;
+        animation: fadeInHero 1.2s ease 0.2s forwards;
+      }
+      @keyframes fadeInHero {
+        from { opacity: 0; }
+        to { opacity: 0.25; }
+      }
+      .resource-link:focus-visible {
+        outline: 2px solid var(--accent-light);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 4px var(--accent-light);
+        background: var(--accent-light);
+        color: #121212;
+      }
+
+      /* Related Links modern pill/card style */
+      .related-links-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 1.5rem;
+        justify-content: center;
+        margin: 2.2rem auto 0 auto;
+        padding: 0;
+        list-style: none;
+        max-width: 900px;
+      }
+      .related-link-pill {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        background: var(--surface-1, #232b2b);
+        color: var(--accent);
+        border-radius: 2em;
+        padding: 0.7em 1.5em 0.7em 1.2em;
+        font-weight: 600;
+        font-size: 1.05em;
+        text-decoration: none;
+        box-shadow: 0 2px 12px 0 rgba(0,197,197,0.08);
+        border: 1.5px solid var(--accent-light);
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+        position: relative;
+      }
+      .related-link-pill:hover, .related-link-pill:focus-visible {
+        background: var(--accent);
+        color: #121212;
+        box-shadow: 0 6px 24px 0 rgba(0,197,197,0.18);
+        transform: translateY(-2px) scale(1.04);
+        text-decoration: none;
+      }
+      .related-link-pill .fa-external-link-alt {
+        font-size: 0.98em;
+        margin-left: 0.2em;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+  <body data-theme="dark">
+    <!-- HERO -->
+    <header class="hero" id="top">
+      <!-- Replace with teaser; placeholder below -->
+      <video src="media/nerfies_teaser.mp4" autoplay muted loop playsinline></video>
+      <div class="header-content">
+        <!-- Title Row -->
+        <h1 class="fade-up">
+          RoPECraft: Training-Free Motion Transfer with Trajectory-Guided RoPE Optimization on Diffusion Transformers
+        </h1>
+        
+        <!-- Authors Row -->
+        <div class="authors-container fade-up delay-1">
+          <span class="author"><strong>Ahmet Berke Gökmen</strong><sup>1</sup></span>
+          <span class="author"><strong>Yiğit Ekin</strong><sup>1,</sup></span>
+          <span class="author"><strong>Bahri Batuhan Bilecen</strong><sup>1</sup></span>
+          <span class="author"><strong>Aysegul Dundar</strong><sup>1</sup></span>
+        </div>
+        
+        <!-- Affiliations Row -->
+        <div class="affiliations-container fade-up delay-2">
+          <div class="affiliation"><sup>1</sup> Bilkent University</div>
+        </div>
+        
+        <!-- Resource Links Row -->
+        <div class="resource-links fade-up delay-3">
+          <a href="#" class="resource-link"><i class="fas fa-file-pdf"></i>Paper</a>
+          <a href="#" class="resource-link"><i class="fas fa-bookmark"></i>arXiv</a>
+          <a href="https://github.com/berkegokmen1/RoPECraft" class="resource-link"><i class="fas fa-code"></i>Code</a>
+          <a href="https://drive.google.com/drive/folders/1xWLPBKTzsEifiDVBbllJZ9tH790L9Frh?usp=share_link" class="resource-link"><i class="fas fa-database"></i>Data</a>
+          <a href="supp.html" class="resource-link"><i class="fas fa-file-alt"></i>Supplementary</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- TOC -->
+    <nav class="toc" aria-label="Table of contents">
+      <div class="toc-inner">
+        <a href="#abstract">Abstract</a>
+        <a href="#Architecture">Architecture</a>
+        <a href="#ftd-section">Fréchet Trajectory Distance</a>
+        <a href="#results_ours">Results</a>
+        <a href="#results">Comparisons</a>
+        <a href="#bibtex">BibTeX</a>
+        <a href="#links">Related&nbsp;Links</a>
+      </div>
+    </nav>
+
+    <main>
+      <!-- ========== ABSTRACT ========= -->
+      <section id="abstract">
+        <h2>Abstract</h2>
+        <p style="text-align:center;max-width:900px;margin:0 auto;">We propose RoPECraft, a training-free video motion transfer method for diffusion transformers that operates solely by modifying their rotary positional embeddings (RoPE). We first extract dense optical flow from a reference video, and utilize the resulting motion offsets to warp the complex-exponential tensors of RoPE, effectively encoding motion into the generation process. These embeddings are then further optimized during denoising time steps via trajectory alignment between the predicted and target velocities using a flow-matching objective. To keep the output faithful to the text prompt and prevent duplicate generations, we incorporate a regularization term based on the phase components of the reference video's Fourier transform, projecting the phase angles onto a smooth manifold to suppress high-frequency artifacts. Experiments on benchmarks reveal that RoPECraft outperforms all recently published methods, both qualitatively and quantitatively.</p>
+      </section>
+
+      <!-- ========== VIDEO ========= -->
+<!-- ===============================================================
+     RoPECraft — Architecture & Optimisation
+     =============================================================== -->
+     <section id="Architecture"
+     style="background:linear-gradient(120deg,rgba(0,197,197,0.07) 0%,rgba(18,18,18,0.95) 100%);
+            border-radius:var(--radius);
+            box-shadow:0 6px 32px rgba(0,0,0,0.13);
+            border:1.5px solid var(--accent-light);
+            padding:3.5rem 1.5rem 3rem;
+            margin-bottom:2.5rem;">
+
+<!-- ——— Title & one-liner ——— -->
+<h2 style="text-align:center;margin-bottom:0.7rem;color:var(--accent);font-size:2.3rem;letter-spacing:-0.01em;">
+  Architecture
+</h2>
+<p class="lead"
+ style="text-align:center;max-width:700px;margin:0 auto 2.2rem;font-size:1.15em;">
+A concise overview of the RoPECraft architecture and its optimisation
+pipeline.
+</p>
+
+<!-- ——— Diagram ——— -->
+<div style="display:flex;justify-content:center;align-items:center;">
+  <div style="background:#fff;padding:2rem 2rem 1.5rem 2rem;border-radius:1.1rem;box-shadow:0 4px 24px rgba(0,0,0,0.13);max-width:820px;width:100%;margin:2.5rem auto 2rem auto;">
+    <object data="results/arch/arch.svg"
+            type="image/svg+xml"
+            style="width:100%;max-width:800px;height:auto;display:block;background:none;padding:0;"
+            aria-label="RoPECraft Architecture Diagram">
+      <img src="results/Architecture.png"
+           alt="RoPECraft Architecture Diagram"
+           style="width:100%;max-width:800px;height:auto;object-fit:contain;display:block;background:none;padding:0;" />
+    </object>
+  </div>
+</div>
+
+<!-- ——— Key components ——— -->
+<div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:2.2rem;">
+  <div style="display:flex;align-items:flex-start;gap:1.2rem;">
+    <div style="width:6px;min-width:6px;height:2.5rem;background:var(--accent);border-radius:4px;margin-top:0.3em;"></div>
+    <div>
+      <h3 style="margin:0 0 0.3em 0;color:var(--accent);font-size:1.25em;">Motion-augmented RoPE</h3>
+      <p style="margin:0;color:var(--fg-muted);font-size:1.07em;">
+        Instead of tiling standard 1-D rotary embeddings independently across axes, RoPECraft warps the spatial indices with per-row and per-column optical-flow cues <em>before</em> the complex exponential is applied. This yields motion-aware embeddings that tell the transformer which patches should attend to one another, while the temporal term remains untouched to avoid artefacts.
+      </p>
+    </div>
+  </div>
+  <div style="display:flex;align-items:flex-start;gap:1.2rem;">
+    <div style="width:6px;min-width:6px;height:2.5rem;background:var(--accent);border-radius:4px;margin-top:0.3em;"></div>
+    <div>
+      <h3 style="margin:0 0 0.3em 0;color:var(--accent);font-size:1.25em;">Flow-matching optimisation</h3>
+      <p style="margin:0;color:var(--fg-muted);font-size:1.07em;">
+        During the earliest diffusion steps we align the predicted velocity field&nbsp;<code>v<sub>θ</sub>(t,x<sub>t</sub>)</code> with a target velocity derived from a reference latent video. Starting from the warped RoPE initialisation improves subject placement and motion direction, giving cleaner, more accurate trajectories than either default RoPE or optimisation from an unwarped state.
+      </p>
+    </div>
+  </div>
+  <div style="display:flex;align-items:flex-start;gap:1.2rem;">
+    <div style="width:6px;min-width:6px;height:2.5rem;background:var(--accent);border-radius:4px;margin-top:0.3em;"></div>
+    <div>
+      <h3 style="margin:0 0 0.3em 0;color:var(--accent);font-size:1.25em;">Phase-consistency constraint</h3>
+      <p style="margin:0;color:var(--fg-muted);font-size:1.07em;">
+        To eliminate residual duplicates or mis-oriented subjects, we add an <span style="white-space:nowrap;">ℓ<sub>1</sub></span> penalty that
+        matches the cosine and sine of the spatial-temporal Fourier-phase of
+        target and predicted velocities. Representing phase on the unit circle
+        makes the loss smooth and differentiable, fixing remaining artefacts and
+        further stabilising motion across generated frames.
+
+</div>
+
+
+      </section>
+<!-- =============================================================== -->
+
+
+      <!-- ========== Fréchet Trajectory Distance (FTD) SECTION ========= -->
+      <section id="ftd-section"
+        style="background:linear-gradient(120deg,rgba(0,197,197,0.07) 0%,rgba(18,18,18,0.95) 100%);border-radius:var(--radius);box-shadow:0 6px 32px rgba(0,0,0,0.13);border:1.5px solid var(--accent-light);padding:3.5rem 1.5rem 3rem;margin-bottom:2.5rem;">
+        <h2 style="text-align:center;margin-bottom:0.7rem;color:var(--accent);font-size:2.3rem;letter-spacing:-0.01em;">Fréchet Trajectory Distance (FTD)</h2>
+
+        <!-- Concise three-step caption (colour-coded) -->
+        <div style="max-width:900px;margin:0 auto;display:flex;flex-direction:column;gap:2.2rem;">
+          <div style="display:flex;align-items:flex-start;gap:1.2rem;">
+            <div style="width:6px;min-width:6px;height:2.5rem;background:var(--accent);border-radius:4px;margin-top:0.3em;"></div>
+            <div>
+              <h3 style="margin:0 0 0.3em 0;color:var(--accent);font-size:1.15em;">Step 1: Sampling</h3>
+              <p style="margin:0;font-size:1.07em;color:var(--fg-muted);">
+                Sample <em>n</em> foreground (<span style="color:#ff4b5c;font-weight:600;">red</span>) and <em>n</em> background (<span style="color:#00c97b;font-weight:600;">green</span>) seeds in the first frame.
+              </p>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:1.2rem;">
+            <div style="width:6px;min-width:6px;height:2.5rem;background:var(--accent);border-radius:4px;margin-top:0.3em;"></div>
+            <div>
+              <h3 style="margin:0 0 0.3em 0;color:var(--accent);font-size:1.15em;">Step 2: Occlusion-aware tracking</h3>
+              <p style="margin:0;font-size:1.07em;color:var(--fg-muted);">
+                Track each seed with an occlusion-aware filler: copy the nearest visible neighbour while occluded and discard tracks that never re-appear.
+              </p>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:1.2rem;">
+            <div style="width:6px;min-width:6px;height:2.5rem;background:var(--accent);border-radius:4px;margin-top:0.3em;"></div>
+            <div>
+              <h3 style="margin:0 0 0.3em 0;color:var(--accent);font-size:1.15em;">Step 3: Distance computation</h3>
+              <p style="margin:0;font-size:1.07em;color:var(--fg-muted);">
+                Measure the RMS Fréchet distance between generated (<span style="color:#8196ff;font-weight:600;">fake</span>) and reference (<span style="color:#f96977;font-weight:600;">real</span>) tracks.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Illustration -->
+        <div style="display:flex;justify-content:center;align-items:center;">
+          <div style="background:#fff;padding:2rem 2rem 1.5rem 2rem;border-radius:1.1rem;box-shadow:0 4px 24px rgba(0,0,0,0.13);max-width:820px;width:100%;margin:2.5rem auto 0 auto;">
+            <object data="results/ftd/FTD.svg"
+                    type="image/svg+xml"
+                    style="width:100%;max-width:800px;height:auto;display:block;background:none;padding:0;"
+                    aria-label="Fréchet Trajectory Distance (FTD) Illustration">
+              <img src="results/ftd/FTD.svg"
+                   alt="Fréchet Trajectory Distance (FTD) Illustration"
+                   style="width:100%;max-width:800px;height:auto;object-fit:contain;display:block;background:none;padding:0;" />
+            </object>
+          </div>
+        </div>
+
+        <!-- How it works -->
+        <h3 style="text-align:center;margin-top:2.5rem;color:var(--accent);">How it works</h3>
+        <ol style="margin-left:1.5em;max-width:800px;margin:0 auto 2.2rem auto;text-align:left;">
+          <li>
+            Uniformly sample <em>n</em> foreground and <em>n</em> background points in
+            the first frame (<span style="color:#ff4b5c;font-weight:600;">red</span> /
+            <span style="color:#00c97b;font-weight:600;">green</span>).
+          </li>
+          <li>
+            Track those 2&nbsp;<em>n</em> seeds with an occlusion-aware tracker; if a
+            seed disappears it is reassigned to its nearest visible neighbour, and
+            tracks that never re-appear are discarded.
+          </li>
+          <li>
+            Normalise all track coordinates by frame width <em>W</em> and height
+            <em>H</em> to make the metric resolution-invariant.
+          </li>
+          <li>
+            Compute the root-mean-square of the discrete Fréchet distance between
+            each real / fake track pair:
+            <div style="background:var(--surface-1);padding:1em 1.5em;margin:1em 0;border-radius:0.7em;text-align:center;font-size:1.08em;overflow-x:auto;">
+              <span class="mathjax" style="display:block;">
+                $$
+                \mathrm{FTD} = \left(
+                  \frac{1}{N} \sum_{i=1}^{N}
+                  D_F^2\left(\mathcal{T}_i^{\mathrm{real}},\;
+                             \mathcal{T}_i^{\mathrm{fake}}\right)
+                \right)^{1/2}
+                $$
+              </span>
+            </div>
+          </li>
+        </ol>
+
+        <!-- Why it is better -->
+        <h3 style="text-align:center;margin-top:2.5rem;color:var(--accent);">Comparison with Motion Fidelity&nbsp;(MF)</h3>
+        <p style="max-width:800px;margin:0 auto 2.5rem auto;text-align:center;">
+          MF computes cosine similarity between successive displacements on a fixed
+          grid, ignoring overall path shape, magnitude, and occlusions; it can still
+          score highly when trajectories diverge and exhibits high variance.<br>
+          <strong>FTD</strong> focuses on reliable, task-relevant tracks, handles
+          occlusions explicitly, and evaluates full-curve similarity through the
+          discrete Fréchet distance, delivering a more stable and physically
+          meaningful motion-alignment metric.
+        </p>
+      </section>
+
+      <section id="results-ours">
+        <h2>Results</h2>
+        <p class="lead" style="text-align:center;margin:0 auto 2.2rem auto;">
+          RoPECraft achieves state-of-the-art results.
+        </p>
+        <div class="carousel-container">
+          <button class="carousel-button prev" aria-label="Previous slide">←</button>
+          <button class="carousel-button next" aria-label="Next slide">→</button>
+          <div class="carousel-track">
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-3/paired_car-turn_3.mov" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A robotic courier zips through a maze of automated warehouses, packages whizzing past on conveyor belts.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-3/paired_rallye_3.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>An interstellar rally craft zooms through a chaotic asteroid belt, thrusters blazing as it weaves between spinning rock fragments.</figcaption>
+            </figure>
+            
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-1/paired_blackswan_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A child in a duck costume paddles a small inflatable boat across a pond.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-2/paired_blackswan_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A flock of black swans swims gracefully through a misty, moonlit swamp, their dark forms contrasting with the eerie glow on the water.</figcaption>
+            </figure>
+            
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-2/paired_blackswan_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A collection of origami swans, enchanted to life, delicately paddles across a reflecting pool in a serene Japanese garden, their paper necks craning with surprising fluidity.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-2/paired_boat_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A group of children in a bathtub imagines their rubber ducks are a mighty fleet of galleons sailing across a vast, soapy ocean, with the children as captains.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-1/paired_boat_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A towboat pushes a barge filled with shipping containers through the harbor.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-1/paired_bus_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A herd of sheep marches along the street while a shepherd watches from the sidewalk.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-2/paired_car-roundabout_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A race of miniature cars made of cheese, driven by a team of mice, speeds around a tiny roundabout on a kitchen counter, avoiding crumbs and a curious cat.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-3/paired_car-shadow_0.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>The silhouette of a ballerina leaps across a sunlit studio, delicate shadow dancing on polished hardwood floors.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-1/paired_drift-chicane_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A rugged off-road buggy powers through a muddy forest trail, throwing up clods of earth.</figcaption>
+            </figure>
+            
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-1/paired_drift-chicane_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A sleek electric skateboard zooms around the circuit, leaving neon trails in its wake.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-1/paired_scooter-board_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A man rides a small scooter in an underground parking lot, loses control, and recovers.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/ours-2/paired_walking_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A band of elves in shimmering blue tunics walks through an enchanted forest, narrating their magical discoveries to a crystal ball that records everything.</figcaption>
+            </figure>
+            
+          </div>
+        </div>
+      </section>
+
+
+      <!-- ========== RESULTS ========= -->
+      <section id="results">
+        <h2>Comparisons</h2>
+        <p class="lead" style="text-align:center;max-width:800px;margin:0 auto 2.2rem auto;">
+          The following results showcase the comparison of RoPECraft across a wide range of reference motion videos. Hover over each clip to preview the generated motion transfer in action. In each video, the original video is on the top row labeled as "DAVIS" and the generated video is on the other 2 rows labeled as the name of the method. The prompt used for each video is also provided at the bottom.
+        </p>
+        <div class="carousel-container">
+          <button class="carousel-button prev" aria-label="Previous slide">←</button>
+          <button class="carousel-button next" aria-label="Next slide">→</button>
+          <div class="carousel-track">
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/car-shadow_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A silver motorhome is seen pulling up to a campsite nestled among the towering redwoods of a misty forest, with a dense canopy above it.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/lucia_2.mov" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A woman wearing a black dress walks down a worn wooden dock along the edge of a misty lake at dusk.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/dancing_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A large group of fire dancers are spinning together in a circle, with one seasoned performer leading the mesmerizing display under the warm glow of string lights on a tropical beach at sunset.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/rallye_1.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>The vintage motorcycle drives down a dirt road, passes a truck, and then speeds up as it goes.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/bus_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A sailboat is anchored in a tranquil cove surrounded by lush greenery, as the man walks along the weathered wooden dock, gazing out at the serene ocean waters while the sailboat glides smoothly alongside him.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/bmx-trees_2.mov" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A woman rides a bike down a wooden dock alongside a serene lake at sunrise.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== LINKS ========= -->
+      <section id="links">
+        <h2>Related Links</h2>
+        <p class="lead" style="text-align: center;">Our work has been inspired by many recent works in the field. Here are some of the most relevant ones:</p>
+        <ul class="related-links-list">
+          <li><a class="related-link-pill" href="https://diffusion-motion-transfer.github.io" target="_blank" rel="noopener">SMM <i class="fas fa-external-link-alt"></i></a></li>
+          <li><a class="related-link-pill" href="https://xizaoqu.github.io/moft/" target="_blank" rel="noopener">MoFT <i class="fas fa-external-link-alt"></i></a></li>
+          <li><a class="related-link-pill" href="https://ditflow.github.io" target="_blank" rel="noopener">DiTFlow <i class="fas fa-external-link-alt"></i></a></li>
+          <li><a class="related-link-pill" href="https://arxiv.org/abs/2504.02451" target="_blank" rel="noopener">ConMO <i class="fas fa-external-link-alt"></i></a></li>
+          <li><a class="related-link-pill" href="https://eyeline-research.github.io/Go-with-the-Flow/" target="_blank" rel="noopener">Go With The Flow <i class="fas fa-external-link-alt"></i></a></li>
+        </ul>
+      </section>
+
+      <!-- ========== BIBTEX ========= -->
+      <section id="bibtex" style="position:relative;">
+        <h2>BibTeX</h2>
+        <pre id="bibtex-entry" style="background:var(--surface-1);padding:1rem;border-radius:var(--radius);overflow:auto;font-size:.85rem;user-select:text;">@inproceedings{park2021nerfies,
+  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},
+  title     = {Nerfies: Deformable Neural Radiance Fields},
+  booktitle = {ICCV},
+  year      = {2021},
+}
+        </pre>
+      </section>
+
+    <a href="#top" class="scroll-to-top" aria-label="Scroll back to top" title="Back to top">↑</a>
+
+    <!--  JS  -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.7.8/plyr.min.js"></script>
+    <script>
+      /* Plyr initialisation for all controls videos */
+      document.querySelectorAll('video[controls]').forEach(v=>new Plyr(v,{fullscreen:{enabled:false}}));
+
+      /* Hover‑to‑play (teaser grids) */
+      document.querySelectorAll('.video-grid video:not([controls])').forEach(vid=>{
+        vid.addEventListener('mouseenter',()=>vid.play());
+        vid.addEventListener('mouseleave',()=>{vid.pause();vid.currentTime=0});
+      });
+
+      /* Lazy loading optimisation */
+      const lazyVid=[...document.querySelectorAll('video[loading="lazy"]')];
+      if('IntersectionObserver'in window){
+        const o=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.preload='metadata';o.unobserve(en.target);}})},{threshold:.25});
+        lazyVid.forEach(v=>o.observe(v));
+      }
+
+      /* Scrollspy (updates toc highlighting) */
+      const links=[...document.querySelectorAll('.toc a')];
+      const secs=[...document.querySelectorAll('main > section')];
+      const spy=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.getAttribute('href').slice(1)===en.target.id));}})},{rootMargin:'-40% 0px -45% 0px'});
+      secs.forEach(s=>spy.observe(s));
+
+      /* Animate section children on enter */
+      const sectionsContent=document.querySelectorAll('section > *');
+      const animObs=new IntersectionObserver(entries=>{entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');animObs.unobserve(entry.target);}})},{threshold:.1});
+      sectionsContent.forEach(el=>animObs.observe(el));
+
+      /* Scroll‑to‑top button */
+      const scrollTopBtn=document.querySelector('.scroll-to-top');
+      window.addEventListener('scroll',()=>{window.scrollY>300?scrollTopBtn.classList.add('visible'):scrollTopBtn.classList.remove('visible');});
+
+      /* Simple blend slider demo */
+      const blend=document.getElementById('blend');
+      if(blend){blend.addEventListener('input',e=>{
+        const t=e.target.value/100;
+        document.getElementById('animStart').style.opacity=1-t;
+        document.getElementById('animEnd').style.opacity=t;
+      });}
+
+      /* Parallax hero video */
+      const heroVideo = document.querySelector('.hero video');
+      if (heroVideo) {
+        window.addEventListener('scroll', () => {
+          const scrollY = window.scrollY;
+          // Apply parallax: moves slower than scroll, maintains scale
+          heroVideo.style.transform = `translateY(${scrollY * 0.4}px) scale(1.1)`; 
+        }, { passive: true }); // Use passive listener for scroll performance
+      }
+
+      /* Carousel functionality */
+      const carousels = document.querySelectorAll('.carousel-container');
+      
+      carousels.forEach(carousel => {
+        const track = carousel.querySelector('.carousel-track');
+        const cards = carousel.querySelectorAll('.carousel-card');
+        const prevButton = carousel.querySelector('.carousel-button.prev');
+        const nextButton = carousel.querySelector('.carousel-button.next');
+        
+        let currentIndex = 0;
+        const totalSlides = cards.length;
+        
+        function updateCarousel() {
+          const offset = -currentIndex * 101.5;
+          track.style.transform = `translateX(${offset}%)`;
+          
+          // Update button states
+          prevButton.style.opacity = currentIndex === 0 ? '0.5' : '1';
+          nextButton.style.opacity = currentIndex === totalSlides - 1 ? '0.5' : '1';
+        }
+        
+        prevButton.addEventListener('click', () => {
+          if (currentIndex > 0) {
+            currentIndex--;
+            updateCarousel();
+          }
+        });
+        
+        nextButton.addEventListener('click', () => {
+          if (currentIndex < totalSlides - 1) {
+            currentIndex++;
+            updateCarousel();
+          }
+        });
+        
+        // Initialize carousel
+        updateCarousel();
+        
+        // Handle video loading and hover play
+        carousel.querySelectorAll('.carousel-card video').forEach((vid) => {
+          const card = vid.closest('.carousel-card');
+          const spinner = card.querySelector('.loading-spinner');
+          
+          // Show spinner initially
+          spinner.style.display = 'block';
+          
+          // Handle loading progress
+          vid.addEventListener('loadstart', () => {
+            spinner.style.display = 'block';
+          });
+          
+          vid.addEventListener('canplay', () => {
+            spinner.style.display = 'none';
+          });
+          
+          // Handle hover play
+          vid.addEventListener('mouseenter', () => {
+            vid.play();
+          });
+          
+          vid.addEventListener('mouseleave', () => {
+            vid.pause();
+            vid.currentTime = 0;
+          });
+          
+          // Load video when it becomes visible
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                vid.preload = 'metadata';
+                observer.unobserve(entry.target);
+              }
+            });
+          }, { threshold: 0.1 });
+          
+          observer.observe(card);
+        });
+      });
+
+      /* Sync comparison videos */
+      const vA = document.getElementById('cmpA');
+      const vB = document.getElementById('cmpB');
+      function mirror(src, dst) {
+        if (Math.abs(src.currentTime - dst.currentTime) > 0.05) {
+          dst.currentTime = src.currentTime;
+        }
+      }
+      [vA, vB].forEach(v => {
+        v.addEventListener('play', () => { vA.play(); vB.play(); });
+        v.addEventListener('pause', () => { vA.pause(); vB.pause(); });
+      });
+      vA.addEventListener('timeupdate', () => mirror(vA, vB));
+      vB.addEventListener('timeupdate', () => mirror(vB, vA));
+    </script>
+    <!-- MathJax for LaTeX math rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  </body>
+</html>

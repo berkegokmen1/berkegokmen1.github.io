@@ -1,0 +1,231 @@
+<svg x="0" y="0" width="1466" height="651" viewBox="0 0 1466 651" version="1.1" xmlns="http://www.w3.org/2000/svg" style="display: block;margin-left: auto;margin-right: auto;">
+<defs>
+<clipPath id="c_1"><path d="M0,0H1466V651H0Z"/></clipPath>
+<clipPath id="c0"><path d="M-.2 652.1V-.2H1467V652.1Z"/></clipPath>
+<clipPath id="c1"><path d="M778.6 173.9v-45h60.1v45Z"/></clipPath>
+<clipPath id="c2"><path d="M1092 306.4V261.3h58.6v45.1Z"/></clipPath>
+<clipPath id="c3"><path d="M1067 173.2V128.1h49.3v45.1Z"/></clipPath>
+<clipPath id="c4"><path d="M336.9 566.4V499.2H660.6v67.2Z"/></clipPath>
+<clipPath id="c5"><path d="M191.3 569.7V524.6H318.5v45.1Z"/></clipPath>
+<clipPath id="c6"><path d="M56.6 469.6v-45H183.7v45Z"/></clipPath>
+<clipPath id="c7"><path d="M772.9 533.1v-45h49.3v45Z"/></clipPath>
+<clipPath id="c8"><path d="M770 652V607h58.7v45Z"/></clipPath>
+<clipPath id="c9"><path d="M1212.5 247.9V136.2h241.6V247.9Z"/></clipPath>
+<clipPath id="ca"><path d="M860.6 350.5v-45h435.2v45Z"/></clipPath>
+<clipPath id="cb"><path d="M888.7 483.2v-45h77.5v45Z"/></clipPath>
+<clipPath id="cc"><path d="M892.8 593.7V548.6h77.5v45.1Z"/></clipPath>
+<clipPath id="cd"><path d="M1004 485.7V435.3h111.3v50.4Z"/></clipPath>
+<clipPath id="ce"><path d="M1006.2 590V539.5h119.4V590Z"/></clipPath>
+<clipPath id="cf"><path d="M1176.2 506.9v-45h57.4v45Z"/></clipPath>
+<clipPath id="cg"><path d="M1274.1 612.7V564h61.6v48.7Z"/></clipPath>
+<clipPath id="ch"><path d="M1194 647.2V613.3h229.3v33.9Z"/></clipPath>
+
+<style>
+text { white-space: pre; }
+path, image { pointer-events: none; }
+
+.s0{font-size:21.39px;font-family:DejaVuMathTeXGyre-Regular_6r;fill:#000;}
+.s1{font-size:21.39px;font-family:DejaVuMathTeXGyre-Regular_6r;fill:#FFF;}
+.s2{font-size:21.39px;font-family:DejaVuMathTeXGyre-Regular_6r;fill:#E7E6E6;}
+.s3{font-size:27.50px;font-family:DejaVuMathTeXGyre-Regular_6r;fill:#000;}
+.s4{font-size:18.32px;font-family:DejaVuSans_6h;fill:#FFF;}
+.s5{font-size:21.39px;font-family:DejaVuSans_6h;fill:#FFF;}
+.s6{font-size:16.80px;font-family:DejaVuMathTeXGyre-Regular_6r;fill:#FFF;}
+
+.g0{fill:#FFF;}
+.g1{fill:#2F5597;}
+.g2{fill:none;stroke:#2F5597;stroke-width:1.515;stroke-miterlimit:3;}
+.g3{fill:#6BD131;}
+.g4{fill:none;stroke:#6BD131;stroke-width:1.515;stroke-miterlimit:3;}
+.g5{fill:none;stroke:#2F5597;stroke-width:0.152;stroke-linejoin:round;}
+.g6{fill:none;stroke:#000;stroke-width:1.515;stroke-miterlimit:10;}
+.g7{fill:#000;}
+.g8{fill:none;stroke:#000;stroke-width:1.515;stroke-miterlimit:3;}
+.g9{fill:none;stroke:#4472C4;stroke-width:1.515;stroke-miterlimit:10;}
+.ga{fill:#4472C4;}
+.gb{fill:none;stroke:#C00000;stroke-width:1.515;stroke-miterlimit:10;}
+.gc{fill:#C00000;}
+.gd{fill:none;stroke:#C00000;stroke-width:1.515;stroke-linejoin:round;}
+.ge{fill:none;stroke:#000;stroke-width:0.779;stroke-miterlimit:3;}
+.gf{fill:none;stroke:#1D3155;stroke-width:1.515;stroke-miterlimit:3;}
+.gg{fill:none;stroke:#C00000;stroke-width:1.515;stroke-miterlimit:3;}
+.gh{fill:#0070C0;}
+.gi{fill:none;stroke:#0070C0;stroke-width:1.515;stroke-miterlimit:3;}
+
+</style>
+
+</defs>
+<path d="M0 0V651H1466V0Z" fill="#FFFFFF" stroke="none"/>
+<g clip-path="url(#c_1)">
+<g clip-path="url(#c0)">
+<path fill-rule="evenodd" d="M0 0H1466.6V651.7H0V0Z" class="g0"/>
+<path fill-rule="evenodd" d="M0 0H1466.7V651.8H0V0Z" class="g0"/>
+<text x="36.2" y="303.7" class="s0">Reference </text>
+<text x="18.9" y="329.4" dx="0 .1 0 0 0 0 0 0 0 0 0 0" class="s0">Motion Video </text>
+</g>
+<path fill-rule="evenodd" d="M285.7 280.7H227.1V177.9H344.2V280.7H285.7Z" class="g1"/>
+<path d="M285.7 280.7H227.1V177.9H344.2V280.7H285.7Z" class="g2"/>
+<g clip-path="url(#c0)">
+<text x="246.5" y="199.4" class="s1">Optical </text>
+<text x="259.2" y="225.1" class="s1">Flow </text>
+<text x="239.2" y="250.7" class="s1">Extracto </text>
+<text x="280.5" y="276.4" class="s1">r </text>
+<text x="397.3" y="308.5" class="s0">Optical flow </text>
+<text x="437.4" y="334.2" dx="0 .1 0 0" class="s0">maps </text>
+</g>
+<path fill-rule="evenodd" d="M640.7 268H587.5V192H693.9v76H640.7Z" class="g3"/>
+<path d="M640.7 268H587.5V192H693.9v76H640.7Z" class="g4"/>
+<g clip-path="url(#c0)">
+<text x="611.3" y="212.9" dx="0 .1 0 0" class="s1">Warp </text>
+<text x="616.5" y="238.6" class="s1">(Sec </text>
+<text x="619.2" y="264.3" class="s1">4.1) </text>
+</g>
+<path fill-rule="evenodd" d="M273.7 21.2l68.1 17V77.5l-68.1 17V21.2Z" class="g1"/>
+<path d="M273.7 21.2l68.1 17V77.5l-68.1 17V21.2Z" class="g2"/>
+<g clip-path="url(#c0)">
+<text x="767.3" y="217.9" dx="0 .1 0 0 0 0 0" class="s0">Warped </text>
+<text x="783.7" y="243.6" class="s0">RoPE </text>
+</g>
+<path fill-rule="evenodd" d="M306.4 72.8H276.2V36.3h60.3V72.8H306.4Z" class="g1"/>
+<path d="M306.4 72.8H276.2V36.3h60.3V72.8H306.4Z" class="g5"/>
+<g clip-path="url(#c0)">
+<text x="298.6" y="63.1" class="s2">E </text>
+<image preserveAspectRatio="none" x="392" y="30" width="48" height="48" href="1/img/1.jpg"/>
+<image preserveAspectRatio="none" x="379" y="49" width="49" height="49" href="1/img/2.jpg"/>
+</g>
+<path fill-rule="evenodd" d="M976.5 272.8H923.1V182.4h106.8v90.4H976.5Z" class="g1"/>
+<path d="M976.5 272.8H923.1V182.4h106.8v90.4H976.5Z" class="g2"/>
+<g clip-path="url(#c0)">
+<text x="957.4" y="236.2" class="s1">DiT </text>
+<image preserveAspectRatio="none" x="800" y="77" width="45" height="45" href="1/img/3.jpg"/>
+<image preserveAspectRatio="none" x="620" y="69" width="38" height="34" href="1/img/4.jpg"/>
+<text x="567.9" y="125.6" class="s0">Default RoPE </text>
+</g>
+<path d="M157.1 229.3h61.5" class="g6"/>
+<path fill-rule="evenodd" d="M227.1 229.3l-9.1 4.6v-9.1l9.1 4.5Z" class="g7"/>
+<path d="M348.9 231.8h43.4" class="g6"/>
+<path fill-rule="evenodd" d="M400.8 231.8l-9.1 4.5v-9.1l9.1 4.6Z" class="g7"/>
+<path d="M513.3 230.4h68.2" class="g6"/>
+<path fill-rule="evenodd" d="M590 230.4l-9.1 4.5v-9.1l9.1 4.6Z" class="g7"/>
+<path d="M694 230h67.5" class="g6"/>
+<path fill-rule="evenodd" d="M770 230l-9.1 4.6v-9.1L770 230Z" class="g7"/>
+<image clip-path="url(#c1)" preserveAspectRatio="none" x="779" y="129" width="59" height="45" href="1/img/5.png"/>
+<image clip-path="url(#c2)" preserveAspectRatio="none" x="1092" y="262" width="58" height="44" href="1/img/6.png"/>
+<path d="M125.3 174.3V76.2H273.7V66.3" class="g6"/>
+<path fill-rule="evenodd" d="M273.7 57.9l4.6 9.1h-9.1l4.5-9.1Z" class="g7"/>
+<path d="M341.8 57.9l26.1-.1" class="g6"/>
+<path fill-rule="evenodd" d="M376.3 57.8l-9.1 4.6V53.3l9.1 4.5Z" class="g7"/>
+<path fill-rule="evenodd" d="M949.9 107.7c0-3.2 .8-6.4 2.3-9.3c1.5-2.8 3.6-5.2 6.1-6.8c2.6-1.7 5.5-2.5 8.4-2.5c3 0 5.8 .8 8.4 2.5c2.6 1.6 4.7 4 6.2 6.8c1.4 2.9 2.2 6.1 2.2 9.3c0 3.3-.8 6.5-2.2 9.4c-1.5 2.8-3.6 5.2-6.2 6.8c-2.6 1.6-5.4 2.5-8.4 2.5c-2.9 0-5.8-.9-8.4-2.5c-2.5-1.6-4.6-4-6.1-6.8c-1.5-2.9-2.3-6.1-2.3-9.4Z" class="g0"/>
+<path d="M949.9 107.7c0-3.2 .8-6.4 2.3-9.3c1.5-2.8 3.6-5.2 6.1-6.8c2.6-1.7 5.5-2.5 8.4-2.5c3 0 5.8 .8 8.4 2.5c2.6 1.6 4.7 4 6.2 6.8c1.4 2.9 2.2 6.1 2.2 9.3c0 3.3-.8 6.5-2.2 9.4c-1.5 2.8-3.6 5.2-6.2 6.8c-2.6 1.6-5.4 2.5-8.4 2.5c-2.9 0-5.8-.9-8.4-2.5c-2.5-1.6-4.6-4-6.1-6.8c-1.5-2.9-2.3-6.1-2.3-9.4Z" class="g8"/>
+<path d="M845.9 108.7h95.5" class="g6"/>
+<path fill-rule="evenodd" d="M949.9 108.7l-9.1 4.5v-9.1l9.1 4.6Z" class="g7"/>
+<path d="M440.4 54H966.7V80.6" class="g6"/>
+<path fill-rule="evenodd" d="M966.7 89.1L962.2 80h9l-4.5 9.1Z" class="g7"/>
+<path d="M983.5 107.7l66.1 .8" class="g6"/>
+<path fill-rule="evenodd" d="M1058.1 108.6l-9.2 4.4l.1-9.1l9.1 4.7Z" class="g7"/>
+<path d="M864.3 231.1h50.3" class="g6"/>
+<path fill-rule="evenodd" d="M923.1 231.1l-9.1 4.5v-9.1l9.1 4.6Z" class="g7"/>
+<path d="M1030 231.1h48.3" class="g6"/>
+<path fill-rule="evenodd" d="M1086.7 231.1l-9 4.5v-9.1l9 4.6Z" class="g7"/>
+<image clip-path="url(#c3)" preserveAspectRatio="none" x="1067" y="128" width="49" height="45" href="1/img/7.png"/>
+<path d="M640.7 131.4V179" class="g6"/>
+<path fill-rule="evenodd" d="M640.7 187.5l-4.5-9.1h9.1l-4.6 9.1Z" class="g7"/>
+<g clip-path="url(#c0)">
+<path d="M0 359.8H1466.6m-747 2.6V651.8" class="g8"/>
+<text x="-11.9" y="396.6" dx="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -.1 0 0 0 0 0 0 0" class="s3">ptimization with flow-matching (Sec 4.2) </text>
+<text x="729.2" y="398.2" class="s3">Phase constraint (Sec 4.3) </text>
+</g>
+<path d="M95.7 566.1l50.6-105.2" class="g9"/>
+<path fill-rule="evenodd" d="M150 453.3l.1 10.1l-8.2-3.9l8.1-6.2Z" class="ga"/>
+<path d="M134.3 599l109.9-67.1" class="gb"/>
+<path fill-rule="evenodd" d="M251.4 527.5l-5.4 8.6l-4.7-7.7l10.1-.9Z" class="gc"/>
+<image clip-path="url(#c4)" preserveAspectRatio="none" x="337" y="499" width="323" height="67" href="1/img/8.png"/>
+<image clip-path="url(#c5)" preserveAspectRatio="none" x="192" y="525" width="126" height="44" href="1/img/9.png"/>
+<image clip-path="url(#c6)" preserveAspectRatio="none" x="57" y="425" width="126" height="44" href="1/img/10.png"/>
+<g clip-path="url(#c0)">
+<text x="962.7" y="116.2" class="s3">- </text>
+<text x="0.2" y="32.9" class="s3">Inference </text>
+</g>
+<image clip-path="url(#c7)" preserveAspectRatio="none" x="773" y="488" width="49" height="45" href="1/img/11.png"/>
+<g clip-path="url(#c0)">
+<image preserveAspectRatio="none" x="763" y="536" width="70" height="70" href="1/img/12.jpg"/>
+<image preserveAspectRatio="none" x="761" y="424" width="69" height="70" href="1/img/13.jpg"/>
+</g>
+<image clip-path="url(#c8)" preserveAspectRatio="none" x="770" y="607" width="58" height="45" href="1/img/14.png"/>
+<image clip-path="url(#c9)" preserveAspectRatio="none" x="1213" y="136" width="241" height="112" href="1/img/15.png"/>
+<path d="M1333.3 247.5H1212.8v-111h240.9v111H1333.3Z" class="gd"/>
+<path d="M1333.3 247.5V349.4h-520V261.8" class="gb"/>
+<path fill-rule="evenodd" d="M813.3 253.3l4.5 9.1h-9.1l4.6-9.1Z" class="gc"/>
+<image clip-path="url(#ca)" preserveAspectRatio="none" x="861" y="306" width="434" height="44" href="1/img/16.png"/>
+<image clip-path="url(#cb)" preserveAspectRatio="none" x="889" y="438" width="77" height="45" href="1/img/17.png"/>
+<path d="M1303.6 414.1V571.4m78.8-78.7H1224.9" class="ge"/>
+<path d="M1224.9 492.7c0-13.8 3.6-27.4 10.5-39.3c6.9-12 16.9-21.9 28.9-28.8c11.9-6.9 25.5-10.5 39.3-10.5c13.9 0 27.5 3.6 39.4 10.5c12 6.9 22 16.8 28.9 28.8c6.9 11.9 10.5 25.5 10.5 39.3c0 13.8-3.6 27.4-10.5 39.3c-6.9 12-16.9 21.9-28.9 28.8c-11.9 6.9-25.5 10.6-39.4 10.6c-13.8 0-27.4-3.7-39.3-10.6c-12-6.9-22-16.8-28.9-28.8c-6.9-11.9-10.5-25.5-10.5-39.3Z" class="gf"/>
+<path d="M832.5 463.9h50.4" class="g6"/>
+<path fill-rule="evenodd" d="M891.3 463.9l-9 4.6v-9.1l9 4.5Z" class="g7"/>
+<text clip-path="url(#c0)" x="837" y="462" class="s3">FFT </text>
+<image clip-path="url(#cc)" preserveAspectRatio="none" x="893" y="549" width="77" height="44" href="1/img/18.png"/>
+<path d="M836.6 574.4H887" class="g6"/>
+<path fill-rule="evenodd" d="M895.5 574.4l-9.1 4.5v-9.1l9.1 4.6Z" class="g7"/>
+<text clip-path="url(#c0)" x="841.2" y="572.4" class="s3">FFT </text>
+<path d="M951.4 465.7h50.3" class="g6"/>
+<path fill-rule="evenodd" d="M1010.2 465.7l-9.1 4.6v-9.1l9.1 4.5Z" class="g7"/>
+<image clip-path="url(#cd)" preserveAspectRatio="none" x="1004" y="436" width="111" height="49" href="1/img/19.png"/>
+<path d="M957.9 571.4h50.3" class="g6"/>
+<path fill-rule="evenodd" d="M1016.7 571.4l-9.1 4.6v-9.1l9.1 4.5Z" class="g7"/>
+<image clip-path="url(#ce)" preserveAspectRatio="none" x="1006" y="540" width="119" height="50" href="1/img/20.png"/>
+<path fill-rule="evenodd" d="M1339.6 558.4c0-1.5 .4-2.9 1.1-4.2c.6-1.3 1.6-2.3 2.8-3c1.1-.7 2.4-1.1 3.8-1.1c1.4 0 2.7 .4 3.8 1.1c1.2 .7 2.2 1.7 2.9 3c.6 1.3 1 2.7 1 4.2c0 1.4-.4 2.8-1 4.1c-.7 1.3-1.7 2.3-2.9 3c-1.1 .7-2.4 1.1-3.8 1.1c-1.4 0-2.7-.4-3.8-1.1c-1.2-.7-2.2-1.7-2.8-3c-.7-1.3-1.1-2.7-1.1-4.1Z" class="gc"/>
+<path d="M1339.6 558.4c0-1.5 .4-2.9 1.1-4.2c.6-1.3 1.6-2.3 2.8-3c1.1-.7 2.4-1.1 3.8-1.1c1.4 0 2.7 .4 3.8 1.1c1.2 .7 2.2 1.7 2.9 3c.6 1.3 1 2.7 1 4.2c0 1.4-.4 2.8-1 4.1c-.7 1.3-1.7 2.3-2.9 3c-1.1 .7-2.4 1.1-3.8 1.1c-1.4 0-2.7-.4-3.8-1.1c-1.2-.7-2.2-1.7-2.8-3c-.7-1.3-1.1-2.7-1.1-4.1Z" class="gg"/>
+<path fill-rule="evenodd" d="M1255.6 423.1c0-1.5 .3-2.9 1-4.1c.6-1.3 1.6-2.4 2.8-3.1c1.2-.7 2.5-1.1 3.9-1.1c1.3 0 2.6 .4 3.8 1.1c1.1 .7 2.1 1.8 2.8 3.1c.7 1.2 1 2.6 1 4.1c0 1.4-.3 2.8-1 4.1c-.7 1.3-1.7 2.3-2.8 3c-1.2 .7-2.5 1.1-3.8 1.1c-1.4 0-2.7-.4-3.9-1.1c-1.2-.7-2.2-1.7-2.8-3c-.7-1.3-1-2.7-1-4.1Z" class="gh"/>
+<path d="M1255.6 423.1c0-1.5 .3-2.9 1-4.1c.6-1.3 1.6-2.4 2.8-3.1c1.2-.7 2.5-1.1 3.9-1.1c1.3 0 2.6 .4 3.8 1.1c1.1 .7 2.1 1.8 2.8 3.1c.7 1.2 1 2.6 1 4.1c0 1.4-.3 2.8-1 4.1c-.7 1.3-1.7 2.3-2.8 3c-1.2 .7-2.5 1.1-3.8 1.1c-1.4 0-2.7-.4-3.9-1.1c-1.2-.7-2.2-1.7-2.8-3c-.7-1.3-1-2.7-1-4.1Z" class="gi"/>
+<path d="M59.2 526.3c0-19.7 5.2-39.1 15-56.2c9.9-17.2 24.1-31.4 41.2-41.3c17.2-9.8 36.6-15 56.3-15c19.8 0 39.2 5.2 56.3 15c17.1 9.9 31.3 24.1 41.2 41.2c9.9 17.2 15.1 36.6 15.1 56.3c0 19.8-5.2 39.2-15.1 56.3c-9.9 17.1-24.1 31.3-41.2 41.2c-17.1 9.9-36.5 15.1-56.3 15.1c-19.7 0-39.1-5.2-56.2-15.1c-17.2-9.9-31.4-24.1-41.3-41.2c-9.8-17.1-15-36.5-15-56.3Z" class="gf"/>
+<path d="M1339.6 558.4h-78.2m1.8-127.1L1261 557" class="g8"/>
+<image clip-path="url(#cf)" preserveAspectRatio="none" x="1176" y="462" width="57" height="45" href="1/img/21.png"/>
+<image clip-path="url(#cg)" preserveAspectRatio="none" x="1274" y="564" width="61" height="48" href="1/img/22.png"/>
+<image clip-path="url(#ch)" preserveAspectRatio="none" x="1194" y="614" width="229" height="33" href="1/img/23.png"/>
+<g clip-path="url(#c0)">
+<text x="321.4" y="237.2" class="s4"> </text>
+<text x="276.3" y="85.7" class="s5"> </text>
+<text x="1003.9" y="268.5" class="s5"> </text>
+</g>
+<path d="M1129.3 94.1h204V128" class="g6"/>
+<path fill-rule="evenodd" d="M1333.3 136.5l-4.6-9.1h9.1l-4.5 9.1Z" class="g7"/>
+<g clip-path="url(#c0)">
+<image preserveAspectRatio="none" x="95" y="174" width="60" height="61" href="1/img/24.jpg"/>
+<image preserveAspectRatio="none" x="74" y="189" width="60" height="60" href="1/img/25.jpg"/>
+<image preserveAspectRatio="none" x="54" y="205" width="61" height="60" href="1/img/26.jpg"/>
+<image preserveAspectRatio="none" x="35" y="218" width="60" height="60" href="1/img/27.jpg"/>
+<image preserveAspectRatio="none" x="784" y="92" width="45" height="45" href="1/img/28.jpg"/>
+<image preserveAspectRatio="none" x="1084" y="71" width="45" height="46" href="1/img/29.jpg"/>
+<image preserveAspectRatio="none" x="1058" y="86" width="46" height="45" href="1/img/30.jpg"/>
+<image preserveAspectRatio="none" x="450" y="180" width="67" height="67" href="1/img/31.jpg"/>
+<image preserveAspectRatio="none" x="440" y="192" width="63" height="63" href="1/img/32.jpg"/>
+<image preserveAspectRatio="none" x="424" y="207" width="61" height="60" href="1/img/33.jpg"/>
+<image preserveAspectRatio="none" x="403" y="221" width="60" height="60" href="1/img/34.jpg"/>
+<image preserveAspectRatio="none" x="1104" y="190" width="53" height="54" href="1/img/35.jpg"/>
+<image preserveAspectRatio="none" x="1087" y="209" width="53" height="53" href="1/img/36.jpg"/>
+<text x="364.2" y="127" class="s0">Encoded </text>
+<text x="374" y="152.7" dx="0 0 0 0 .1 0" class="s0">frames </text>
+</g>
+<path d="M1157.1 232.3h49.3" class="g6"/>
+<path fill-rule="evenodd" d="M1214.9 232.3l-9.1 4.5v-9l9.1 4.5Z" class="g7"/>
+<path d="M838.4 151.4h40.4v49.5h31.8" class="g6"/>
+<path fill-rule="evenodd" d="M919.1 200.9l-9.1 4.6v-9.1l9.1 4.5Z" class="g7"/>
+<text clip-path="url(#c0)" x="1005.2" y="196.7" class="s6">xN </text>
+
+</g>
+
+<style>
+
+@font-face {
+	font-family: DejaVuMathTeXGyre-Regular_6r;
+	src: url("fonts/DejaVuMathTeXGyre-Regular_6r.woff") format("woff");
+}
+
+@font-face {
+	font-family: DejaVuSans_6h;
+	src: url("fonts/DejaVuSans_6h.woff") format("woff");
+}
+
+</style>
+
+</svg>

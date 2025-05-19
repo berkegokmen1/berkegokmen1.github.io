@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>RoPECraft ‑ Supplementary Material</title>
+
+    <!-- Inter font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Plyr -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.7.8/plyr.min.css" />
+
+    <style>
+      /* ========= RESET ========= */
+      *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+
+      /* ========= THEME ========= */
+      :root {
+        --accent: #00c5c5; /* New Accent: Teal */
+        --bg-dark: #121212;
+        --surface1-dark: #1E1E1E;
+        --surface2-dark: #2C2C2C; 
+        --fg-dark: #EAEAEA;
+        --fg-muted-dark: #9E9E9E;
+        --radius: 0.75rem;
+        --plyr-color-main: var(--accent); /* Added for Plyr theming */
+      }
+      body[data-theme="dark"] {
+        --bg: var(--bg-dark);
+        --surface-1: var(--surface1-dark);
+        --surface-2: var(--surface2-dark);
+        --fg: var(--fg-dark);
+        --fg-muted: var(--fg-muted-dark);
+      }
+      body { 
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+        background-image: 
+          url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E"),
+          radial-gradient(ellipse at 60% 20%, #1e2a2a 0%, #121212 100%); 
+        background-color: var(--bg);
+        color: var(--fg); 
+        line-height: 1.6; 
+        transition: background .3s, color .3s;
+        letter-spacing: 0.01em; /* Subtle letter spacing improvement */
+      }
+
+      /* ========= CUSTOM SCROLLBAR ========= */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: color-mix(in srgb, var(--bg) 95%, var(--fg) 5%);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: color-mix(in srgb, var(--accent) 50%, var(--bg) 50%);
+        border-radius: 5px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent);
+      }
+
+      /* ========= HERO ========= */
+      .hero { position: relative; min-height: 65vh; display: flex; align-items: center; justify-content: center; overflow: hidden; isolation: isolate; }
+      .hero video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .25; }
+      .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,.75) 0%, rgba(0,0,0,.3) 40%, rgba(0,0,0,.75) 100%); mix-blend-mode: multiply; }
+      .hero h1 {
+        position: relative;
+        font-size: clamp(2.25rem, 6vw, 4.5rem);
+        text-align: center;
+        opacity: 0;
+        transform: translateY(16px);
+        animation: fadeSlide .9s cubic-bezier(.24,1.12,.32,1) forwards .2s;
+        color: #00c5c5; /* Solid Pale Turquoise text */
+      }
+      @keyframes fadeSlide { to { opacity: 1; transform: none; } }
+      .scroll-cue { position: absolute; bottom: 1.25rem; left: 50%; transform: translateX(-50%); width: 24px; height: 36px; border: 2px solid #fff; border-radius: 14px; opacity: .8; overflow: hidden; }
+      .scroll-cue::before {
+        content: '⌄'; /* Chevron down */
+        display: block;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #fff;
+        text-align: center;
+        line-height: 1.2;
+        animation: cue-chevron 1.8s infinite cubic-bezier(0.65, 0, 0.35, 1);
+      }
+      @keyframes cue-chevron { 
+        0% { transform: translateY(-100%); opacity: 0; }
+        30%, 70% { transform: translateY(0); opacity: 1; }
+        100% { transform: translateY(100%); opacity: 0; }
+      }
+
+      /* ========= TOC ========= */
+      .toc { position: sticky; top: 0; background: color-mix(in srgb, var(--bg) 80%, var(--accent) 2%, transparent); backdrop-filter: blur(12px); border-bottom: 2px solid color-mix(in srgb, var(--fg) 15%, transparent); z-index: 50; box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12); }
+      .toc-inner { max-width: 1200px; margin-inline: auto; display: flex; justify-content: center; gap: 1rem; align-items: center; padding: .75rem 1rem; overflow-x: auto; }
+      .toc a { position: relative; padding: .35rem .75rem; /* Adjusted padding for background */ border-radius: 6px; /* Rounded corners for background */ text-decoration: none; font-weight: 600; color: var(--fg); white-space: nowrap; transition: color 0.2s ease-in-out, opacity 0.2s ease-in-out, background-color 0.2s ease-in-out; }
+      .toc a.active {
+        color: var(--accent);
+        background-color: color-mix(in srgb, var(--accent) 15%, transparent); /* Subtle background for active link */
+      }
+      .toc a.active::after { content: ""; position: absolute; left: 0; bottom: -4px; width: 100%; height: 2px; background: var(--accent); border-radius: 1px; }
+      .toc a:not(.active):hover { color: var(--accent); opacity: 0.85; }
+
+      /* ========= SECTION ========= */
+      section { 
+        padding: 4rem 1rem; 
+        max-width: 1200px; 
+        margin-inline: auto; 
+        scroll-margin-top: 80px; 
+        border-radius: var(--radius); 
+        box-shadow: 0 2px 16px 0 rgba(0,0,0,0.10); 
+        border: 1px solid color-mix(in srgb, var(--surface-2) 80%, var(--accent) 10%); 
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+      section:nth-of-type(even) { background: var(--surface-1); }
+      section:nth-of-type(odd) { background: var(--surface-2); }
+      section h2 { 
+        font-size: clamp(1.8rem, 5vw, 2.25rem); 
+        margin-bottom: 1rem; 
+        position: relative; 
+        z-index: 1;
+        letter-spacing: -0.02em; /* Tighter tracking for headings */
+        font-weight: 700; /* Bolder headings */
+      }
+      section h2::after { content: ''; display: block; width: 60px; height: 4px; margin-top: 0.5rem; border-radius: 2px; background: linear-gradient(90deg, var(--accent), #AFEEEE 80%); transition: width 0.3s cubic-bezier(.4,2,.6,1); margin-left: auto; margin-right: auto; }
+      section:hover h2::after { width: 90px; }
+      section p.lead { color: var(--fg-muted); margin-bottom: 2rem; }
+      section:not(:last-of-type) { border-bottom: none; }
+
+      /* ========= COLLAPSIBLE ========= */
+      details { 
+        margin-bottom: 1.5rem; 
+        border: 1px solid color-mix(in srgb, var(--fg) 8%, transparent); 
+        border-radius: var(--radius); 
+        background: color-mix(in srgb, var(--bg) 95%, var(--accent) 5%); 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        transition: box-shadow 0.3s ease;
+      }
+      details:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      }
+      summary {
+        position: relative; /* For custom marker positioning */
+        cursor: pointer;
+        padding: .85rem 1.15rem;
+        padding-right: 2.5rem; /* Space for custom marker */
+        font-weight: 600;
+        list-style: none; /* Ensure no default marker */
+        letter-spacing: 0.01em;
+        background: color-mix(in srgb, var(--surface-1) 95%, var(--accent) 5%);
+        border-radius: var(--radius);
+        transition: background-color 0.2s ease;
+      }
+      summary:hover {
+        background: color-mix(in srgb, var(--surface-1) 85%, var(--accent) 15%);
+      }
+      summary::-webkit-details-marker { display: none; } /* Hide default marker in WebKit */
+      summary::after { /* Custom marker */
+        content: '▸';
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 1.2em;
+        color: var(--accent);
+        transition: transform 0.2s ease-in-out;
+      }
+      details[open] > summary::after {
+        transform: translateY(-50%) rotate(90deg);
+      }
+      details[open] summary { border-bottom: 1px solid rgba(0,0,0,.08); }
+      details .content { padding: 1rem 1.25rem 1.5rem; }
+
+      /* ========= VIDEO GRID / CARD ========= */
+      .video-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 1.25rem; }
+      .clip-card { 
+        position: relative; 
+        overflow: hidden; 
+        border-radius: var(--radius); 
+        background: #000; 
+        /* aspect-ratio: 16/9; */
+        transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        box-shadow: 0 6px 24px 0 rgba(0,0,0,0.18); 
+        transform-style: preserve-3d;
+        perspective: 1000px;
+      }
+      .clip-card:hover {
+        transform: translateY(-5px) scale(1.02) rotateX(2deg);
+        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 0 0 1px var(--accent);
+        z-index: 1;
+      }
+      .clip-card::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 80%, rgba(0,0,0,0.2));
+        pointer-events: none;
+        opacity: 0.6;
+      }
+      .clip-card video, .clip-card img { 
+        width: 100%; 
+        height: 100%; 
+        object-fit: cover; 
+        display: block;
+        transition: transform 0.3s ease;
+      }
+      .clip-card:hover video, .clip-card:hover img {
+        transform: scale(1.05);
+      }
+      .clip-card figcaption { position: absolute; inset-block-end: 0; inset-inline: 0; background: linear-gradient(90deg, rgba(0,0,0,0.55) 60%, rgba(0,197,197,0.18) 100%); color: #fff; font-size: .875rem; padding: .5rem .75rem; backdrop-filter: blur(4px); border-bottom-left-radius: var(--radius); border-bottom-right-radius: var(--radius); box-shadow: 0 2px 8px 0 rgba(0,0,0,0.12); }
+
+      /* ========= TABLE ========= */
+      table { width: 100%; border-collapse: collapse; margin-bottom: 2rem; font-size: .9rem; }
+      th, td { padding: .6rem .75rem; border: 1px solid rgba(0,0,0,.1); text-align: left; }
+      th { background: var(--surface-1); font-weight: 600; }
+      tbody tr:nth-child(even) { background: var(--surface-2); }
+      tbody tr:hover {
+        background-color: color-mix(in srgb, var(--surface-2) 80%, var(--accent) 5%); /* Subtle hover for table rows */
+      }
+
+      /* ========= FOOTER ========= */
+      /* footer { padding: 2rem 1rem; text-align: center; color: var(--fg-muted); font-size: .9rem; } -- Footer was removed */
+
+      /* ========= SCROLL TO TOP BUTTON ========= */
+      .scroll-to-top {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: var(--accent);
+        color: var(--bg-dark); /* Assuming accent contrasts well with dark bg for text */
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        text-align: center;
+        line-height: 40px; /* Vertically center arrow */
+        text-decoration: none;
+        font-size: 1.5rem; /* Arrow size */
+        opacity: 0;
+        transform: translateY(100px); /* Start off-screen */
+        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease, box-shadow 0.3s ease; /* Added box-shadow transition */
+        visibility: hidden;
+        z-index: 1000;
+      }
+      .scroll-to-top:hover {
+        transform: translateY(-2px) scale(1.1); /* Slight lift and scale */
+        box-shadow: 0 6px 12px color-mix(in srgb, var(--accent) 50%, black 50%); /* Enhanced shadow on hover */
+      }
+      .scroll-to-top.visible {
+        opacity: 1;
+        transform: translateY(0);
+        visibility: visible;
+      }
+      .scroll-to-top:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 30%, transparent);
+      }
+
+      /* ========= ENHANCED FOCUS STATES ========= */
+      a:focus-visible,
+      button:focus-visible,
+      summary:focus-visible,
+      [role="button"]:focus-visible,
+      [tabindex]:not([tabindex*="-"]):focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 30%, transparent); /* Optional: softer outer glow */
+      }
+      /* For Plyr, the above might be too generic, it has its own focus handling. */
+      /* If specific overrides are needed for Plyr controls, they would be more targeted. */
+
+      /* ========= SECTION CONTENT ANIMATIONS ========= */
+      section > * {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+      }
+      section > .visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      /* Add staggered delays to children for a cascade effect */
+      section > :nth-child(1) { transition-delay: 0.1s; }
+      section > :nth-child(2) { transition-delay: 0.2s; }
+      section > :nth-child(3) { transition-delay: 0.3s; }
+      section > :nth-child(4) { transition-delay: 0.4s; }
+      section > :nth-child(5) { transition-delay: 0.5s; }
+      /* More delay rules could be added if needed */
+
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          transition: none !important;
+          animation: none !important;
+        }
+      }
+
+      a, button {
+        position: relative;
+        overflow: hidden;
+      }
+      a::after, button::after {
+        content: '';
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 2px;
+        background: linear-gradient(90deg, var(--accent), #AFEEEE 80%);
+        transform: scaleX(0);
+        transition: transform 0.3s cubic-bezier(.4,2,.6,1);
+        border-radius: 1px;
+      }
+      a:hover::after, button:hover::after,
+      a:focus-visible::after, button:focus-visible::after {
+        transform: scaleX(1);
+      }
+
+      /* ===== CAROUSEL ===== */
+      .carousel-container {
+        position: relative;
+        display: flex;
+        align-items: stretch;
+        justify-content: center;
+        margin: 0 auto;
+        overflow: hidden;
+        width: fit-content;
+        height: fit-content;
+        background: none;
+      }
+      .carousel-track {
+        display: flex;
+        align-items: stretch;
+        transition: transform 0.5s ease-in-out;
+        gap: 1.25rem;
+        height: 100%;
+      }
+      .carousel-card {
+        flex: 0 0 auto;
+        position: relative;
+        overflow: hidden;
+        border-radius: var(--radius);
+        background: none;
+        transition: box-shadow 0.5s cubic-bezier(0.23,1,0.32,1);
+        box-shadow: 0 6px 24px 0 rgba(0,0,0,0.18);
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        width: fit-content;
+        height: fit-content;
+      }
+      .carousel-card video {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: none;
+        margin: 0;
+        border-radius: 0;
+      }
+      .carousel-card figcaption {
+        position: relative;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        background: linear-gradient(90deg, rgba(0,0,0,.55) 60%, rgba(0,197,197,.18) 100%);
+        color: #fff;
+        font-size: .875rem;
+        padding: .5rem .75rem;
+        backdrop-filter: blur(4px);
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        box-shadow: 0 2px 8px 0 rgba(0,0,0,0.12);
+        margin: 0;
+      }
+      .carousel-button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.5);
+        color: white;
+        border: none;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        transition: all 0.3s ease;
+        z-index: 2;
+      }
+      .carousel-button:hover {
+        background: var(--accent);
+        transform: translateY(-50%) scale(1.1);
+      }
+      .carousel-button.prev {
+        left: 10px;
+      }
+      .carousel-button.next {
+        right: 10px;
+      }
+      .loading-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: var(--accent);
+        animation: spin 1s ease-in-out infinite;
+        z-index: 1;
+      }
+      @keyframes spin {
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+      .loading-progress {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 1;
+      }
+      .loading-progress-bar {
+        height: 100%;
+        background: var(--accent);
+        width: 0;
+        transition: width 0.3s ease;
+      }
+      section, section *, .carousel-card figcaption, .carousel-container, .carousel-track, .carousel-card {
+        text-align: center !important;
+      }
+
+      /* Stylized dropdown for More Results */
+      #results-category {
+        background: var(--surface-2, #232b2b);
+        color: var(--fg, #EAEAEA);
+        border: 2px solid var(--accent);
+        border-radius: 0.7em;
+        padding: 0.45em 1.5em 0.45em 1em;
+        font-size: 1.08em;
+        font-weight: 600;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        box-shadow: 0 2px 10px rgba(0,197,197,0.08);
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+        appearance: none;
+        cursor: pointer;
+      }
+      #results-category:focus {
+        border-color: var(--accent-light);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 30%, transparent);
+        background: var(--surface-1, #1E1E1E);
+      }
+      #results-category:hover {
+        border-color: var(--accent-light);
+        background: var(--surface-1, #1E1E1E);
+      }
+      #results-category option {
+        background: var(--surface-2, #232b2b);
+        color: var(--fg, #EAEAEA);
+      }
+    </style>
+  </head>
+  <body data-theme="dark">
+    <!-- HERO -->
+    <header class="hero" id="top">
+      <video src="media/hero-demo.mp4" autoplay muted loop playsinline></video>
+      <h1>RoPECraft – Supplementary Material</h1>
+      <div class="scroll-cue" aria-hidden="true"></div>
+    </header>
+
+    <!-- TOC -->
+    <nav class="toc" aria-label="Table of contents">
+      <div class="toc-inner">
+        <a href="#phase">Phase</a>
+        <a href="#phase-mag">Phase&nbsp;+&nbsp;Mag</a>
+        <a href="#limitations">Limitations</a>
+        <a href="#more-results">More&nbsp;Results</a>
+      </div>
+    </nav>
+
+    <main>
+      <!-- ============ SUPPLEMENTARY SECTION ============= -->
+
+
+      <section id="phase">
+        <h2>Phase</h2>
+        <p class="lead" style="text-align:center;max-width:800px;margin:0 auto 2.2rem auto;">
+          Flow matching optimization yields strong results but sometimes causes duplicated subjects during motion or orientation changes. To mitigate this, we analyze the signals in the frequency domain. By leveraging the fact that spatial displacements cause phase shifts in the Fourier domain, we introduce a phase constraint to improve the spatiotemporal consistency of motion transfer.
+        </p>
+        <div class="carousel-container">
+          <button class="carousel-button prev" aria-label="Previous slide">←</button>
+          <button class="carousel-button next" aria-label="Next slide">→</button>
+          <div class="carousel-track">
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/phase/triple_car-shadow_3.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A white van cruises down the road, passing by a substantial edifice situated in the distance.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/phase/triple_drift-chicane_3.mp4"  muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A vehicle is observed speeding along a racing circuit, generating thick clouds of smoke that trail behind it as it proceeds.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/phase/triple_mallard-fly_2.mp4"  muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>The video shows a duck waddling along a rocky beach at low tide and then soaring above a serene saltwater lake surrounded by misty mountains.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="phase-mag">
+        <h2>Phase + Mag</h2>
+        <p class="lead" style="text-align:center;max-width:800px;margin:0 auto 2.2rem auto;">
+          We ablate two regularizer for magnitude and phase. Using phase constraints as regularizer yields superior results.
+        </p>
+        <div class="carousel-container">
+          <button class="carousel-button prev" aria-label="Previous slide">←</button>
+          <button class="carousel-button next" aria-label="Next slide">→</button>
+          <div class="carousel-track">
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/mag-phase/triple_bmx-trees_2.mp4"  muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A woman rides a bike down a wooden dock alongside a serene lake at sunrise.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/mag-phase/triple_car-shadow_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A silver motorhome is seen pulling up to a campsite nestled among the towering redwoods of a misty forest, with a dense canopy above it.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="limitations">
+        <h2>Limitations</h2>
+        <p class="lead" style="text-align:center;max-width:800px;margin:0 auto 2.2rem auto;">
+          Demonstration of current shortcomings and broader impacts. Hover over each clip to preview the effect. In the video a boat in the background intermittently appears and disappears, likely due to limitations in the backbone network.
+        </p>
+        <div class="carousel-container">
+          <button class="carousel-button prev" aria-label="Previous slide">←</button>
+          <button class="carousel-button next" aria-label="Next slide">→</button>
+          <div class="carousel-track">
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/limitations/paired_kite-surf_0.mp4"  muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A person is seen water skiing in the ocean, being pulled by a boat.</figcaption>
+            </figure>            
+          </div>
+        </div>
+      </section>
+
+      <!-- ========== RESULTS ========= -->
+      <section id="results">
+        <h2>Comparisons</h2>
+        <p class="lead" style="text-align:center;max-width:800px;margin:0 auto 2.2rem auto;">
+          The following results showcase the comparison of RoPECraft across a wide range of reference motion videos. Hover over each clip to preview the generated motion transfer in action. In each video, the original video is on the top row labeled as "DAVIS" and the generated video is on the other 2 rows labeled as the name of the method. The prompt used for each video is also provided at the bottom.
+        </p>
+        <div class="carousel-container">
+          <button class="carousel-button prev" aria-label="Previous slide">←</button>
+          <button class="carousel-button next" aria-label="Next slide">→</button>
+          <div class="carousel-track">
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/car-shadow_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A silver motorhome is seen pulling up to a campsite nestled among the towering redwoods of a misty forest, with a dense canopy above it.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/lucia_2.mov" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A woman wearing a black dress walks down a worn wooden dock along the edge of a misty lake at dusk.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/dancing_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A large group of fire dancers are spinning together in a circle, with one seasoned performer leading the mesmerizing display under the warm glow of string lights on a tropical beach at sunset.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/rallye_1.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>The vintage motorcycle drives down a dirt road, passes a truck, and then speeds up as it goes.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/bus_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A sailboat is anchored in a tranquil cove surrounded by lush greenery, as the man walks along the weathered wooden dock, gazing out at the serene ocean waters while the sailboat glides smoothly alongside him.</figcaption>
+            </figure>
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/comparisons/bmx-trees_2.mov" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A woman rides a bike down a wooden dock alongside a serene lake at sunrise.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section id="more-results">
+        <h2>More Results</h2>
+        <p class="lead" style="text-align:center;max-width:800px;margin:0 auto 2.2rem auto;">
+          Supplementary videos showcase ∼50 more generations across complex trajectories. Hover over each clip to preview the generated motion transfer in action.
+        </p>
+        <div style="margin-bottom:2rem;">
+          <label for="results-category" style="font-weight:600;">Category:&nbsp;</label>
+          <select id="results-category" style="font-size:1.1em;padding:0.3em 1em;border-radius:0.5em;">
+            <option value="blackswan">Blackswan</option>
+            <option value="boat">Boat</option>
+            <option value="bus">Bus</option>
+            <option value="car-roundabout">Car Roundabout</option>
+            <option value="car-shadow">Car Shadow</option>
+            <option value="car-turn">Car Turn</option>
+            <option value="classic-car">Classic Car</option>
+            <option value="drift-chicane">Drift Chicane</option>
+            <option value="lucia">Lucia</option>
+            <option value="motorbike">Motorbike</option>
+            <option value="paragliding">Paragliding</option>
+            <option value="scooter-board">Scooter Board</option>
+            <option value="walking">Walking</option>
+            <option value="stroller">Stroller</option>
+            <option value="rallye">Rallye</option>
+
+          </select>
+        </div>
+        <div class="more-results-carousels">
+
+          <div class="carousel-category" data-category="blackswan">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_blackswan_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A child in a duck costume paddles a small inflatable boat across a pond.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-2/paired_blackswan_1.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A group of remote-controlled submarine models navigates a large aquarium, their periscopes extending and retracting as they move.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-2/paired_blackswan_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A flock of black swans swims gracefully through a misty, moonlit swamp, their dark forms contrasting with the eerie glow on the water.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-2/paired_blackswan_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A collection of origami swans, enchanted to life, delicately paddles across a reflecting pool in a serene Japanese garden, their paper necks craning with surprising fluidity.</figcaption>
+                </figure>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="boat">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_boat_3.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A wooden rowboat drifts slowly across a lily-covered pond.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_boat_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A towboat pushes a barge filled with shipping containers through the harbor.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-2/paired_boat_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A group of children in a bathtub imagines their rubber ducks are a mighty fleet of galleons sailing across a vast, soapy ocean, with the children as captains.</figcaption>
+                </figure>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="bus">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_bus_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A futuristic maglev pod glides along an elevated track above a bustling metropolis.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_bus_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A herd of sheep marches along the street while a shepherd watches from the sidewalk.</figcaption>
+                </figure>
+         
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-3/paired_bus_1.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A vintage biplane loops gracefully above a sunlit airfield, propeller churning wind against a cerulean backdrop.</figcaption>
+                </figure>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="car-roundabout">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_car-roundabout_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A police car speeds through a coastal roundabout flanked by palm trees.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-2/paired_car-roundabout_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A race of miniature cars made of cheese, driven by a team of mice, speeds around a tiny roundabout on a kitchen counter, avoiding crumbs and a curious cat.</figcaption>
+                </figure>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="car-shadow">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_car-shadow_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A vintage muscle car cruises through a foggy pine forest road.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-3/paired_car-shadow_0.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>The silhouette of a ballerina leaps across a sunlit studio, delicate shadow dancing on polished hardwood floors.</figcaption>
+                </figure>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="car-turn">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_car-turn_1.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A cyclist pedals hard around a hairpin turn on a sunny hillside road.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_car-turn_3.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A sports car speeds through switchbacks with ocean cliffs visible below.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-3/paired_car-turn_3.mov" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A robotic courier zips through a maze of automated warehouses, packages whizzing past on conveyor belts.</figcaption>
+                </figure>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="classic-car">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_classic-car_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A solar-powered concept vehicle glides silently down the street, its panels gleaming.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-3/paired_classic-car_0.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A vintage steam locomotive rolls past a snowy station, its black iron body steaming in the frosty air.</figcaption>
+                </figure>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="drift-chicane">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_drift-chicane_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A horse-drawn sleigh skids dramatically around a frozen bend on an icy track.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_drift-chicane_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A rugged off-road buggy powers through a muddy forest trail, throwing up clods of earth.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_drift-chicane_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A sleek electric skateboard zooms around the circuit, leaving neon trails in its wake.</figcaption>
+                </figure>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="lucia">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_lucia_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A firefly swarm flickers along the path as a silhouette in a flowing dress glides past.</figcaption>
+                </figure>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="motorbike">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_motorbike_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A majestic eagle soars high above a mountain range, searching for prey in the valleys below.</figcaption>
+                </figure>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="paragliding">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_paragliding_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A glider plane soars above the town, its wings casting a shadow on rooftops.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-2/paired_paragliding_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A group of wizards on flying carpets, patterned in red and white, gently descends towards a hidden magical village nestled in a valley.</figcaption>
+                </figure>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="scooter-board">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_scooter-board_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A man rides a small scooter in an underground parking lot, loses control, and recovers.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-3/paired_scooter-board_2.mov" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A young woman riding a small skateboard through the misty rainforest.</figcaption>
+                </figure>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="walking">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_walking_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A solitary robot with LED eyes ambles along an abandoned urban plaza, recording its surroundings.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-2/paired_walking_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A band of elves in shimmering blue tunics walks through an enchanted forest, narrating their magical discoveries to a crystal ball that records everything.</figcaption>
+                </figure>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="stroller">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-1/paired_scooter-board_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A child-sized robot navigates a stroller along a futuristic city walkway.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-2/paired_stroller_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A line of fairytale princesses, disguised as commoners, pushes simple wooden carts (acting as makeshift strollers for royal babies) through a bustling medieval marketplace.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-3/paired_scooter-board_2.mov" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A shopping cart winds through a futuristic galaxy mall with hovering product displays and neon escalators.</figcaption>
+                </figure>
+                
+              </div>
+            </div>
+          </div>
+
+          <div class="carousel-category" data-category="rallye">
+            <div class="carousel-container">
+              <button class="carousel-button prev" aria-label="Previous slide">←</button>
+              <button class="carousel-button next" aria-label="Next slide">→</button>
+              <div class="carousel-track">
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-3/paired_rallye_0.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A fearless downhill mountain biker hurtles down a rocky canyon trail, dust plumes trailing as they tackle hairpin turns.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-3/paired_rallye_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>A competitive mountain biker races across the edge of an erupting volcanic crater, molten lava glowing beneath the rugged path.</figcaption>
+                </figure>
+                
+                <figure class="carousel-card">
+                  <div class="loading-spinner"></div>
+                  <video src="media/ours-3/paired_rallye_3.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+                  <figcaption>An interstellar rally craft zooms through a chaotic asteroid belt, thrusters blazing as it weaves between spinning rock fragments.</figcaption>
+                </figure>
+                
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+    </main>
+
+    <a href="#top" class="scroll-to-top" aria-label="Scroll back to top" title="Back to top">↑</a>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plyr/3.7.8/plyr.min.js"></script>
+    <script>
+      /* Plyr initialisation */
+      document.querySelectorAll('video[controls]').forEach(v => new Plyr(v,{fullscreen:{enabled:false}}));
+
+      /* Hover play for all carousels */
+      document.querySelectorAll('.carousel-card video').forEach(vid => {
+        vid.addEventListener('mouseenter', ()=> vid.play());
+        vid.addEventListener('mouseleave', ()=>{ vid.pause(); vid.currentTime=0; });
+      });
+
+      /* Lazy load for all carousels */
+      const lazyVid=[...document.querySelectorAll('.carousel-card video[loading="lazy"]')];
+      if('IntersectionObserver' in window){
+        const o=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.preload='metadata';o.unobserve(en.target);}})},{threshold:.25});
+        lazyVid.forEach(v=>o.observe(v));
+      }
+
+      /* Carousel functionality for all carousels */
+      document.querySelectorAll('.carousel-container').forEach(container => {
+        const carousel = container.querySelector('.carousel-track');
+        const cards = container.querySelectorAll('.carousel-card');
+        const prevButton = container.querySelector('.carousel-button.prev');
+        const nextButton = container.querySelector('.carousel-button.next');
+        let currentIndex = 0;
+        const totalSlides = cards.length;
+        function updateCarousel() {
+          const offset = -currentIndex * 101.5;
+          carousel.style.transform = `translateX(${offset}%)`;
+          prevButton.style.opacity = currentIndex === 0 ? '0.5' : '1';
+          nextButton.style.opacity = currentIndex === totalSlides - 1 ? '0.5' : '1';
+        }
+        function goToSlide(index) {
+          currentIndex = index;
+          updateCarousel();
+        }
+        prevButton.addEventListener('click', () => {
+          if (currentIndex > 0) {
+            currentIndex--;
+            updateCarousel();
+          }
+        });
+        nextButton.addEventListener('click', () => {
+          if (currentIndex < totalSlides - 1) {
+            currentIndex++;
+            updateCarousel();
+          }
+        });
+        updateCarousel();
+        // Handle video loading and progress
+        cards.forEach((card, index) => {
+          const vid = card.querySelector('video');
+          const spinner = card.querySelector('.loading-spinner');
+          const progressBar = card.querySelector('.loading-progress-bar');
+          spinner.style.display = 'block';
+          vid.addEventListener('loadstart', () => {
+            spinner.style.display = 'block';
+            progressBar.style.width = '0%';
+          });
+          vid.addEventListener('progress', () => {
+            if (vid.buffered.length > 0) {
+              const progress = (vid.buffered.end(vid.buffered.length - 1) / vid.duration) * 100;
+              progressBar.style.width = `${progress}%`;
+            }
+          });
+          vid.addEventListener('canplay', () => {
+            spinner.style.display = 'none';
+            progressBar.style.width = '100%';
+          });
+        });
+      });
+
+      /* Scrollspy */
+      const links=[...document.querySelectorAll('.toc a')];
+      const secs=[...document.querySelectorAll('main > section')];
+      const spy=new IntersectionObserver(entries=>{entries.forEach(en=>{if(en.isIntersecting){links.forEach(l=>l.classList.toggle('active',l.getAttribute('href').slice(1)===en.target.id));}})},{rootMargin:'-40% 0px -45% 0px'});
+      secs.forEach(s=>spy.observe(s));
+
+      /* Section Content Animation Logic */
+      document.addEventListener('DOMContentLoaded', () => {
+        const sectionsContent = document.querySelectorAll('section > *');
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+              observer.unobserve(entry.target); // Stop observing once visible
+            }
+          });
+        }, { threshold: 0.1 }); // Start animation when 10% of the element is visible
+
+        sectionsContent.forEach(el => observer.observe(el));
+
+        // Make items already in view visible immediately 
+        setTimeout(() => {
+          sectionsContent.forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < window.innerHeight) {
+              el.classList.add('visible');
+              observer.unobserve(el);
+            }
+          });
+        }, 100);
+      });
+
+      /* Scroll to Top Button Logic */
+      const scrollTopBtn = document.querySelector('.scroll-to-top');
+      if (scrollTopBtn) {
+        window.addEventListener('scroll', () => {
+          if (window.scrollY > 300) { // Show button after scrolling 300px
+            scrollTopBtn.classList.add('visible');
+          } else {
+            scrollTopBtn.classList.remove('visible');
+          }
+        });
+      }
+
+      /* Parallax effect for hero video */
+      window.addEventListener('scroll', () => {
+        const heroVid = document.querySelector('.hero video');
+        if (heroVid) {
+          heroVid.style.transform = `translateY(${window.scrollY * 0.15}px) scale(1.03)`;
+        }
+      });
+
+      // Dropdown logic for More Results
+      const resultsCategory = document.getElementById('results-category');
+      if (resultsCategory) {
+        resultsCategory.addEventListener('change', function() {
+          document.querySelectorAll('.more-results-carousels .carousel-category').forEach(div => {
+            div.style.display = (div.getAttribute('data-category') === this.value) ? '' : 'none';
+          });
+        });
+      }
+    </script>
+  </body>
+</html>
