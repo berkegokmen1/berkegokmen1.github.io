@@ -636,10 +636,6 @@
           </select>
         </div>
         <div class="more-results-carousels">
-          <style>
-            .carousel-category { display: none; }
-            .carousel-category[data-category="blackswan"] { display: block; }
-          </style>
           <div class="carousel-category" data-category="blackswan">
             <div class="carousel-container">
               <button class="carousel-button prev" aria-label="Previous slide">←</button>
@@ -1128,6 +1124,11 @@
       // Dropdown logic for More Results
       const resultsCategory = document.getElementById('results-category');
       if (resultsCategory) {
+        // Hide all categories except blackswan on initial load
+        document.querySelectorAll('.more-results-carousels .carousel-category').forEach(div => {
+          div.style.display = (div.getAttribute('data-category') === 'blackswan') ? '' : 'none';
+        });
+
         resultsCategory.addEventListener('change', function() {
           document.querySelectorAll('.more-results-carousels .carousel-category').forEach(div => {
             div.style.display = (div.getAttribute('data-category') === this.value) ? '' : 'none';
