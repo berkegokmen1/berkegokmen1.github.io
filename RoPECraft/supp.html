@@ -618,7 +618,7 @@
         <div style="margin-bottom:2rem;">
           <label for="results-category" style="font-weight:600;">Category:&nbsp;</label>
           <select id="results-category" style="font-size:1.1em;padding:0.3em 1em;border-radius:0.5em;">
-            <option value="blackswan">Blackswan</option>
+            <option value="blackswan" selected>Blackswan</option>
             <option value="boat">Boat</option>
             <option value="bus">Bus</option>
             <option value="car-roundabout">Car Roundabout</option>
@@ -633,11 +633,13 @@
             <option value="walking">Walking</option>
             <option value="stroller">Stroller</option>
             <option value="rallye">Rallye</option>
-
           </select>
         </div>
         <div class="more-results-carousels">
-
+          <style>
+            .carousel-category { display: none; }
+            .carousel-category[data-category="blackswan"] { display: block; }
+          </style>
           <div class="carousel-category" data-category="blackswan">
             <div class="carousel-container">
               <button class="carousel-button prev" aria-label="Previous slide">←</button>
@@ -647,7 +649,7 @@
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
                   <video src="media/ours-1/paired_blackswan_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A child in a duck costume paddles a small inflatable boat across a pond.</figcaption>
+                  <figcaption>Children, one in a duck costume, paddles a small inflatable boat across a pond.</figcaption>
                 </figure>
                 
                 <figure class="carousel-card">
@@ -693,7 +695,7 @@
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
                   <video src="media/ours-2/paired_boat_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A group of children in a bathtub imagines their rubber ducks are a mighty fleet of galleons sailing across a vast, soapy ocean, with the children as captains.</figcaption>
+                  <figcaption>A group of children as captains imagines their rubber ducks are a mighty fleet of galleons sailing across a vast, soapy ocean.</figcaption>
                 </figure>
 
               </div>
@@ -721,7 +723,7 @@
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
                   <video src="media/ours-3/paired_bus_1.mp4" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A vintage biplane loops gracefully above a sunlit airfield, propeller churning wind against a cerulean backdrop.</figcaption>
+                  <figcaption>A vintage biplane loops gracefully above a sunlit airfield, propeller churning wind.</figcaption>
                 </figure>
 
               </div>
@@ -743,7 +745,7 @@
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
                   <video src="media/ours-2/paired_car-roundabout_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A race of miniature cars made of cheese, driven by a team of mice, speeds around a tiny roundabout on a kitchen counter, avoiding crumbs and a curious cat.</figcaption>
+                  <figcaption>A miniature car made of cheese, driven by a team of mice, speeds around a tiny roundabout on a kitchen counter, avoiding crumbs.</figcaption>
                 </figure>
 
               </div>
@@ -793,7 +795,7 @@
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
                   <video src="media/ours-3/paired_car-turn_3.mov" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A robotic courier zips through a maze of automated warehouses, packages whizzing past on conveyor belts.</figcaption>
+                  <figcaption>A robotic courier zips through a maze of eco-friendly, automated warehouses, packages whizzing past on conveyor belts.</figcaption>
                 </figure>
 
               </div>
@@ -891,13 +893,13 @@
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
                   <video src="media/ours-1/paired_paragliding_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A glider plane soars above the town, its wings casting a shadow on rooftops.</figcaption>
+                  <figcaption>A glider plane soars above the town.</figcaption>
                 </figure>
                 
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
                   <video src="media/ours-2/paired_paragliding_4.mp4" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A group of wizards on flying carpets, patterned in red and white, gently descends towards a hidden magical village nestled in a valley.</figcaption>
+                  <figcaption>A group of wizards on flying carpets, patterned in red and yellow, gently descends towards a hidden magical village nestled in a valley.</figcaption>
                 </figure>
                 
               </div>
@@ -913,7 +915,7 @@
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
                   <video src="media/ours-1/paired_scooter-board_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A man rides a small scooter in an underground parking lot, loses control, and recovers.</figcaption>
+                  <figcaption>A man rides a small scooter in an underground parking lot.</figcaption>
                 </figure>
                 
                 <figure class="carousel-card">
@@ -956,20 +958,8 @@
                 
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
-                  <video src="media/ours-1/paired_scooter-board_2.mp4" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A child-sized robot navigates a stroller along a futuristic city walkway.</figcaption>
-                </figure>
-                
-                <figure class="carousel-card">
-                  <div class="loading-spinner"></div>
                   <video src="media/ours-2/paired_stroller_5.mp4" muted loop preload="none" playsinline loading="lazy"></video>
                   <figcaption>A line of fairytale princesses, disguised as commoners, pushes simple wooden carts (acting as makeshift strollers for royal babies) through a bustling medieval marketplace.</figcaption>
-                </figure>
-                
-                <figure class="carousel-card">
-                  <div class="loading-spinner"></div>
-                  <video src="media/ours-3/paired_scooter-board_2.mov" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A shopping cart winds through a futuristic galaxy mall with hovering product displays and neon escalators.</figcaption>
                 </figure>
                 
               </div>
@@ -985,7 +975,7 @@
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
                   <video src="media/ours-3/paired_rallye_0.mp4" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>A fearless downhill mountain biker hurtles down a rocky canyon trail, dust plumes trailing as they tackle hairpin turns.</figcaption>
+                  <figcaption>A fearless downhill mountain biker hurtles down a rocky canyon trail, dust plumes.</figcaption>
                 </figure>
                 
                 <figure class="carousel-card">
@@ -997,7 +987,7 @@
                 <figure class="carousel-card">
                   <div class="loading-spinner"></div>
                   <video src="media/ours-3/paired_rallye_3.mp4" muted loop preload="none" playsinline loading="lazy"></video>
-                  <figcaption>An interstellar rally craft zooms through a chaotic asteroid belt, thrusters blazing as it weaves between spinning rock fragments.</figcaption>
+                  <figcaption>An interstellar rally craft close to ground zooms through, thrusters blazing as it weaves between spinning rock fragments.</figcaption>
                 </figure>
                 
               </div>
