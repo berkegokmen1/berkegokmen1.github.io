@@ -13,6 +13,10 @@ I'm looking for PhD or MSc opportunities.
 
 My publications:
 
+
+RoPECraft: Training-Free Motion Transfer with Trajectory-Guided RoPE Optimization on Diffusion Transformers
+**Ahmet Berke Gökmen^**, Yigit Ekin^, Bahri Batuhan Bilecen^, Ayşegül Dündar. _In Submission_ [Project Page and Paper 🔗.](https://berkegokmen1.github.io/RoPECraft/)
+
 Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images
 **Ahmet Berke Gökmen^**, Bahri Batuhan Bilecen^, Ayşegül Dündar. _**NeurIPS2024**, Accepted poster._ [Project Page and Paper 🔗.](https://berkegokmen1.github.io/dual-enc-3d-gan-inv/)
 
