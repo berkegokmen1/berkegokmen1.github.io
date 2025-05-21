@@ -489,6 +489,7 @@
         <a href="#phase-mag">Phase&nbsp;vs&nbsp;Magnitude</a>
         <a href="#limitations">Limitations</a>
         <a href="#results">Comparisons</a>
+        <a href="#other-models">CogVideoX Results</a>
         <a href="#more-results">More&nbsp;Results</a>
       </div>
     </nav>
@@ -611,10 +612,81 @@
         </div>
       </section>
 
+      <!-- ========== RESULTS ========= -->
+      <section id="other-models">
+        <h2>CogVideoX Results</h2>
+        <p class="lead" style="text-align:center;max-width:800px;margin:0 auto 2.2rem auto;">
+          Following results showcase the generalization of RoPECraft to other models. The first video is from the DAVIS dataset, second video is from RoPECraft built on CogVideoX, third video is from Go With The Flow and last one is from DiTFlow. The prompt used for each video is also provided at the bottom. Hover over each clip to preview the generated motion transfer in action.
+          </br></br>
+          As we can see, Go With The Flow struggles with object shapes or multiple subjects since it is tied to the original video which the noise was extracted from. DiTFlow on the other hand fails to transfer motion in some scenarios. Our method is able to transfer motion in all scenarios and is able to generalize to other models.
+        </p>
+        <div class="carousel-container">
+          <button class="carousel-button prev" aria-label="Previous slide">←</button>
+          <button class="carousel-button next" aria-label="Next slide">→</button>
+          <div class="carousel-track">
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/other-models/cogvideox/elephant_5_concat.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A herd of antelope dashes across the dirt path at twilight against a backdrop of trees.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/other-models/cogvideox/camel_2_concat.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A herd of llamas moves through a dry, enclosed plateau in the Andes.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/other-models/cogvideox/lucia_1_concat.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A black dog strolls calmly down a tree-lined park path.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/other-models/cogvideox/dog_5_concat.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A remote-controlled drone hovers low over the yard, capturing aerial footage.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/other-models/cogvideox/car-shadow_3_concat.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A black taxi drives down a street in a desert outpost as dust swirls around.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/other-models/cogvideox/classic-car_3_concat.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A classic car cruises through a town square adorned with market tents and banners.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/other-models/cogvideox/motorbike_1_concat.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A moped rider weaves through a narrow path in a tropical mountain village.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/other-models/cogvideox/motorbike_1_concat.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A moped rider weaves through a narrow path in a tropical mountain village.</figcaption>
+            </figure>
+
+            <figure class="carousel-card">
+              <div class="loading-spinner"></div>
+              <video src="media/other-models/cogvideox/bus_2_concat.mp4" muted loop preload="none" playsinline loading="lazy"></video>
+              <figcaption>A public bus drives past a snow-covered rural village with a lone figure walking nearby.</figcaption>
+            </figure>
+            
+          </div>
+        </div>
+      </section>
+
       <section id="more-results">
         <h2>More Results</h2>
         <p class="lead" style="text-align:center;max-width:800px;margin:0 auto 2.2rem auto;">
-          Supplementary videos showcase ∼50 more generations across complex trajectories. Hover over each clip to preview the generated motion transfer in action.
+          Supplementary videos showcase ∼30 more generations across complex trajectories. Hover over each clip to preview the generated motion transfer in action.
         </p>
         <div style="margin-bottom:2rem;">
           <label for="results-category" style="font-weight:600;">Category:&nbsp;</label>
