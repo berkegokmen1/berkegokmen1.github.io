@@ -20,8 +20,8 @@ RoPECraft: Training-Free Motion Transfer with Trajectory-Guided RoPE Optimizatio
 Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images
 **Ahmet Berke Gökmen^**, Bahri Batuhan Bilecen^, Ayşegül Dündar. _**NeurIPS2024**, Accepted poster._ [Project Page and Paper 🔗.](https://berkegokmen1.github.io/dual-enc-3d-gan-inv/)
 
+Identity Preserving 3D Head Stylization with Multiview Score Distillation
+Bahri Batuhan Bilecen, **Ahmet Berke Gökmen**, Furkan Güzelant, Ayşegül Dündar. _**ICCV2025**, Accepted poster._ [Project Page and Paper 🔗.](https://three-bee.github.io/head_stylization/)
+
 Counterfactual Disease Removal and Generation in Chest X-Rays Using Diffusion Models
 **Ahmet Berke Gökmen**, Ender Konukoğlu. _In Submission._ [Project Page and Paper 🔗.](https://berkegokmen1.github.io/counterfactual-disease-removal-and-generation-chest-xray/)
-
-Identity Preserving 3D Head Stylization with Multiview Score Distillation
-Bahri Batuhan Bilecen, **Ahmet Berke Gökmen**, Furkan Güzelant, Ayşegül Dündar. _In Submission._ [Project Page and Paper 🔗.](https://three-bee.github.io/head_stylization/)
