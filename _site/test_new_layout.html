@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About Me | A. Berke Gökmen</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+/* Modern Layout Improvements */
+
+/* Color scheme and typography */
+:root {
+  --primary-color: #2c3e50;
+  --accent-color: #3498db;
+  --secondary-color: #e74c3c;
+  --text-color: #333;
+  --light-bg: #f8f9fa;
+  --border-color: #e1e5e9;
+  --shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: var(--text-color);
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Improved wrapper and layout */
+.wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: white;
+  box-shadow: var(--shadow);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Modern header styling */
+header {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+  border-radius: 10px 10px 0 0;
+}
+
+header h1 a {
+  color: white;
+  text-decoration: none;
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+header h1 a:hover {
+  color: #ecf0f1;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
+}
+
+/* Contact information styling */
+header div {
+  display: inline-block;
+  margin: 0.5rem 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+header div:hover {
+  background: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+
+header .material-icons {
+  vertical-align: middle;
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+header a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+header a:hover {
+  color: #ecf0f1;
+  text-decoration: underline;
+}
+
+/* Content section improvements */
+section {
+  padding: 2rem;
+  background: white;
+}
+
+/* Photo styling */
+section img {
+  width: 300px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 15px;
+  box-shadow: var(--shadow);
+  float: right;
+  margin: 0 0 1rem 2rem;
+  transition: transform 0.3s ease;
+}
+
+section img:hover {
+  transform: scale(1.05);
+}
+
+/* Typography improvements */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 3px solid var(--accent-color);
+  display: inline-block;
+}
+
+/* Research section improvements */
+section p {
+  margin-bottom: 1.5rem;
+  text-align: justify;
+  line-height: 1.7;
+}
+
+/* Publication styling */
+section p:has(strong) {
+  background: var(--light-bg);
+  padding: 1.5rem;
+  border-radius: 10px;
+  border-left: 4px solid var(--accent-color);
+  margin: 1rem 0;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+/* Link improvements */
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+a:hover {
+  color: var(--secondary-color);
+  text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .wrapper {
+    margin: 10px;
+    border-radius: 5px;
+  }
+  
+  header {
+    padding: 1.5rem 1rem;
+  }
+  
+  header h1 a {
+    font-size: 1.8rem;
+  }
+  
+  header div {
+    display: block;
+    margin: 0.5rem 0;
+    text-align: center;
+  }
+  
+  section {
+    padding: 1.5rem 1rem;
+  }
+  
+  section img {
+    float: none;
+    display: block;
+    margin: 1rem auto;
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 a {
+    font-size: 1.5rem;
+  }
+  
+  section img {
+    width: 100%;
+    height: 150px;
+  }
+}
+
+/* Video styling */
+video {
+  height: 100%;
+  width: 100%;
+  border-radius: 10px;
+}
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1><a href="/">A. Berke Gökmen</a></h1>
+
+        <div>
+          <i class="material-icons">pages</i> <a href="Blog">Blog</a>
+        </div>
+
+        <div>
+          <i class="material-icons">email</i> berke.gokmen@ug.bilkent.edu.tr
+        </div>
+
+        <div>
+          <i class="material-icons">camera_front</i>
+          <a href="https://www.linkedin.com/in/berkegokmen/">LinkedIn</a>
+        </div>
+
+        <div>
+          <i class="material-icons">school</i>
+          <a href="https://scholar.google.com.tr/citations?user=rg7Vk-gAAAAJ&hl=tr">Google Scholar</a>
+        </div>
+      </header>
+      <section>
+        <img src="assets/img/me.jpeg" alt="Berke Gökmen">
+
+        <h2>About Me</h2>
+
+        <p>I am a Computer Science student at <a href="https://w3.bilkent.edu.tr/">Bilkent University</a>, passionate about computer vision, machine learning, and artificial intelligence.</p>
+
+        <p>I'm currently looking for PhD or MSc opportunities to further my research in deep learning and computer vision.</p>
+
+        <h2>Research</h2>
+
+        <p>My publications and research focus on computer vision, generative models, and medical imaging:</p>
+
+        <p><strong>RoPECraft: Training-Free Motion Transfer with Trajectory-Guided RoPE Optimization on Diffusion Transformers</strong><br>
+        <strong>Ahmet Berke Gökmen^</strong>, Yigit Ekin^, Bahri Batuhan Bilecen^, Ayşegül Dündar. <em>In Submission</em><br>
+        <a href="https://berkegokmen1.github.io/RoPECraft/">Project Page and Paper 🔗</a></p>
+
+        <p><strong>Dual Encoder GAN Inversion for High-Fidelity 3D Head Reconstruction from Single Images</strong><br>
+        <strong>Ahmet Berke Gökmen^</strong>, Bahri Batuhan Bilecen^, Ayşegül Dündar. <em><strong>NeurIPS 2024</strong>, Accepted poster</em><br>
+        <a href="https://berkegokmen1.github.io/dual-enc-3d-gan-inv/">Project Page and Paper 🔗</a></p>
+
+        <p><strong>Identity Preserving 3D Head Stylization with Multiview Score Distillation</strong><br>
+        Bahri Batuhan Bilecen, <strong>Ahmet Berke Gökmen</strong>, Furkan Güzelant, Ayşegül Dündar. <em><strong>ICCV 2025</strong>, Accepted poster</em><br>
+        <a href="https://three-bee.github.io/head_stylization/">Project Page and Paper 🔗</a></p>
+
+        <p><strong>Counterfactual Disease Removal and Generation in Chest X-Rays Using Diffusion Models</strong><br>
+        <strong>Ahmet Berke Gökmen</strong>, Ender Konukoğlu. <em>In Submission</em><br>
+        <a href="https://berkegokmen1.github.io/counterfactual-disease-removal-and-generation-chest-xray/">Project Page and Paper 🔗</a></p>
+
+      </section>
+    </div>
+  </body>
+</html>
