@@ -102,7 +102,7 @@ main {
 
 .hero-card {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
   gap: 2.4rem;
   padding: 2.2rem;
   border: 1px solid var(--border);
@@ -130,7 +130,6 @@ main {
 .hero-text .lead {
   font-size: 1.32rem;
   font-weight: 500;
-  max-width: 32ch;
 }
 
 .hero-text p {
@@ -185,12 +184,12 @@ main {
 
 
 .hero-media {
-  justify-self: center;
+  justify-self: stretch;
 }
 
 .hero-media img {
   display: block;
-  width: min(260px, 100%);
+  width: 100%;
   border-radius: calc(var(--radius) * 1.15);
   border: 4px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 18px 40px rgba(15, 26, 71, 0.12);
