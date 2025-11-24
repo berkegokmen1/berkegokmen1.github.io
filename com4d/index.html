@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inferring Compositional 4D Scenes</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        background: #05060a;
+        color: #f4f5f6;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        background: radial-gradient(circle at top, rgba(49, 65, 138, 0.3), transparent 65%),
+          #05060a;
+      }
+
+      .page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 2.5rem 1.5rem 4rem;
+      }
+
+      h1,
+      h2 {
+        font-weight: 650;
+        margin: 0 0 0.35em;
+      }
+
+      h1 {
+        font-size: clamp(2.1rem, 4vw, 2.85rem);
+        letter-spacing: -0.02em;
+      }
+
+      h2 {
+        font-size: clamp(1.4rem, 2.7vw, 1.85rem);
+      }
+
+      p {
+        margin: 0 0 1rem;
+        line-height: 1.6;
+        opacity: 0.92;
+      }
+
+      .hero {
+        text-align: center;
+        margin-bottom: 2.5rem;
+      }
+
+      .hero .subtitle {
+        margin: 0.4rem 0 1.25rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .authors,
+      .affiliation {
+        margin: 0 0 0.6rem;
+        font-weight: 500;
+      }
+
+      .affiliation {
+        opacity: 0.85;
+      }
+
+      .hero-actions {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        padding: 0.85rem 1.4rem;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 650;
+        color: #0b0c10;
+        background: linear-gradient(135deg, #8cd5ff, #6cb8ff);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 12px 30px rgba(108, 184, 255, 0.22);
+      }
+
+      .button[aria-disabled="true"] {
+        cursor: default;
+        opacity: 0.9;
+      }
+
+      .section-nav {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        margin: 1rem 0 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .section-nav a {
+        color: inherit;
+        text-decoration: none;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 999px;
+        padding: 0.7rem 1.35rem;
+        font-size: 1.02rem;
+        font-weight: 650;
+        transition: background 0.2s ease, color 0.2s ease;
+      }
+
+      .section-nav a:focus-visible,
+      .section-nav a:hover {
+        background: rgba(255, 255, 255, 0.14);
+        color: #fff;
+      }
+
+      section {
+        margin-top: 3rem;
+      }
+
+      section > p {
+        max-width: 60ch;
+      }
+
+      .card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        padding: 1.2rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+        backdrop-filter: blur(8px);
+      }
+
+      .media {
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        background: #000;
+      }
+
+      .tag {
+        display: inline-block;
+        margin-bottom: 0.65rem;
+        padding: 0.2rem 0.65rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        font-size: 0.8rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .slider {
+        position: relative;
+        padding: 0 4.5rem;
+      }
+
+      .slides {
+        width: 100%;
+      }
+
+      .slide {
+        display: none;
+        width: 100%;
+      }
+
+      .slide.active {
+        display: block;
+      }
+
+      .slider-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 999px;
+        width: 44px;
+        height: 44px;
+        color: #fff;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .slider-btn:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
+      .slider-btn:hover:not(:disabled),
+      .slider-btn:focus-visible:not(:disabled) {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      .slider-btn:first-of-type {
+        left: 1rem;
+      }
+
+      .slider-btn:last-of-type {
+        right: 1rem;
+      }
+
+      .section-hidden {
+        display: none;
+      }
+
+      @media (max-width: 720px) {
+        .slider {
+          padding: 0 1.5rem;
+        }
+
+        .slider-btn:first-of-type {
+          left: 0;
+        }
+
+        .slider-btn:last-of-type {
+          right: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="hero">
+        <h1>Inferring Compositional 4D Scenes without Ever Seeing One</h1>
+        <p class="subtitle">Temporary Website -- New one Under Construction.</p>
+        <p class="authors">
+          Ahmet Berke Gökmen, Ajad Chattkuli, Luc Van Gool, Danda Pani Paudel
+        </p>
+        <p class="affiliation">INSAIT, Sofia University "Kliment Ohridski"</p>
+        <div class="hero-actions">
+          <a class="button" href="#" aria-disabled="true">Paper — Link Will be Updated</a>
+        </div>
+      </header>
+
+      <nav class="section-nav" aria-label="Page sections">
+        <a href="#com4d" data-section-target="com4d">Compositional 4D</a>
+        <a href="#gifs4d" data-section-target="gifs4d">Single Object 4D</a>
+        <a href="#threeD" data-section-target="threeD">Compositional 3D</a>
+        <a href="#video" data-section-target="video">Video</a>
+      </nav>
+
+      <section id="com4d" data-section-id="com4d">
+        <h2>Compositional 4D GIFs</h2>
+        <p>Preview GIFs from the paper.</p>
+        <div class="slider">
+          <button class="slider-btn" id="com4d-prev" aria-label="Previous sample">
+            &#8592;
+          </button>
+          <div class="slides" id="com4d-slides"></div>
+          <button class="slider-btn" id="com4d-next" aria-label="Next sample">
+            &#8594;
+          </button>
+        </div>
+      </section>
+
+      <section id="gifs4d" data-section-id="gifs4d">
+        <h2>Single Object 4D</h2>
+        <p>Sample single-object 4D reconstructions shown as GIFs.</p>
+        <div class="slider">
+          <button class="slider-btn" id="gifs4d-prev" aria-label="Previous sample">
+            &#8592;
+          </button>
+          <div class="slides" id="gifs4d-slides"></div>
+          <button class="slider-btn" id="gifs4d-next" aria-label="Next sample">
+            &#8594;
+          </button>
+        </div>
+      </section>
+
+      <section id="threeD" data-section-id="threeD">
+        <h2>Compositional 3D GIFs</h2>
+        <p>GIF comparisons only.</p>
+        <div class="slider">
+          <button class="slider-btn" id="threeD-prev" aria-label="Previous sample">
+            &#8592;
+          </button>
+          <div class="slides" id="threeD-slides"></div>
+          <button class="slider-btn" id="threeD-next" aria-label="Next sample">
+            &#8594;
+          </button>
+        </div>
+      </section>
+
+      <section id="video" data-section-id="video">
+        <h2>Video</h2>
+        <p>Overview of the method.</p>
+        <article class="card">
+          <video
+            id="results-video"
+            class="media"
+            src="video.mp4"
+            autoplay
+            loop
+            muted
+            playsinline
+            controls
+          ></video>
+        </article>
+      </section>
+    </div>
+
+    <script>
+      const com4dData = [
+        { gif: "com4d/dog_human_x/dog_human_x.gif" },
+        { gif: "com4d/living_room_old/living_room_old.gif" },
+        { gif: "com4d/office_sample/office_sample.gif" },
+        { gif: "com4d/toddler_ian/toddler_ian.gif" },
+        { gif: "com4d/camping/camping.gif" },
+        { gif: "com4d/cat/cat.gif" },
+      ];
+
+      const fourDGifData = [
+        { gif: "4dgifs_mv/doggieMN5_Crouchleft.gif" },
+        { gif: "4dgifs_mv/deerA4K_sleep.gif" },
+        { gif: "4dgifs_mv/ironman_BreakdanceFreezeVar4.gif" },
+        { gif: "4dgifs_mv/3d32db36ab6245f29fffb61483001f20.gif" },
+        { gif: "4dgifs_mv/1eca489fdb6445b19e9cb550d9ef6148.gif" },
+        { gif: "4dgifs_mv/7af0f723f1444ef399221c265d149be6.gif" },
+        { gif: "4dgifs_mv/8723c780d58b4e2ebb808c3781860f3f.gif" },
+      ];
+
+      const threeDData = [
+        {
+          gif: "3dgifs/00245__eb014623-6b94-4fb0-b33d-39773cb0cd8c__KidsRoom-77034/comparison.gif",
+        },
+        {
+          gif: "3dgifs/00100__e4d49144-ac70-482d-ac0a-607f68160dca__SecondBedroom-15120/comparison.gif",
+        },
+        {
+          gif: "3dgifs/00252__eb2abbb1-9a02-4614-aaad-d94a203d12f7__MasterBedroom-16104/comparison.gif",
+        },
+        {
+          gif: "3dgifs/00064__e2f3aa79-e130-445e-8773-b697ab77d9b8__MasterBedroom-45873/comparison.gif",
+        },
+        {
+          gif: "3dgifs/00180__e7ea961c-5f0d-437a-9cdc-4b4488f62675__SecondBedroom-18851/comparison.gif",
+        },
+        {
+          gif: "3dgifs/00116__e534fb8b-1a40-48a6-a895-07ea15c5e3fe__Bedroom-130367/comparison.gif",
+        },
+        {
+          gif: "3dgifs/00169__e76ebb28-f9f8-40d6-a1e6-5fa1420191fb__MasterBedroom-2303/comparison.gif",
+        },
+        {
+          gif: "3dgifs/00231__e9ebe917-5812-429a-9154-913dcacb49ff__SecondBedroom-33190/comparison.gif",
+        },
+      ];
+
+      const createTag = (text) => {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = text;
+        return tag;
+      };
+
+      const createCard = (label, mediaElement) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.append(createTag(label), mediaElement);
+        return card;
+      };
+
+      const createGifCard = ({ gif, label = "GIF", alt = "Sample gif" }) => {
+        const img = document.createElement("img");
+        img.className = "media";
+        img.src = gif;
+        img.alt = alt;
+        img.loading = "lazy";
+        return createCard(label, img);
+      };
+
+      const sectionLoadState = {
+        com4d: false,
+        gifs4d: false,
+        threeD: false,
+        video: false,
+      };
+
+      const initializeSlider = (slides, prevBtn, nextBtn) => {
+        if (!slides.length) {
+          if (prevBtn) prevBtn.disabled = true;
+          if (nextBtn) nextBtn.disabled = true;
+          return;
+        }
+
+        let currentIndex = 0;
+        slides[currentIndex].classList.add("active");
+
+        const move = (direction) => {
+          slides[currentIndex].classList.remove("active");
+          currentIndex = (currentIndex + direction + slides.length) % slides.length;
+          slides[currentIndex].classList.add("active");
+        };
+
+        if (prevBtn) {
+          prevBtn.addEventListener("click", () => move(-1));
+        }
+        if (nextBtn) {
+          nextBtn.addEventListener("click", () => move(1));
+        }
+      };
+
+      const com4dSlidesContainer = document.querySelector("#com4d-slides");
+      const com4dPrevBtn = document.querySelector("#com4d-prev");
+      const com4dNextBtn = document.querySelector("#com4d-next");
+
+      const gifs4dSlidesContainer = document.querySelector("#gifs4d-slides");
+      const gifs4dPrevBtn = document.querySelector("#gifs4d-prev");
+      const gifs4dNextBtn = document.querySelector("#gifs4d-next");
+
+      const threeDSlidesContainer = document.querySelector("#threeD-slides");
+      const threeDPrevBtn = document.querySelector("#threeD-prev");
+      const threeDNextBtn = document.querySelector("#threeD-next");
+
+      const resultsVideo = document.querySelector("#results-video");
+
+      const loadCom4dSection = () => {
+        if (sectionLoadState.com4d) return;
+        sectionLoadState.com4d = true;
+
+        const slides = com4dData.map((item) => {
+          const gifCard = createGifCard({
+            ...item,
+            label: "4D GIF",
+            alt: "Compositional 4D sample gif",
+          });
+          gifCard.classList.add("slide");
+          com4dSlidesContainer.append(gifCard);
+          return gifCard;
+        });
+
+        initializeSlider(slides, com4dPrevBtn, com4dNextBtn);
+      };
+
+      const loadSingle4dSection = () => {
+        if (sectionLoadState.gifs4d) return;
+        sectionLoadState.gifs4d = true;
+
+        const slides = fourDGifData.map((gifEntry) => {
+          const gifCard = createGifCard({ ...gifEntry, label: "4D GIF" });
+          gifCard.classList.add("slide");
+          gifs4dSlidesContainer.append(gifCard);
+          return gifCard;
+        });
+
+        initializeSlider(slides, gifs4dPrevBtn, gifs4dNextBtn);
+      };
+
+      const loadThreeDSection = () => {
+        if (sectionLoadState.threeD) return;
+        sectionLoadState.threeD = true;
+
+        const slides = threeDData.map((scene) => {
+          const block = document.createElement("article");
+          block.className = "card slide";
+          block.append(createTag("3D GIF"));
+
+          const gif = document.createElement("img");
+          gif.className = "media";
+          gif.src = scene.gif;
+          gif.alt = "3D comparison gif";
+          gif.loading = "lazy";
+          block.append(gif);
+
+          threeDSlidesContainer.append(block);
+          return block;
+        });
+
+        initializeSlider(slides, threeDPrevBtn, threeDNextBtn);
+      };
+
+      const loadVideoSection = () => {
+        if (sectionLoadState.video) return;
+        sectionLoadState.video = true;
+        if (resultsVideo) {
+          resultsVideo.play().catch(() => {});
+        }
+      };
+
+      const sectionLoaders = {
+        com4d: loadCom4dSection,
+        gifs4d: loadSingle4dSection,
+        threeD: loadThreeDSection,
+        video: loadVideoSection,
+      };
+
+      const requestSectionLoad = (sectionId) => {
+        const loader = sectionLoaders[sectionId];
+        if (loader) {
+          loader();
+        }
+      };
+
+      const sections = Array.from(
+        document.querySelectorAll("section[data-section-id]")
+      );
+
+      const setSectionVisibility = (targetId) => {
+        sections.forEach((section) => {
+          section.classList.toggle(
+            "section-hidden",
+            section.dataset.sectionId !== targetId
+          );
+        });
+      };
+
+      let activeSection = null;
+
+      const activateSection = (sectionId, { scroll = true } = {}) => {
+        if (!sectionId) return;
+        if (activeSection !== sectionId) {
+          setSectionVisibility(sectionId);
+          activeSection = sectionId;
+        }
+
+        requestSectionLoad(sectionId);
+
+        if (scroll) {
+          document.getElementById(sectionId)?.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }
+      };
+
+      document
+        .querySelectorAll("[data-section-target]")
+        .forEach((link) =>
+          link.addEventListener("click", (event) => {
+            event.preventDefault();
+            activateSection(link.dataset.sectionTarget);
+          })
+        );
+
+      sections
+        .filter((section) => section.dataset.sectionId !== "com4d")
+        .forEach((section) => section.classList.add("section-hidden"));
+
+      activateSection("com4d", { scroll: false });
+    </script>
+  </body>
+</html>
