@@ -1,555 +1,455 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Inferring Compositional 4D Scenes</title>
-    <style>
-      :root {
-        color-scheme: dark;
-        font-family: "Inter", "Helvetica Neue", Helvetica, Arial, sans-serif;
-        background: #05060a;
-        color: #f4f5f6;
-      }
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Inferring Compositional 4D Scenes without Ever Seeing One">
+  <meta name="keywords" content="3D, computer vision, graphics, 4D">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Inferring Compositional 4D Scenes without Ever Seeing One</title>
 
-      html {
-        scroll-behavior: smooth;
-      }
+  <script>
+    window.dataLayer = window.dataLayer || [];
 
-      body {
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        background: radial-gradient(circle at top, rgba(49, 65, 138, 0.3), transparent 65%),
-          #05060a;
-      }
+    function gtag() {
+      dataLayer.push(arguments);
+    }
 
-      .page {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 2.5rem 1.5rem 4rem;
-      }
+    gtag('js', new Date());
 
-      h1,
-      h2 {
-        font-weight: 650;
-        margin: 0 0 0.35em;
-      }
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
 
-      h1 {
-        font-size: clamp(2.1rem, 4vw, 2.85rem);
-        letter-spacing: -0.02em;
-      }
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
 
-      h2 {
-        font-size: clamp(1.4rem, 2.7vw, 1.85rem);
-      }
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
 
-      p {
-        margin: 0 0 1rem;
-        line-height: 1.6;
-        opacity: 0.92;
-      }
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
 
-      .hero {
-        text-align: center;
-        margin-bottom: 2.5rem;
-      }
-
-      .hero .subtitle {
-        margin: 0.4rem 0 1.25rem;
-        font-weight: 600;
-        letter-spacing: 0.02em;
-      }
-
-      .authors,
-      .affiliation {
-        margin: 0 0 0.6rem;
-        font-weight: 500;
-      }
-
-      .affiliation {
-        opacity: 0.85;
-      }
-
-      .hero-actions {
-        display: flex;
-        justify-content: center;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-      }
-
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.4rem;
-        padding: 0.85rem 1.4rem;
-        border-radius: 999px;
-        text-decoration: none;
-        font-weight: 650;
-        color: #0b0c10;
-        background: linear-gradient(135deg, #8cd5ff, #6cb8ff);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        box-shadow: 0 12px 30px rgba(108, 184, 255, 0.22);
-      }
-
-      .button[aria-disabled="true"] {
-        cursor: default;
-        opacity: 0.9;
-      }
-
-      .section-nav {
-        display: flex;
-        gap: 0.75rem;
-        justify-content: center;
-        margin: 1rem 0 0.5rem;
-        flex-wrap: wrap;
-      }
-
-      .section-nav a {
-        color: inherit;
-        text-decoration: none;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 999px;
-        padding: 0.7rem 1.35rem;
-        font-size: 1.02rem;
-        font-weight: 650;
-        transition: background 0.2s ease, color 0.2s ease;
-      }
-
-      .section-nav a:focus-visible,
-      .section-nav a:hover {
-        background: rgba(255, 255, 255, 0.14);
-        color: #fff;
-      }
-
-      section {
-        margin-top: 3rem;
-      }
-
-      section > p {
-        max-width: 60ch;
-      }
-
-      .card {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 18px;
-        padding: 1.2rem;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
-        backdrop-filter: blur(8px);
-      }
-
-      .media {
-        width: 100%;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        background: #000;
-      }
-
-      .tag {
-        display: inline-block;
-        margin-bottom: 0.65rem;
-        padding: 0.2rem 0.65rem;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.08);
-        font-size: 0.8rem;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-      }
-
-      .slider {
-        position: relative;
-        padding: 0 4.5rem;
-      }
-
-      .slides {
-        width: 100%;
-      }
-
-      .slide {
-        display: none;
-        width: 100%;
-      }
-
-      .slide.active {
-        display: block;
-      }
-
-      .slider-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 2;
-        background: rgba(255, 255, 255, 0.12);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 999px;
-        width: 44px;
-        height: 44px;
-        color: #fff;
-        font-size: 1.2rem;
-        cursor: pointer;
-        transition: background 0.2s ease;
-      }
-
-      .slider-btn:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-      }
-
-      .slider-btn:hover:not(:disabled),
-      .slider-btn:focus-visible:not(:disabled) {
-        background: rgba(255, 255, 255, 0.25);
-      }
-
-      .slider-btn:first-of-type {
-        left: 1rem;
-      }
-
-      .slider-btn:last-of-type {
-        right: 1rem;
-      }
-
-      .section-hidden {
-        display: none;
-      }
-
-      @media (max-width: 720px) {
-        .slider {
-          padding: 0 1.5rem;
-        }
-
-        .slider-btn:first-of-type {
-          left: 0;
-        }
-
-        .slider-btn:last-of-type {
-          right: 0;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="page">
-      <header class="hero">
-        <h1>Inferring Compositional 4D Scenes without Ever Seeing One</h1>
-        <p class="subtitle">Temporary Website -- New one Under Construction.</p>
-        <p class="authors">
-          Ahmet Berke Gökmen, Ajad Chattkuli, Luc Van Gool, Danda Pani Paudel
-        </p>
-        <p class="affiliation">INSAIT, Sofia University "Kliment Ohridski"</p>
-        <div class="hero-actions">
-          <a class="button" href="https://arxiv.org/abs/2512.05272">Paper</a>
-          <a class="button" href="https://github.com/insait-institute/COM4D">Code</a>
-        </div>
-      </header>
-
-      <nav class="section-nav" aria-label="Page sections">
-        <a href="#com4d" data-section-target="com4d">Compositional 4D</a>
-        <a href="#gifs4d" data-section-target="gifs4d">Single Object 4D</a>
-        <a href="#threeD" data-section-target="threeD">Compositional 3D</a>
-        <a href="#video" data-section-target="video">Video</a>
-      </nav>
-
-      <section id="com4d" data-section-id="com4d">
-        <h2>Compositional 4D GIFs</h2>
-        <p>Preview GIFs from the paper.</p>
-        <div class="slider">
-          <button class="slider-btn" id="com4d-prev" aria-label="Previous sample">
-            &#8592;
-          </button>
-          <div class="slides" id="com4d-slides"></div>
-          <button class="slider-btn" id="com4d-next" aria-label="Next sample">
-            &#8594;
-          </button>
-        </div>
-      </section>
-
-      <section id="gifs4d" data-section-id="gifs4d">
-        <h2>Single Object 4D</h2>
-        <p>Sample single-object 4D reconstructions shown as GIFs.</p>
-        <div class="slider">
-          <button class="slider-btn" id="gifs4d-prev" aria-label="Previous sample">
-            &#8592;
-          </button>
-          <div class="slides" id="gifs4d-slides"></div>
-          <button class="slider-btn" id="gifs4d-next" aria-label="Next sample">
-            &#8594;
-          </button>
-        </div>
-      </section>
-
-      <section id="threeD" data-section-id="threeD">
-        <h2>Compositional 3D GIFs</h2>
-        <p>GIF comparisons only.</p>
-        <div class="slider">
-          <button class="slider-btn" id="threeD-prev" aria-label="Previous sample">
-            &#8592;
-          </button>
-          <div class="slides" id="threeD-slides"></div>
-          <button class="slider-btn" id="threeD-next" aria-label="Next sample">
-            &#8594;
-          </button>
-        </div>
-      </section>
-
-      <section id="video" data-section-id="video">
-        <h2>Video</h2>
-        <p>Overview of the method.</p>
-        <article class="card">
-          <video
-            id="results-video"
-            class="media"
-            src="video.mp4"
-            autoplay
-            loop
-            muted
-            playsinline
-            controls
-          ></video>
-        </article>
-      </section>
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://berkegokmen1.github.io">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
     </div>
 
-    <script>
-      const com4dData = [
-        { gif: "com4d/dog_human_x/dog_human_x.gif" },
-        { gif: "com4d/living_room_old/living_room_old.gif" },
-        { gif: "com4d/office_sample/office_sample.gif" },
-        { gif: "com4d/toddler_ian/toddler_ian.gif" },
-        { gif: "com4d/camping/camping.gif" },
-        { gif: "com4d/cat/cat.gif" },
-      ];
+  </div>
+</nav>
 
-      const fourDGifData = [
-        { gif: "4dgifs_mv/doggieMN5_Crouchleft.gif" },
-        { gif: "4dgifs_mv/deerA4K_sleep.gif" },
-        { gif: "4dgifs_mv/ironman_BreakdanceFreezeVar4.gif" },
-        { gif: "4dgifs_mv/3d32db36ab6245f29fffb61483001f20.gif" },
-        { gif: "4dgifs_mv/1eca489fdb6445b19e9cb550d9ef6148.gif" },
-        { gif: "4dgifs_mv/7af0f723f1444ef399221c265d149be6.gif" },
-        { gif: "4dgifs_mv/8723c780d58b4e2ebb808c3781860f3f.gif" },
-      ];
 
-      const threeDData = [
-        {
-          gif: "3dgifs/00245__eb014623-6b94-4fb0-b33d-39773cb0cd8c__KidsRoom-77034/comparison.gif",
-        },
-        {
-          gif: "3dgifs/00100__e4d49144-ac70-482d-ac0a-607f68160dca__SecondBedroom-15120/comparison.gif",
-        },
-        {
-          gif: "3dgifs/00252__eb2abbb1-9a02-4614-aaad-d94a203d12f7__MasterBedroom-16104/comparison.gif",
-        },
-        {
-          gif: "3dgifs/00064__e2f3aa79-e130-445e-8773-b697ab77d9b8__MasterBedroom-45873/comparison.gif",
-        },
-        {
-          gif: "3dgifs/00180__e7ea961c-5f0d-437a-9cdc-4b4488f62675__SecondBedroom-18851/comparison.gif",
-        },
-        {
-          gif: "3dgifs/00116__e534fb8b-1a40-48a6-a895-07ea15c5e3fe__Bedroom-130367/comparison.gif",
-        },
-        {
-          gif: "3dgifs/00169__e76ebb28-f9f8-40d6-a1e6-5fa1420191fb__MasterBedroom-2303/comparison.gif",
-        },
-        {
-          gif: "3dgifs/00231__e9ebe917-5812-429a-9154-913dcacb49ff__SecondBedroom-33190/comparison.gif",
-        },
-      ];
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Inferring Compositional 4D Scenes without Ever Seeing One</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Ahmet Berke Gökmen,</span>
+            <span class="author-block">Ajad Chattkuli,</span>
+            <span class="author-block">Luc Van Gool,</span>
+            <span class="author-block">Danda Pani Paudel</span>
+          </div>
 
-      const createTag = (text) => {
-        const tag = document.createElement("span");
-        tag.className = "tag";
-        tag.textContent = text;
-        return tag;
-      };
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">INSAIT, Sofia University "Kliment Ohridski"</span>
+          </div>
 
-      const createCard = (label, mediaElement) => {
-        const card = document.createElement("article");
-        card.className = "card";
-        card.append(createTag(label), mediaElement);
-        return card;
-      };
+          <div class="is-size-5 publication-authors" style="margin-top: 0.75rem;">
+            <span class="author-block">
+              <img src="./static/logos/insait.png" alt="INSAIT logo" style="height: 60px;">
+            </span>
+            <span class="author-block">
+              <img src="./static/logos/sofiauni.jpg" alt="Sofia University logo" style="height: 60px;">
+            </span>
+          </div>
 
-      const createGifCard = ({ gif, label = "GIF", alt = "Sample gif" }) => {
-        const img = document.createElement("img");
-        img.className = "media";
-        img.src = gif;
-        img.alt = alt;
-        img.loading = "lazy";
-        return createCard(label, img);
-      };
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2512.05272"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2512.05272"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/insait-institute/COM4D"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#BibTeX"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-quote-right"></i>
+                  </span>
+                  <span>BibTeX</span>
+                </a>
+              </span>
+            </div>
 
-      const sectionLoadState = {
-        com4d: false,
-        gifs4d: false,
-        threeD: false,
-        video: false,
-      };
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-      const initializeSlider = (slides, prevBtn, nextBtn) => {
-        if (!slides.length) {
-          if (prevBtn) prevBtn.disabled = true;
-          if (nextBtn) nextBtn.disabled = true;
-          return;
-        }
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img loading="lazy" src="./static/images/teaser.png" alt="Teaser visualization" style="width: 100%; height: auto;">
+      <h2 class="subtitle has-text-centered">
+        Our method turns videos into compositional 4D scenes with explicit meshes.
+      </h2>
+    </div>
+  </div>
+</section>
 
-        let currentIndex = 0;
-        slides[currentIndex].classList.add("active");
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <div id="results-carousel" class="carousel results-carousel">
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/com4d/dog_human_x/dog_human_x.gif" alt="Dog and human scene GIF">
+          </figure>
+          <div style="position: relative;">
+            <model-viewer id="viewer-dog" class="glb-viewer" src="./static/com4d/dog_human_x/glb/dog_human_x_combined.glb"
+                          camera-controls auto-rotate shadow-intensity="0.5"
+                          style="width: 100%; height: 320px; background: #f5f5f5; border-radius: 12px;">
+            </model-viewer>
+            <button class="button is-small is-dark glb-fullscreen" data-target="viewer-dog" style="position: absolute; bottom: 10px; left: 10px;">
+              Fullscreen
+            </button>
+          </div>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/com4d/living_room_old/living_room_old.gif" alt="Living room scene GIF">
+          </figure>
+          <div style="position: relative;">
+            <model-viewer id="viewer-living-room" class="glb-viewer" src="./static/com4d/living_room_old/glb/living_room_old_combined.glb"
+                          camera-controls auto-rotate shadow-intensity="0.5"
+                          style="width: 100%; height: 320px; background: #f5f5f5; border-radius: 12px;">
+            </model-viewer>
+            <button class="button is-small is-dark glb-fullscreen" data-target="viewer-living-room" style="position: absolute; bottom: 10px; left: 10px;">
+              Fullscreen
+            </button>
+          </div>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/com4d/office_sample/office_sample.gif" alt="Office scene GIF">
+          </figure>
+          <div style="position: relative;">
+            <model-viewer id="viewer-office" class="glb-viewer" src="./static/com4d/office_sample/glb/office_sample_combined.glb"
+                          camera-controls auto-rotate shadow-intensity="0.5"
+                          style="width: 100%; height: 320px; background: #f5f5f5; border-radius: 12px;">
+            </model-viewer>
+            <button class="button is-small is-dark glb-fullscreen" data-target="viewer-office" style="position: absolute; bottom: 10px; left: 10px;">
+              Fullscreen
+            </button>
+          </div>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/com4d/camping/camping.gif" alt="Camping scene GIF">
+          </figure>
+          <div style="position: relative;">
+            <model-viewer id="viewer-camping" class="glb-viewer" src="./static/com4d/camping/glb/camping_combined.glb"
+                          camera-controls auto-rotate shadow-intensity="0.5"
+                          style="width: 100%; height: 320px; background: #f5f5f5; border-radius: 12px;">
+            </model-viewer>
+            <button class="button is-small is-dark glb-fullscreen" data-target="viewer-camping" style="position: absolute; bottom: 10px; left: 10px;">
+              Fullscreen
+            </button>
+          </div>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/com4d/cat/cat.gif" alt="Cat scene GIF">
+          </figure>
+          <div style="position: relative;">
+            <model-viewer id="viewer-cat" class="glb-viewer" src="./static/com4d/cat/glb/cat_combined.glb"
+                          camera-controls auto-rotate shadow-intensity="0.5"
+                          style="width: 100%; height: 320px; background: #f5f5f5; border-radius: 12px;">
+            </model-viewer>
+            <button class="button is-small is-dark glb-fullscreen" data-target="viewer-cat" style="position: absolute; bottom: 10px; left: 10px;">
+              Fullscreen
+            </button>
+          </div>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/com4d/toddler_ian/toddler_ian.gif" alt="Toddler scene GIF">
+          </figure>
+          <div style="position: relative;">
+            <model-viewer id="viewer-toddler" class="glb-viewer" src="./static/com4d/toddler_ian/glb/toddler_ian_combined.glb"
+                          camera-controls auto-rotate shadow-intensity="0.5"
+                          style="width: 100%; height: 320px; background: #f5f5f5; border-radius: 12px;">
+            </model-viewer>
+            <button class="button is-small is-dark glb-fullscreen" data-target="viewer-toddler" style="position: absolute; bottom: 10px; left: 10px;">
+              Fullscreen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        const move = (direction) => {
-          slides[currentIndex].classList.remove("active");
-          currentIndex = (currentIndex + direction + slides.length) % slides.length;
-          slides[currentIndex].classList.add("active");
-        };
 
-        if (prevBtn) {
-          prevBtn.addEventListener("click", () => move(-1));
-        }
-        if (nextBtn) {
-          nextBtn.addEventListener("click", () => move(1));
-        }
-      };
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Scenes in the real world are often composed of several static and dynamic objects. Capturing their 4-dimensional structures, composition and spatio-temporal configuration in-the-wild, though extremely interesting, is equally hard. Therefore, existing works often focus on one object at a time, while relying on some category-specific parametric shape model for dynamic objects. This can lead to inconsistent scene configurations, in addition to being limited to the modeled object categories. We propose COM4D (Compositional 4D), a method that consistently and jointly predicts the structure and spatio-temporal configuration of 4D/3D objects using only static multi-object or dynamic single object supervision. We achieve this by a carefully designed training of spatial and temporal attentions on 2D video input. The training is disentangled into learning from object compositions on the one hand, and single object dynamics throughout the video on the other, thus completely avoiding reliance on 4D compositional training data. At inference time, our proposed attention mixing mechanism combines these independently learned attentions, without requiring any 4D composition examples. By alternating between spatial and temporal reasoning, COM4D reconstructs complete and persistent 4D scenes with multiple interacting objects directly from monocular videos. Furthermore, COM4D provides state-of-the-art results in existing separate problems of 4D object and composed 3D reconstruction despite being purely data-driven.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!-- Idea illustration. -->
+    <div class="columns is-centered">
+      <div class="column is-four-fifths has-text-centered">
+        <h3 class="title is-3">Idea</h3>
+        <figure class="image" style="margin: 0 auto;">
+          <img src="./static/images/method/idea.png" alt="Method overview illustration" style="width: 100%; height: auto;">
+        </figure>
+        <p class="has-text-justified" style="margin: 0.75rem auto 0;">
+          We assume scenes can be factored into static and dynamic components; separate priors for each guide compositional 4D reconstruction and keep the learned representation well-behaved even without fully observed 4D supervision.
+        </p>
+      </div>
+    </div>
+    <!--/ Idea illustration. -->
+    <!--/ Abstract. -->
+  </div>
+</section>
 
-      const com4dSlidesContainer = document.querySelector("#com4d-slides");
-      const com4dPrevBtn = document.querySelector("#com4d-prev");
-      const com4dNextBtn = document.querySelector("#com4d-next");
+<section class="hero is-light is-small">
+  <div class="hero-body">
+    <div class="container">
+      <h2 class="title is-2 has-text-centered">Additional Results</h2>
+      <h3 class="title is-4 has-text-centered">Single Object 4D</h3>
+      <div id="four-d-gif-carousel" class="carousel results-carousel">
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/4dgifs_mv/1eca489fdb6445b19e9cb550d9ef6148.gif" alt="4D GIF sample 1">
+          </figure>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/4dgifs_mv/3d32db36ab6245f29fffb61483001f20.gif" alt="4D GIF sample 2">
+          </figure>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/4dgifs_mv/7af0f723f1444ef399221c265d149be6.gif" alt="4D GIF sample 3">
+          </figure>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/4dgifs_mv/8723c780d58b4e2ebb808c3781860f3f.gif" alt="4D GIF sample 4">
+          </figure>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/4dgifs_mv/deerA4K_sleep.gif" alt="4D GIF sample deer">
+          </figure>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/4dgifs_mv/doggieMN5_Crouchleft.gif" alt="4D GIF sample dog">
+          </figure>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img loading="lazy" src="./static/4dgifs_mv/ironman_BreakdanceFreezeVar4.gif" alt="4D GIF sample ironman">
+          </figure>
+        </div>
+      </div>
 
-      const gifs4dSlidesContainer = document.querySelector("#gifs4d-slides");
-      const gifs4dPrevBtn = document.querySelector("#gifs4d-prev");
-      const gifs4dNextBtn = document.querySelector("#gifs4d-next");
+      <h3 class="title is-4 has-text-centered" style="margin-top: 2rem;">Static 3D Compositional</h3>
+      <div id="static-3d-carousel" class="carousel results-carousel">
+        <div class="item">
+          <figure class="image">
+            <img src="./static/3dgifs_glbs/00100__e4d49144-ac70-482d-ac0a-607f68160dca__SecondBedroom-15120/comparison.gif" alt="Static 3D comparison: SecondBedroom-15120">
+          </figure>
+          <div class="columns is-variable is-2 is-multiline">
+            <div class="column is-4 has-text-centered">
+              <p class="has-text-weight-semibold">Ours</p>
+              <model-viewer src="./static/3dgifs_glbs/00100__e4d49144-ac70-482d-ac0a-607f68160dca__SecondBedroom-15120/ours/scene.glb"
+                            camera-controls shadow-intensity="0.5"
+                            style="width: 100%; height: 260px; background: #f5f5f5; border-radius: 12px;">
+              </model-viewer>
+            </div>
+            <div class="column is-4 has-text-centered">
+              <p class="has-text-weight-semibold">PartCrafter</p>
+              <model-viewer src="./static/3dgifs_glbs/00100__e4d49144-ac70-482d-ac0a-607f68160dca__SecondBedroom-15120/partcrafter/scene.glb"
+                            camera-controls shadow-intensity="0.5"
+                            style="width: 100%; height: 260px; background: #f5f5f5; border-radius: 12px;">
+              </model-viewer>
+            </div>
+            <div class="column is-4 has-text-centered">
+              <p class="has-text-weight-semibold">MIDI</p>
+              <model-viewer src="./static/3dgifs_glbs/00100__e4d49144-ac70-482d-ac0a-607f68160dca__SecondBedroom-15120/midi/scene.glb"
+                            camera-controls shadow-intensity="0.5"
+                            style="width: 100%; height: 260px; background: #f5f5f5; border-radius: 12px;">
+              </model-viewer>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img src="./static/3dgifs_glbs/00245__eb014623-6b94-4fb0-b33d-39773cb0cd8c__KidsRoom-77034/comparison.gif" alt="Static 3D comparison: KidsRoom-77034">
+          </figure>
+          <div class="columns is-variable is-2 is-multiline">
+            <div class="column is-4 has-text-centered">
+              <p class="has-text-weight-semibold">Ours</p>
+              <model-viewer src="./static/3dgifs_glbs/00245__eb014623-6b94-4fb0-b33d-39773cb0cd8c__KidsRoom-77034/ours/scene.glb"
+                            camera-controls shadow-intensity="0.5"
+                            style="width: 100%; height: 260px; background: #f5f5f5; border-radius: 12px;">
+              </model-viewer>
+            </div>
+            <div class="column is-4 has-text-centered">
+              <p class="has-text-weight-semibold">PartCrafter</p>
+              <model-viewer src="./static/3dgifs_glbs/00245__eb014623-6b94-4fb0-b33d-39773cb0cd8c__KidsRoom-77034/partcrafter/scene.glb"
+                            camera-controls shadow-intensity="0.5"
+                            style="width: 100%; height: 260px; background: #f5f5f5; border-radius: 12px;">
+              </model-viewer>
+            </div>
+            <div class="column is-4 has-text-centered">
+              <p class="has-text-weight-semibold">MIDI</p>
+              <model-viewer src="./static/3dgifs_glbs/00245__eb014623-6b94-4fb0-b33d-39773cb0cd8c__KidsRoom-77034/midi/scene.glb"
+                            camera-controls shadow-intensity="0.5"
+                            style="width: 100%; height: 260px; background: #f5f5f5; border-radius: 12px;">
+              </model-viewer>
+            </div>
+          </div>
+        </div>
+        <div class="item">
+          <figure class="image">
+            <img src="./static/3dgifs_glbs/00252__eb2abbb1-9a02-4614-aaad-d94a203d12f7__MasterBedroom-16104/comparison.gif" alt="Static 3D comparison: MasterBedroom-16104">
+          </figure>
+          <div class="columns is-variable is-2 is-multiline">
+            <div class="column is-4 has-text-centered">
+              <p class="has-text-weight-semibold">Ours</p>
+              <model-viewer src="./static/3dgifs_glbs/00252__eb2abbb1-9a02-4614-aaad-d94a203d12f7__MasterBedroom-16104/ours/scene.glb"
+                            camera-controls shadow-intensity="0.5"
+                            style="width: 100%; height: 260px; background: #f5f5f5; border-radius: 12px;">
+              </model-viewer>
+            </div>
+            <div class="column is-4 has-text-centered">
+              <p class="has-text-weight-semibold">PartCrafter</p>
+              <model-viewer src="./static/3dgifs_glbs/00252__eb2abbb1-9a02-4614-aaad-d94a203d12f7__MasterBedroom-16104/partcrafter/scene.glb"
+                            camera-controls shadow-intensity="0.5"
+                            style="width: 100%; height: 260px; background: #f5f5f5; border-radius: 12px;">
+              </model-viewer>
+            </div>
+            <div class="column is-4 has-text-centered">
+              <p class="has-text-weight-semibold">MIDI</p>
+              <model-viewer src="./static/3dgifs_glbs/00252__eb2abbb1-9a02-4614-aaad-d94a203d12f7__MasterBedroom-16104/midi/scene.glb"
+                            camera-controls shadow-intensity="0.5"
+                            style="width: 100%; height: 260px; background: #f5f5f5; border-radius: 12px;">
+              </model-viewer>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-      const threeDSlidesContainer = document.querySelector("#threeD-slides");
-      const threeDPrevBtn = document.querySelector("#threeD-prev");
-      const threeDNextBtn = document.querySelector("#threeD-next");
 
-      const resultsVideo = document.querySelector("#results-video");
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@misc{gokmen2025inferringcompositional4dscenes,
+      title={Inferring Compositional 4D Scenes without Ever Seeing One}, 
+      author={Ahmet Berke Gokmen and Ajad Chhatkuli and Luc Van Gool and Danda Pani Paudel},
+      year={2025},
+      eprint={2512.05272},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2512.05272}, 
+}</code></pre>
+  </div>
+</section>
 
-      const loadCom4dSection = () => {
-        if (sectionLoadState.com4d) return;
-        sectionLoadState.com4d = true;
 
-        const slides = com4dData.map((item) => {
-          const gifCard = createGifCard({
-            ...item,
-            label: "4D GIF",
-            alt: "Compositional 4D sample gif",
-          });
-          gifCard.classList.add("slide");
-          com4dSlidesContainer.append(gifCard);
-          return gifCard;
-        });
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="https://arxiv.org/abs/2512.05272">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/insait-institute/COM4D" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This means you are free to borrow the <a
+              href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website,
+            we just ask that you link back to this page in the footer.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
 
-        initializeSlider(slides, com4dPrevBtn, com4dNextBtn);
-      };
-
-      const loadSingle4dSection = () => {
-        if (sectionLoadState.gifs4d) return;
-        sectionLoadState.gifs4d = true;
-
-        const slides = fourDGifData.map((gifEntry) => {
-          const gifCard = createGifCard({ ...gifEntry, label: "4D GIF" });
-          gifCard.classList.add("slide");
-          gifs4dSlidesContainer.append(gifCard);
-          return gifCard;
-        });
-
-        initializeSlider(slides, gifs4dPrevBtn, gifs4dNextBtn);
-      };
-
-      const loadThreeDSection = () => {
-        if (sectionLoadState.threeD) return;
-        sectionLoadState.threeD = true;
-
-        const slides = threeDData.map((scene) => {
-          const block = document.createElement("article");
-          block.className = "card slide";
-          block.append(createTag("3D GIF"));
-
-          const gif = document.createElement("img");
-          gif.className = "media";
-          gif.src = scene.gif;
-          gif.alt = "3D comparison gif";
-          gif.loading = "lazy";
-          block.append(gif);
-
-          threeDSlidesContainer.append(block);
-          return block;
-        });
-
-        initializeSlider(slides, threeDPrevBtn, threeDNextBtn);
-      };
-
-      const loadVideoSection = () => {
-        if (sectionLoadState.video) return;
-        sectionLoadState.video = true;
-        if (resultsVideo) {
-          resultsVideo.play().catch(() => {});
-        }
-      };
-
-      const sectionLoaders = {
-        com4d: loadCom4dSection,
-        gifs4d: loadSingle4dSection,
-        threeD: loadThreeDSection,
-        video: loadVideoSection,
-      };
-
-      const requestSectionLoad = (sectionId) => {
-        const loader = sectionLoaders[sectionId];
-        if (loader) {
-          loader();
-        }
-      };
-
-      const sections = Array.from(
-        document.querySelectorAll("section[data-section-id]")
-      );
-
-      const setSectionVisibility = (targetId) => {
-        sections.forEach((section) => {
-          section.classList.toggle(
-            "section-hidden",
-            section.dataset.sectionId !== targetId
-          );
-        });
-      };
-
-      let activeSection = null;
-
-      const activateSection = (sectionId, { scroll = true } = {}) => {
-        if (!sectionId) return;
-        if (activeSection !== sectionId) {
-          setSectionVisibility(sectionId);
-          activeSection = sectionId;
-        }
-
-        requestSectionLoad(sectionId);
-
-        if (scroll) {
-          document.getElementById(sectionId)?.scrollIntoView({
-            behavior: "smooth",
-            block: "start",
-          });
-        }
-      };
-
-      document
-        .querySelectorAll("[data-section-target]")
-        .forEach((link) =>
-          link.addEventListener("click", (event) => {
-            event.preventDefault();
-            activateSection(link.dataset.sectionTarget);
-          })
-        );
-
-      sections
-        .filter((section) => section.dataset.sectionId !== "com4d")
-        .forEach((section) => section.classList.add("section-hidden"));
-
-      activateSection("com4d", { scroll: false });
-    </script>
-  </body>
+</body>
 </html>
