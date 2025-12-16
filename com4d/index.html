@@ -118,6 +118,15 @@
                 </a>
               </span>
               <span class="link-block">
+                <a id="video-modal-open"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-play-circle"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span>
+              <span class="link-block">
                 <a href="#BibTeX"
                    class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
@@ -145,6 +154,21 @@
     </div>
   </div>
 </section>
+
+<!-- Video modal -->
+<div id="video-modal" class="modal">
+  <div class="modal-background"></div>
+  <div class="modal-content" style="max-width: 960px;">
+    <div class="box">
+      <video id="overlay-video" controls style="width: 100%; height: auto;" preload="none">
+        <source src="./static/videos/video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </div>
+  <button class="modal-close is-large" aria-label="close"></button>
+</div>
+<!--/ Video modal -->
 
 <section class="hero is-light is-small">
   <div class="hero-body">

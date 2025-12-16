@@ -85,6 +85,26 @@ $(document).ready(function() {
       }
     });
 
+    // Video modal
+    $('#video-modal-open').on('click', function(e) {
+      e.preventDefault();
+      var modal = $('#video-modal');
+      modal.addClass('is-active');
+      var video = document.getElementById('overlay-video');
+      if (video) {
+        video.play();
+      }
+    });
+    $('#video-modal .modal-close, #video-modal .modal-background').on('click', function() {
+      var modal = $('#video-modal');
+      modal.removeClass('is-active');
+      var video = document.getElementById('overlay-video');
+      if (video) {
+        video.pause();
+        video.currentTime = 0;
+      }
+    });
+
     // Lazy load images and model-viewers using IntersectionObserver
     if ('IntersectionObserver' in window) {
       const imgObserver = new IntersectionObserver((entries, observer) => {
