@@ -17,6 +17,7 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
     <script src="https://www.w3counter.com/tracker.js?id=156379"></script>
     <header class="site-header">
       <div class="site-header__inner">
@@ -277,6 +278,120 @@
         <span>© <script>document.write(new Date().getFullYear());</script> A. Berke Gökmen.</span>
       </div>
     </footer>
+
+    <script>
+      (() => {
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas?.getContext('2d');
+        if (!canvas || !ctx) return;
+
+        const particles = [];
+        const particleCount = 520;
+        const pointer = {
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2,
+          lastMove: performance.now()
+        };
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+
+        const resize = () => {
+          const dpr = window.devicePixelRatio || 1;
+          width = window.innerWidth;
+          height = window.innerHeight;
+          canvas.width = width * dpr;
+          canvas.height = height * dpr;
+          canvas.style.width = '100%';
+          canvas.style.height = '100%';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+
+        const makeParticle = () => ({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.7,
+          vy: (Math.random() - 0.5) * 0.7,
+          size: 1.2 + Math.random() * 2.6,
+          tone: 205 + Math.random() * 28
+        });
+
+        const init = () => {
+          resize();
+          for (let i = 0; i < particleCount; i += 1) {
+            particles.push(makeParticle());
+          }
+          requestAnimationFrame(tick);
+        };
+
+        window.addEventListener('resize', resize);
+        window.addEventListener('pointermove', (event) => {
+          pointer.x = event.clientX;
+          pointer.y = event.clientY;
+          pointer.lastMove = performance.now();
+        });
+
+        const tick = () => {
+          const now = performance.now();
+          const moving = now - pointer.lastMove < 260;
+          const avoidRadius = 260;
+          const returnRadius = 220;
+          const jitter = moving ? 0.08 : 0.06;
+          const repel = moving ? 0.0022 : 0.0006;
+          const attract = moving ? 0.0008 : 0.0038;
+          const maxSpeed = moving ? 6.2 : 3.1;
+
+          ctx.clearRect(0, 0, width, height);
+
+          for (const particle of particles) {
+            const dx = pointer.x - particle.x;
+            const dy = pointer.y - particle.y;
+            const dist = Math.hypot(dx, dy) || 1;
+
+            if (moving && dist < avoidRadius) {
+              const push = 1 - dist / avoidRadius;
+              particle.vx -= dx * repel * push;
+              particle.vy -= dy * repel * push;
+            }
+
+            if (!moving && dist < returnRadius) {
+              const pull = 1 - dist / returnRadius;
+              particle.vx += dx * attract * pull;
+              particle.vy += dy * attract * pull;
+            }
+
+            particle.vx += (Math.random() - 0.5) * jitter;
+            particle.vy += (Math.random() - 0.5) * jitter;
+
+            particle.vx *= 0.94;
+            particle.vy *= 0.94;
+
+            const speed = Math.hypot(particle.vx, particle.vy);
+            if (speed > maxSpeed) {
+              const scale = maxSpeed / speed;
+              particle.vx *= scale;
+              particle.vy *= scale;
+            }
+
+            particle.x += particle.vx;
+            particle.y += particle.vy;
+
+            if (particle.x < 0) particle.x = width;
+            if (particle.x > width) particle.x = 0;
+            if (particle.y < 0) particle.y = height;
+            if (particle.y > height) particle.y = 0;
+
+            ctx.beginPath();
+            ctx.fillStyle = `hsla(${particle.tone}, 85%, 56%, 0.32)`;
+            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          requestAnimationFrame(tick);
+        };
+
+        init();
+      })();
+    </script>
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
