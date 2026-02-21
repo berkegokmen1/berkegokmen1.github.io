@@ -323,6 +323,10 @@ main {
   text-decoration: none;
 }
 
+[data-venue="cvpr"] .pub-badge {
+  background: linear-gradient(135deg, #3b82f6, #1f2937);
+}
+
 [data-venue="neurips"] .pub-badge {
   background: linear-gradient(135deg, #0b2c8f, #274bce);
 }
