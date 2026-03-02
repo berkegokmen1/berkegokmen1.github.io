@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>World Map · A. Berke Gökmen</title>
+    <meta name="description" content="Interactive world map with country borders and US state divisions." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+    <style>
+      /* ── Theme tokens (matching main site) ── */
+      :root {
+        --bg: #ffffff;
+        --surface: #f6f7fb;
+        --text: #14151b;
+        --muted: #5f626e;
+        --accent: #1c5cff;
+        --accent-soft: rgba(28, 92, 255, 0.12);
+        --border: #e1e4ed;
+        --shadow: 0 22px 48px rgba(17, 23, 52, 0.08);
+        --card-bg: #ffffff;
+        --footer-bg: #f9fafc;
+        --header-bg: rgba(255, 255, 255, 0.92);
+        --max-width: 980px;
+        --radius: 18px;
+
+        /* Map-specific */
+        --land: #e8ecf4;
+        --land-hover: #5b8aff;
+        --visited: #3f72fa;
+        --visited-us: #2d61e6;
+        --unvisited-us: #a7c0ff;
+        --visited-hover: #1e4bd2;
+        --country-stroke: #c5cad8;
+        --state-stroke: #d5d9e3;
+        --ocean: #f0f4fa;
+        --graticule: #dde1ea;
+        color-scheme: light;
+      }
+
+      html.dark {
+        --bg: #0f1117;
+        --surface: #1a1d28;
+        --text: #e4e6ee;
+        --muted: #9ca0af;
+        --accent: #5b8aff;
+        --accent-soft: rgba(91, 138, 255, 0.15);
+        --border: #2a2d3a;
+        --shadow: 0 22px 48px rgba(0, 0, 0, 0.32);
+        --card-bg: #181b24;
+        --footer-bg: #13151e;
+        --header-bg: rgba(15, 17, 23, 0.92);
+
+        --land: #232738;
+        --land-hover: #5b8aff;
+        --visited: #3b60c4;
+        --visited-us: #2f51a8;
+        --unvisited-us: #25396b;
+        --visited-hover: #213f8c;
+        --country-stroke: #3a3f52;
+        --state-stroke: #2e3344;
+        --ocean: #14161f;
+        --graticule: #1e2130;
+        color-scheme: dark;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        height: 100vh;
+      }
+
+      a {
+        color: var(--accent);
+        text-decoration: none;
+      }
+      a:hover,
+      a:focus-visible {
+        text-decoration: underline;
+      }
+
+      /* ── Header ── */
+      .site-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        backdrop-filter: blur(16px);
+        background: var(--header-bg);
+        border-bottom: 1px solid var(--border);
+      }
+
+      .site-header__inner {
+        margin: 0 auto;
+        max-width: var(--max-width);
+        padding: 1.2rem 1.5rem;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .brand {
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 1.35rem;
+        font-size: 0.96rem;
+        font-weight: 500;
+      }
+
+      .nav-links a {
+        color: var(--muted);
+        padding-bottom: 0.22rem;
+        border-bottom: 2px solid transparent;
+        transition: border-color 0.2s ease, color 0.2s ease;
+      }
+      .nav-links a:hover,
+      .nav-links a:focus-visible {
+        color: var(--accent);
+        border-color: var(--accent);
+        text-decoration: none;
+      }
+      .nav-links a.active {
+        color: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .theme-toggle {
+        justify-self: end;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        background: var(--surface);
+        color: var(--muted);
+        cursor: pointer;
+        transition: background 0.25s ease, color 0.25s ease,
+          border-color 0.25s ease, transform 0.2s ease;
+      }
+      .theme-toggle:hover {
+        color: var(--accent);
+        border-color: var(--accent);
+        transform: scale(1.08);
+      }
+      .theme-toggle svg {
+        width: 20px;
+        height: 20px;
+        transition: opacity 0.25s ease, transform 0.3s ease;
+      }
+      .theme-toggle .icon-sun {
+        display: block;
+      }
+      .theme-toggle .icon-moon {
+        display: none;
+      }
+      html.dark .theme-toggle .icon-sun {
+        display: none;
+      }
+      html.dark .theme-toggle .icon-moon {
+        display: block;
+      }
+
+      /* ── Map container ── */
+      .map-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--ocean);
+        overflow: hidden;
+      }
+
+      #map-svg {
+        width: 100%;
+        height: 100%;
+        cursor: grab;
+      }
+      #map-svg:active {
+        cursor: grabbing;
+      }
+
+      /* ── Tooltip ── */
+      .tooltip {
+        position: fixed;
+        pointer-events: none;
+        z-index: 200;
+        background: var(--card-bg);
+        color: var(--text);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 0.65rem 0.95rem;
+        font-size: 0.88rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.14);
+        opacity: 0;
+        transition: opacity 0.15s ease;
+        backdrop-filter: blur(12px);
+      }
+      .tooltip.visible {
+        opacity: 1;
+      }
+      .tooltip-title {
+        margin-bottom: 0.2rem;
+        display: block;
+      }
+      .tooltip-institutions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        margin-top: 0.5rem;
+        border-top: 1px solid var(--border);
+        padding-top: 0.5rem;
+      }
+      .tooltip-inst {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.82rem;
+        font-weight: 500;
+        color: var(--muted);
+      }
+      .tooltip-inst img {
+        height: 18px;
+        width: auto;
+        border-radius: 2px;
+      }
+
+      /* ── Map controls ── */
+      .map-controls {
+        position: fixed;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        z-index: 150;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .map-controls button {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+        color: var(--text);
+        font-size: 1.25rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        transition: background 0.2s, transform 0.15s, border-color 0.2s;
+        backdrop-filter: blur(12px);
+      }
+      .map-controls button:hover {
+        border-color: var(--accent);
+        transform: scale(1.08);
+      }
+
+      /* ── Legend ── */
+      .map-legend {
+        position: fixed;
+        bottom: 1.5rem;
+        left: 1.5rem;
+        z-index: 150;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 0.8rem 1.1rem;
+        font-size: 0.82rem;
+        color: var(--muted);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        backdrop-filter: blur(12px);
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+      }
+      .legend-items {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .legend-desc {
+        font-size: 0.78rem;
+        line-height: 1.4;
+        max-width: 250px;
+        border-top: 1px solid var(--border);
+        padding-top: 0.6rem;
+      }
+      .map-legend .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+      }
+      .map-legend .dot.land {
+        background: var(--land);
+        border: 1px solid var(--country-stroke);
+      }
+      .map-legend .dot.us {
+        background: var(--land);
+        border: 1px dashed var(--state-stroke);
+      }
+
+      /* ── Loading ── */
+      .loading-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 300;
+        background: var(--bg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        transition: opacity 0.5s ease;
+      }
+      .loading-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .spinner {
+        width: 36px;
+        height: 36px;
+        border: 3px solid var(--border);
+        border-top-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .loading-text {
+        font-size: 0.92rem;
+        font-weight: 500;
+        color: var(--muted);
+      }
+
+      /* Paths */
+      .country-path {
+        fill: var(--land);
+        stroke: var(--country-stroke);
+        stroke-width: 0.6;
+        transition: fill 0.18s ease;
+        cursor: pointer;
+      }
+
+      .state-path {
+        fill: var(--land);
+        stroke: var(--state-stroke);
+        stroke-width: 0.35;
+        stroke-dasharray: 2 1;
+        transition: fill 0.18s ease;
+        cursor: pointer;
+      }
+
+      .graticule-path {
+        fill: none;
+        stroke: var(--graticule);
+        stroke-width: 0.4;
+      }
+
+      .sphere-path {
+        fill: var(--ocean);
+        stroke: var(--border);
+        stroke-width: 0.5;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 600px) {
+        .site-header__inner {
+          grid-template-columns: 1fr auto;
+          gap: 0.5rem;
+        }
+        .nav-links {
+          grid-column: 1 / -1;
+          grid-row: 2;
+          width: 100%;
+          justify-content: flex-start;
+        }
+        .theme-toggle {
+          grid-column: 2;
+          grid-row: 1;
+        }
+        .map-legend {
+          bottom: 0.8rem;
+          left: 0.8rem;
+          font-size: 0.75rem;
+          padding: 0.5rem 0.8rem;
+        }
+        .map-controls {
+          bottom: 0.8rem;
+          right: 0.8rem;
+        }
+        .map-controls button {
+          width: 36px;
+          height: 36px;
+          font-size: 1.1rem;
+          border-radius: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Loading -->
+    <div class="loading-overlay" id="loading">
+      <div class="spinner"></div>
+      <span class="loading-text">Loading map data…</span>
+    </div>
+
+    <!-- Header -->
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="/">A. Berke Gökmen</a>
+        <nav class="nav-links">
+          <a href="/">About</a>
+          <a href="/#publications">Publications</a>
+          <a href="/#experience">Experience</a>
+          <a href="/map" class="active">Map</a>
+        </nav>
+        <button
+          id="theme-toggle"
+          class="theme-toggle"
+          aria-label="Toggle dark mode"
+          title="Toggle dark mode"
+        >
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="5" />
+            <path
+              d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              fill="none"
+            />
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"
+              fill="currentColor"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Tooltip -->
+    <div class="tooltip" id="tooltip"></div>
+
+    <!-- Map -->
+    <div class="map-wrapper">
+      <svg id="map-svg"></svg>
+    </div>
+
+    <!-- Controls -->
+    <div class="map-controls">
+      <button id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
+      <button id="zoom-out" aria-label="Zoom out" title="Zoom out">−</button>
+      <button id="zoom-reset" aria-label="Reset zoom" title="Reset zoom">⟳</button>
+    </div>
+
+    <!-- Legend -->
+    <div class="map-legend">
+      <div class="legend-items">
+        <span class="dot land"></span> Countries
+        <span class="dot us"></span> US States
+      </div>
+      <div class="legend-desc">
+        Places I've had the chance to travel for conferences, schools, or work.
+      </div>
+    </div>
+
+    <script>
+      /* ── Theme toggle ── */
+      (() => {
+        const toggle = document.getElementById("theme-toggle");
+        const root = document.documentElement;
+        const saved = localStorage.getItem("theme");
+        if (saved === "dark") root.classList.add("dark");
+
+        toggle.addEventListener("click", () => {
+          root.classList.toggle("dark");
+          const isDark = root.classList.contains("dark");
+          localStorage.setItem("theme", isDark ? "dark" : "light");
+        });
+      })();
+
+      /* ── Map ── */
+      (async () => {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        const svg = d3
+          .select("#map-svg")
+          .attr("viewBox", [0, 0, width, height]);
+
+        const projection = d3
+          .geoNaturalEarth1()
+          .scale(width / 5.6)
+          .translate([width / 2, height / 2]);
+
+        const path = d3.geoPath(projection);
+
+        const g = svg.append("g");
+
+        // Sphere (ocean background)
+        g.append("path")
+          .datum({ type: "Sphere" })
+          .attr("class", "sphere-path")
+          .attr("d", path);
+
+        // Graticule
+        const graticule = d3.geoGraticule10();
+        g.append("path")
+          .datum(graticule)
+          .attr("class", "graticule-path")
+          .attr("d", path);
+
+// Removed duplicate tooltip variables
+
+        // Load TopoJSON data
+        const [worldTopo, usTopo] = await Promise.all([
+          d3.json(
+            "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
+          ),
+          d3.json("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json"),
+        ]);
+
+        const countries = topojson.feature(
+          worldTopo,
+          worldTopo.objects.countries
+        );
+        const states = topojson.feature(usTopo, usTopo.objects.states);
+
+        // Country name lookup — ISO 3166-1 numeric codes
+        const countryNames = new Map([
+          ["004","Afghanistan"],["008","Albania"],["012","Algeria"],["016","American Samoa"],
+          ["020","Andorra"],["024","Angola"],["028","Antigua and Barbuda"],["032","Argentina"],
+          ["036","Australia"],["040","Austria"],["031","Azerbaijan"],["044","Bahamas"],
+          ["048","Bahrain"],["050","Bangladesh"],["051","Armenia"],["052","Barbados"],
+          ["056","Belgium"],["060","Bermuda"],["064","Bhutan"],["068","Bolivia"],
+          ["070","Bosnia and Herzegovina"],["072","Botswana"],["076","Brazil"],
+          ["084","Belize"],["090","Solomon Islands"],["096","Brunei"],["100","Bulgaria"],
+          ["104","Myanmar"],["108","Burundi"],["112","Belarus"],["116","Cambodia"],
+          ["120","Cameroon"],["124","Canada"],["132","Cape Verde"],["140","Central African Republic"],
+          ["144","Sri Lanka"],["148","Chad"],["152","Chile"],["156","China"],
+          ["158","Taiwan"],["170","Colombia"],["174","Comoros"],["178","Congo"],
+          ["180","Dem. Rep. Congo"],["184","Cook Islands"],["188","Costa Rica"],
+          ["191","Croatia"],["192","Cuba"],["196","Cyprus"],["203","Czech Republic"],
+          ["204","Benin"],["208","Denmark"],["212","Dominica"],["214","Dominican Republic"],
+          ["218","Ecuador"],["222","El Salvador"],["226","Equatorial Guinea"],
+          ["231","Ethiopia"],["232","Eritrea"],["233","Estonia"],["234","Faroe Islands"],
+          ["238","Falkland Islands"],["242","Fiji"],["246","Finland"],["250","France"],
+          ["254","French Guiana"],["258","French Polynesia"],["262","Djibouti"],
+          ["266","Gabon"],["268","Georgia"],["270","Gambia"],["275","Palestine"],
+          ["276","Germany"],["288","Ghana"],["296","Kiribati"],["300","Greece"],
+          ["304","Greenland"],["308","Grenada"],["312","Guadeloupe"],["316","Guam"],
+          ["320","Guatemala"],["324","Guinea"],["328","Guyana"],["332","Haiti"],
+          ["340","Honduras"],["344","Hong Kong"],["348","Hungary"],["352","Iceland"],
+          ["356","India"],["360","Indonesia"],["364","Iran"],["368","Iraq"],
+          ["372","Ireland"],["376","Israel"],["380","Italy"],["384","Côte d'Ivoire"],
+          ["388","Jamaica"],["392","Japan"],["398","Kazakhstan"],["400","Jordan"],
+          ["404","Kenya"],["408","North Korea"],["410","South Korea"],["414","Kuwait"],
+          ["417","Kyrgyzstan"],["418","Laos"],["422","Lebanon"],["426","Lesotho"],
+          ["428","Latvia"],["430","Liberia"],["434","Libya"],["438","Liechtenstein"],
+          ["440","Lithuania"],["442","Luxembourg"],["450","Madagascar"],["454","Malawi"],
+          ["458","Malaysia"],["462","Maldives"],["466","Mali"],["470","Malta"],
+          ["474","Martinique"],["478","Mauritania"],["480","Mauritius"],["484","Mexico"],
+          ["492","Monaco"],["496","Mongolia"],["498","Moldova"],["499","Montenegro"],
+          ["504","Morocco"],["508","Mozambique"],["512","Oman"],["516","Namibia"],
+          ["520","Nauru"],["524","Nepal"],["528","Netherlands"],["531","Curaçao"],
+          ["533","Aruba"],["540","New Caledonia"],["548","Vanuatu"],["554","New Zealand"],
+          ["558","Nicaragua"],["562","Niger"],["566","Nigeria"],["570","Niue"],
+          ["578","Norway"],["583","Micronesia"],["584","Marshall Islands"],
+          ["585","Palau"],["586","Pakistan"],["591","Panama"],["598","Papua New Guinea"],
+          ["600","Paraguay"],["604","Peru"],["608","Philippines"],["616","Poland"],
+          ["620","Portugal"],["624","Guinea-Bissau"],["626","Timor-Leste"],
+          ["630","Puerto Rico"],["634","Qatar"],["642","Romania"],["643","Russia"],
+          ["646","Rwanda"],["652","Saint Barthélemy"],["654","Saint Helena"],
+          ["659","Saint Kitts and Nevis"],["660","Anguilla"],["662","Saint Lucia"],
+          ["666","Saint Pierre and Miquelon"],
+          ["670","Saint Vincent and the Grenadines"],["674","San Marino"],
+          ["678","São Tomé and Príncipe"],["682","Saudi Arabia"],["686","Senegal"],
+          ["688","Serbia"],["690","Seychelles"],["694","Sierra Leone"],
+          ["702","Singapore"],["703","Slovakia"],["704","Vietnam"],["705","Slovenia"],
+          ["706","Somalia"],["710","South Africa"],["716","Zimbabwe"],
+          ["724","Spain"],["728","South Sudan"],["729","Sudan"],["732","Western Sahara"],
+          ["740","Suriname"],["748","Eswatini"],["752","Sweden"],["756","Switzerland"],
+          ["760","Syria"],["762","Tajikistan"],["764","Thailand"],["768","Togo"],
+          ["776","Tonga"],["780","Trinidad and Tobago"],["784","United Arab Emirates"],
+          ["788","Tunisia"],["792","Turkey"],["795","Turkmenistan"],["798","Tuvalu"],
+          ["800","Uganda"],["804","Ukraine"],["807","North Macedonia"],
+          ["818","Egypt"],["826","United Kingdom"],["834","Tanzania"],
+          ["840","United States of America"],["854","Burkina Faso"],
+          ["858","Uruguay"],["860","Uzbekistan"],["862","Venezuela"],
+          ["876","Wallis and Futuna"],["882","Samoa"],["887","Yemen"],
+          ["894","Zambia"],["10","Antarctica"],["036","Australia"],
+          ["-99","N. Cyprus"],["900","Kosovo"]
+        ]);
+
+        // US state/territory name lookup — FIPS codes
+        const stateNames = new Map([
+          ["01","Alabama"],["02","Alaska"],["04","Arizona"],["05","Arkansas"],
+          ["06","California"],["08","Colorado"],["09","Connecticut"],["10","Delaware"],
+          ["11","District of Columbia"],["12","Florida"],["13","Georgia"],["15","Hawaii"],
+          ["16","Idaho"],["17","Illinois"],["18","Indiana"],["19","Iowa"],
+          ["20","Kansas"],["21","Kentucky"],["22","Louisiana"],["23","Maine"],
+          ["24","Maryland"],["25","Massachusetts"],["26","Michigan"],["27","Minnesota"],
+          ["28","Mississippi"],["29","Missouri"],["30","Montana"],["31","Nebraska"],
+          ["32","Nevada"],["33","New Hampshire"],["34","New Jersey"],["35","New Mexico"],
+          ["36","New York"],["37","North Carolina"],["38","North Dakota"],["39","Ohio"],
+          ["40","Oklahoma"],["41","Oregon"],["42","Pennsylvania"],["44","Rhode Island"],
+          ["45","South Carolina"],["46","South Dakota"],["47","Tennessee"],["48","Texas"],
+          ["49","Utah"],["50","Vermont"],["51","Virginia"],["53","Washington"],
+          ["54","West Virginia"],["55","Wisconsin"],["56","Wyoming"],["60","American Samoa"],
+          ["66","Guam"],["69","Northern Mariana Islands"],["72","Puerto Rico"],
+          ["78","U.S. Virgin Islands"]
+        ]);
+
+        // Visited locations data
+        const visitedCountriesData = new Map([
+          ["792", [
+            { name: "Bilkent University", logo: "../assets/logos/bilkent.png" },
+            { name: "Bilkent DLR", logo: "../assets/logos/bilkent-dlr.png" },
+            { name: "Getir", logo: "../assets/logos/getir.png" },
+            { name: "Çanakkale Özel Fen Lisesi", logo: "../assets/logos/canakkale.png" }
+          ]],
+          ["756", [
+            { name: "ETH Zürich CVL", logo: "../assets/logos/eth.png" },
+            { name: "EPFL", logo: "../assets/logos/epfl.png" }
+          ]],
+          ["100", [
+            { name: "INSAIT", logo: "../assets/logos/insait.png" }
+          ]],
+          ["276", [
+            { name: "CMMRS", logo: "../assets/logos/cmmrs.jpeg" }
+          ]],
+          ["784", [
+            { name: "MBZUAI", logo: "../assets/logos/mbzuai.png" }
+          ]],
+          ["124", [
+            { name: "NeurIPS 2024 — Vancouver", logo: "../assets/logos/NeurIPS_logo.png" }
+          ]]
+        ]);
+
+        const visitedStatesData = new Map([
+          ["06", [
+            { name: "NeurIPS 2025 — San Diego", logo: "../assets/logos/NeurIPS_logo.png" }
+          ]]
+        ]);
+
+        // Tooltip setup
+        const tooltip = document.getElementById("tooltip");
+
+        function showTooltip(name, event, visitedData) {
+          let html = `<span class="tooltip-title">${name}</span>`;
+          if (visitedData && visitedData.length > 0) {
+            html += `<div class="tooltip-institutions">`;
+            visitedData.forEach(inst => {
+              html += `
+                <div class="tooltip-inst">
+                  ${inst.logo ? `<img src="${inst.logo}" alt="${inst.name} logo" />` : ''}
+                  <span>${inst.name}</span>
+                </div>
+              `;
+            });
+            html += `</div>`;
+          }
+          tooltip.innerHTML = html;
+          tooltip.classList.add("visible");
+          positionTooltip(event);
+        }
+
+        function hideTooltip() {
+          tooltip.classList.remove("visible");
+        }
+
+        function positionTooltip(event) {
+          const pad = 14;
+          let x = event.clientX + pad;
+          let y = event.clientY - pad - 32;
+
+          if (x + 200 > window.innerWidth) x = event.clientX - 200 - pad;
+          if (y < 10) y = event.clientY + pad;
+
+          tooltip.style.left = x + "px";
+          tooltip.style.top = y + "px";
+        }
+
+        // Filter out the USA from the countries layer (id "840")
+        const countriesWithoutUS = {
+          type: "FeatureCollection",
+          features: countries.features.filter((f) => f.id !== "840"),
+        };
+
+        // Define a set of different toned visited colors for countries to create distinction
+        const visitedTones = [
+          "var(--visited)",
+          "var(--visited-us)",  // reusing this as a mid-tone
+          "var(--visited-hover)",
+          "#4f7cf6", // slightly lighter
+          "#345ecc"  // slightly darker
+        ];
+        
+        // Assign a color tone to each visited country in a determinisic way based on ID
+        function getVisitedCountryTone(id) {
+            const index = parseInt(id) % visitedTones.length;
+            return visitedTones[index || 0];
+        }
+
+        // Draw countries (without US)
+        g.selectAll(".country-path")
+          .data(countriesWithoutUS.features)
+          .join("path")
+          .attr("class", "country-path")
+          .style("fill", d => visitedCountriesData.has(d.id) ? getVisitedCountryTone(d.id) : "")
+          .attr("d", path)
+          .on("mouseenter", function (event, d) {
+            const isVisited = visitedCountriesData.has(d.id);
+            d3.select(this).style("fill", isVisited ? "var(--visited-hover)" : "var(--land-hover)");
+            const name = countryNames.get(d.id) || "Unknown";
+            const visitedInfo = visitedCountriesData.get(d.id);
+            showTooltip(name, event, visitedInfo);
+          })
+          .on("mousemove", function (event) {
+            positionTooltip(event);
+          })
+          .on("mouseleave", function(event, d) {
+            const isVisited = visitedCountriesData.has(d.id);
+            d3.select(this).style("fill", isVisited ? getVisitedCountryTone(d.id) : "");
+            hideTooltip();
+          });
+
+        // Draw US states
+        g.selectAll(".state-path")
+          .data(states.features)
+          .join("path")
+          .attr("class", "state-path")
+          // If the state is visited, use visited-us color. If unvisited, make it unvisited-us (lighter blue).
+          .style("fill", d => visitedStatesData.has(d.id) ? "var(--visited-us)" : "var(--unvisited-us)")
+          .attr("d", path)
+          .on("mouseenter", function (event, d) {
+            d3.select(this).style("fill", "var(--visited-hover)");
+            const name = stateNames.get(d.id) || "Unknown State";
+            const visitedInfo = visitedStatesData.get(d.id);
+            showTooltip("USA — " + name, event, visitedInfo);
+          })
+          .on("mousemove", function (event) {
+            positionTooltip(event);
+          })
+          .on("mouseleave", function(event, d) {
+            const isVisited = visitedStatesData.has(d.id);
+            d3.select(this).style("fill", isVisited ? "var(--visited-us)" : "var(--unvisited-us)");
+            hideTooltip();
+          });
+
+        // Zoom & pan
+        const zoom = d3
+          .zoom()
+          .scaleExtent([1, 12])
+          .on("zoom", (event) => {
+            g.attr("transform", event.transform);
+          });
+
+        svg.call(zoom);
+
+        // Controls
+        document.getElementById("zoom-in").addEventListener("click", () => {
+          svg.transition().duration(350).call(zoom.scaleBy, 1.5);
+        });
+
+        document.getElementById("zoom-out").addEventListener("click", () => {
+          svg.transition().duration(350).call(zoom.scaleBy, 1 / 1.5);
+        });
+
+        document.getElementById("zoom-reset").addEventListener("click", () => {
+          svg
+            .transition()
+            .duration(500)
+            .call(zoom.transform, d3.zoomIdentity);
+        });
+
+        // Hide loading overlay
+        const loading = document.getElementById("loading");
+        loading.classList.add("hidden");
+        setTimeout(() => loading.remove(), 600);
+      })();
+    </script>
+  </body>
+</html>
