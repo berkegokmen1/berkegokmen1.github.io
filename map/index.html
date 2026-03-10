@@ -251,6 +251,12 @@
         font-weight: 500;
         color: var(--muted);
       }
+      .tooltip-date {
+        font-size: 0.78rem;
+        color: var(--text);
+        opacity: 0.72;
+        margin-left: 0.3rem;
+      }
       .tooltip-inst img {
         height: 18px;
         width: auto;
@@ -288,6 +294,47 @@
       .map-controls button:hover {
         border-color: var(--accent);
         transform: scale(1.08);
+      }
+
+      /* ── Year filter ── */
+      .year-filter {
+        position: fixed;
+        right: 4.9rem;
+        bottom: 1.5rem;
+        z-index: 150;
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 0.75rem 0.9rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(12px);
+        min-width: 180px;
+      }
+      .year-filter-label {
+        font-size: 0.74rem;
+        color: var(--muted);
+        margin-bottom: 0.35rem;
+        display: block;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+      .year-filter-value {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text);
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+      .year-filter input[type="range"] {
+        width: 100%;
+        accent-color: var(--accent);
+      }
+      .year-filter-range {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.72rem;
+        color: var(--muted);
+        margin-top: 0.35rem;
       }
 
       /* ── Legend ── */
@@ -436,6 +483,12 @@
           font-size: 1.1rem;
           border-radius: 10px;
         }
+        .year-filter {
+          right: 4.2rem;
+          bottom: 0.8rem;
+          min-width: 150px;
+          padding: 0.6rem 0.7rem;
+        }
       }
     </style>
   </head>
@@ -495,6 +548,17 @@
       <button id="zoom-in" aria-label="Zoom in" title="Zoom in">+</button>
       <button id="zoom-out" aria-label="Zoom out" title="Zoom out">−</button>
       <button id="zoom-reset" aria-label="Reset zoom" title="Reset zoom">⟳</button>
+    </div>
+
+    <!-- Year filter -->
+    <div class="year-filter">
+      <span class="year-filter-label">SHOW THROUGH YEAR</span>
+      <span class="year-filter-value" id="year-value">2026</span>
+      <input id="year-slider" type="range" min="2022" max="2026" value="2026" step="1" />
+      <div class="year-filter-range">
+        <span id="year-min">2022</span>
+        <span id="year-max">2026</span>
+      </div>
     </div>
 
     <!-- Legend -->
@@ -659,39 +723,87 @@
         ]);
 
         // Visited locations data
-        const visitedCountriesData = new Map([
+        const visitedCountriesRawData = new Map([
           ["792", [
-            { name: "Bilkent University", logo: "../assets/logos/bilkent.png" },
-            { name: "Bilkent DLR", logo: "../assets/logos/bilkent-dlr.png" },
-            { name: "Getir", logo: "../assets/logos/getir.png" },
-            { name: "Çanakkale Özel Fen Lisesi", logo: "../assets/logos/canakkale.png" }
+            { name: "Getir — Istanbul", logo: "../assets/logos/getir.png", date: "2022-01-01" }
           ]],
           ["756", [
-            { name: "ETH Zürich CVL", logo: "../assets/logos/eth.png" },
-            { name: "EPFL", logo: "../assets/logos/epfl.png" }
+            { name: "EPFL", logo: "../assets/logos/epfl.png", date: "2023-01-01" },
+            { name: "ETH Zürich CVL", logo: "../assets/logos/eth.png", date: "2024-01-01" }
           ]],
           ["100", [
-            { name: "INSAIT", logo: "../assets/logos/insait.png" }
+            { name: "INSAIT", logo: "../assets/logos/insait.png", date: "2025-01-01" }
           ]],
           ["276", [
-            { name: "CMMRS", logo: "../assets/logos/cmmrs.jpeg" }
+            { name: "CMMRS", logo: "../assets/logos/cmmrs.jpeg", date: "2025-01-01" }
           ]],
           ["784", [
-            { name: "MBZUAI", logo: "../assets/logos/mbzuai.png" }
+            { name: "MBZUAI", logo: "../assets/logos/mbzuai.png", date: "2026-01-01" }
           ]],
           ["124", [
-            { name: "NeurIPS 2024 — Vancouver", logo: "../assets/logos/NeurIPS_logo.png" }
+            { name: "NeurIPS 2024 — Vancouver", logo: "../assets/logos/NeurIPS_logo.png", date: "2024-01-01" }
           ]]
         ]);
 
-        const visitedStatesData = new Map([
+        const visitedStatesRawData = new Map([
           ["06", [
-            { name: "NeurIPS 2025 — San Diego", logo: "../assets/logos/NeurIPS_logo.png" }
+            { name: "NeurIPS 2025 — San Diego", logo: "../assets/logos/NeurIPS_logo.png", date: "2025-01-01" }
+          ]],
+          ["24", [
+            { name: "JHU Visit Days — Baltimore", logo: "../assets/logos/jhu.png", date: "2026-01-01" }
           ]]
         ]);
+
+        function visitYear(visit) {
+          return Number(String(visit.date).slice(0, 4));
+        }
+
+        function filterVisitsByYear(dataMap, year) {
+          const filtered = new Map();
+          dataMap.forEach((visits, locationId) => {
+            const visible = visits.filter(visit => visitYear(visit) <= year);
+            if (visible.length > 0) filtered.set(locationId, visible);
+          });
+          return filtered;
+        }
+
+        function formatVisitDate(date) {
+          return String(date).slice(0, 4);
+        }
+
+        function hasAnyVisitedUSState() {
+          return visitedStatesData.size > 0;
+        }
+
+        function getStateFill(stateId) {
+          if (visitedStatesData.has(stateId)) return "var(--visited-us)";
+          return hasAnyVisitedUSState() ? "var(--unvisited-us)" : "var(--land)";
+        }
+
+        const allYears = [...visitedCountriesRawData.values(), ...visitedStatesRawData.values()]
+          .flat()
+          .map(visitYear)
+          .filter(year => !Number.isNaN(year));
+
+        const minYear = Math.min(...allYears);
+        const maxYear = Math.max(...allYears);
+        let selectedYear = maxYear;
+        let visitedCountriesData = filterVisitsByYear(visitedCountriesRawData, selectedYear);
+        let visitedStatesData = filterVisitsByYear(visitedStatesRawData, selectedYear);
 
         // Tooltip setup
         const tooltip = document.getElementById("tooltip");
+        const yearSlider = document.getElementById("year-slider");
+        const yearValue = document.getElementById("year-value");
+        const yearMin = document.getElementById("year-min");
+        const yearMax = document.getElementById("year-max");
+
+        yearSlider.min = String(minYear);
+        yearSlider.max = String(maxYear);
+        yearSlider.value = String(selectedYear);
+        yearValue.textContent = String(selectedYear);
+        yearMin.textContent = String(minYear);
+        yearMax.textContent = String(maxYear);
 
         function showTooltip(name, event, visitedData) {
           let html = `<span class="tooltip-title">${name}</span>`;
@@ -701,7 +813,7 @@
               html += `
                 <div class="tooltip-inst">
                   ${inst.logo ? `<img src="${inst.logo}" alt="${inst.name} logo" />` : ''}
-                  <span>${inst.name}</span>
+                  <span>${inst.name}<span class="tooltip-date">${formatVisitDate(inst.date)}</span></span>
                 </div>
               `;
             });
@@ -750,7 +862,7 @@
         }
 
         // Draw countries (without US)
-        g.selectAll(".country-path")
+        const countryPaths = g.selectAll(".country-path")
           .data(countriesWithoutUS.features)
           .join("path")
           .attr("class", "country-path")
@@ -773,12 +885,12 @@
           });
 
         // Draw US states
-        g.selectAll(".state-path")
+        const statePaths = g.selectAll(".state-path")
           .data(states.features)
           .join("path")
           .attr("class", "state-path")
-          // If the state is visited, use visited-us color. If unvisited, make it unvisited-us (lighter blue).
-          .style("fill", d => visitedStatesData.has(d.id) ? "var(--visited-us)" : "var(--unvisited-us)")
+          // Visited states are darker blue; if any US state is visited, the rest become light blue.
+          .style("fill", d => getStateFill(d.id))
           .attr("d", path)
           .on("mouseenter", function (event, d) {
             d3.select(this).style("fill", "var(--visited-hover)");
@@ -790,10 +902,24 @@
             positionTooltip(event);
           })
           .on("mouseleave", function(event, d) {
-            const isVisited = visitedStatesData.has(d.id);
-            d3.select(this).style("fill", isVisited ? "var(--visited-us)" : "var(--unvisited-us)");
+            d3.select(this).style("fill", getStateFill(d.id));
             hideTooltip();
           });
+
+        function applyYearFilter(year) {
+          selectedYear = year;
+          visitedCountriesData = filterVisitsByYear(visitedCountriesRawData, selectedYear);
+          visitedStatesData = filterVisitsByYear(visitedStatesRawData, selectedYear);
+          yearValue.textContent = String(selectedYear);
+          countryPaths.style("fill", d => visitedCountriesData.has(d.id) ? getVisitedCountryTone(d.id) : "");
+          statePaths.style("fill", d => getStateFill(d.id));
+          hideTooltip();
+        }
+
+        yearSlider.addEventListener("input", (event) => {
+          const year = Number(event.target.value);
+          applyYearFilter(year);
+        });
 
         // Zoom & pan
         const zoom = d3
