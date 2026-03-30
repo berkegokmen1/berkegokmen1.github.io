@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Random · A. Berke Gökmen</title>
+    <meta name="description" content="Random projects and visualizations by Ahmet Berke Gökmen." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../style.css" />
+    <style>
+      .random-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.8rem;
+        margin-top: 0.5rem;
+      }
+
+      .random-card {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.8rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--card-bg);
+        box-shadow: var(--shadow);
+        transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .random-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent);
+        box-shadow: 0 28px 56px rgba(17, 23, 52, 0.12);
+        text-decoration: none;
+      }
+
+      html.dark .random-card:hover {
+        box-shadow: 0 28px 56px rgba(0, 0, 0, 0.4);
+      }
+
+      .random-card__icon {
+        font-size: 2.4rem;
+        line-height: 1;
+      }
+
+      .random-card__title {
+        font-size: 1.2rem;
+        font-weight: 600;
+      }
+
+      .random-card__desc {
+        font-size: 0.95rem;
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .random-card__arrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--accent);
+        margin-top: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="particle-canvas" aria-hidden="true"></canvas>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="/">A. Berke Gökmen</a>
+        <nav class="nav-links">
+          <a href="/">About</a>
+          <a href="/#publications">Publications</a>
+          <a href="/#experience">Experience</a>
+          <a href="/map">Map</a>
+          <a href="/random" class="active">Random</a>
+        </nav>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <main>
+      <section class="section">
+        <h2>Random</h2>
+        <p class="section-lead">Random stuff, playing around with Claude.</p>
+        <div class="random-grid">
+          <a class="random-card" href="istanbul-transit/index.html">
+            <span class="random-card__icon">🚇</span>
+            <span class="random-card__title">Istanbul Transit Map</span>
+            <span class="random-card__desc">Interactive map of all Istanbul metro lines.</span>
+            <span class="random-card__arrow">Explore →</span>
+          </a>
+          <a class="random-card" href="sofia-transit/index.html">
+            <span class="random-card__icon">🚇</span>
+            <span class="random-card__title">Sofia Transit Map</span>
+            <span class="random-card__desc">Interactive map of all Sofia metro lines.</span>
+            <span class="random-card__arrow">Explore →</span>
+          </a>
+          <a class="random-card" href="bay-area-transit/index.html">
+            <span class="random-card__icon">🚇</span>
+            <span class="random-card__title">Bay Area Transit Map</span>
+            <span class="random-card__desc">Interactive map of all Bay Area transit lines.</span>
+            <span class="random-card__arrow">Explore →</span>
+          </a>
+        </div>
+      </section>
+    </main>
+
+    <footer id="contact">
+      <div class="footer-inner">
+        <strong>Get in touch</strong>
+        <span>berke.gokmen@insait.ai</span>
+        <span>Or connect via <a href="https://www.linkedin.com/in/berkegokmen/">LinkedIn</a>.</span>
+        <span>© <script>document.write(new Date().getFullYear());</script> A. Berke Gökmen.</span>
+      </div>
+    </footer>
+
+    <script>
+      (() => {
+        const canvas = document.getElementById('particle-canvas');
+        const ctx = canvas?.getContext('2d');
+        if (!canvas || !ctx) return;
+        const particles = [];
+        const particleCount = 520;
+        const pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2, lastMove: performance.now() };
+        let width = window.innerWidth;
+        let height = window.innerHeight;
+        const resize = () => {
+          const dpr = window.devicePixelRatio || 1;
+          width = window.innerWidth; height = window.innerHeight;
+          canvas.width = width * dpr; canvas.height = height * dpr;
+          canvas.style.width = '100%'; canvas.style.height = '100%';
+          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        };
+        const makeParticle = () => ({ x: Math.random() * width, y: Math.random() * height, vx: (Math.random() - 0.5) * 0.7, vy: (Math.random() - 0.5) * 0.7, size: 1.2 + Math.random() * 2.6, tone: 205 + Math.random() * 28 });
+        const init = () => { resize(); for (let i = 0; i < particleCount; i++) particles.push(makeParticle()); requestAnimationFrame(tick); };
+        window.addEventListener('resize', resize);
+        window.addEventListener('pointermove', (e) => { pointer.x = e.clientX; pointer.y = e.clientY; pointer.lastMove = performance.now(); });
+        const tick = () => {
+          const now = performance.now(); const moving = now - pointer.lastMove < 260;
+          const avoidRadius = 260; const returnRadius = 220;
+          const jitter = moving ? 0.08 : 0.06; const repel = moving ? 0.0022 : 0.0006;
+          const attract = moving ? 0.0008 : 0.0038; const maxSpeed = moving ? 6.2 : 3.1;
+          ctx.clearRect(0, 0, width, height);
+          for (const p of particles) {
+            const dx = pointer.x - p.x; const dy = pointer.y - p.y; const dist = Math.hypot(dx, dy) || 1;
+            if (moving && dist < avoidRadius) { const push = 1 - dist / avoidRadius; p.vx -= dx * repel * push; p.vy -= dy * repel * push; }
+            if (!moving && dist < returnRadius) { const pull = 1 - dist / returnRadius; p.vx += dx * attract * pull; p.vy += dy * attract * pull; }
+            p.vx += (Math.random() - 0.5) * jitter; p.vy += (Math.random() - 0.5) * jitter;
+            p.vx *= 0.94; p.vy *= 0.94;
+            const speed = Math.hypot(p.vx, p.vy);
+            if (speed > maxSpeed) { const s = maxSpeed / speed; p.vx *= s; p.vy *= s; }
+            p.x += p.vx; p.y += p.vy;
+            if (p.x < 0) p.x = width; if (p.x > width) p.x = 0;
+            if (p.y < 0) p.y = height; if (p.y > height) p.y = 0;
+            ctx.beginPath(); ctx.fillStyle = `hsla(${p.tone}, 85%, 56%, 0.32)`;
+            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
+          }
+          requestAnimationFrame(tick);
+        };
+        init();
+      })();
+    </script>
+
+    <script>
+      (() => {
+        const toggle = document.getElementById('theme-toggle');
+        const root = document.documentElement;
+        const saved = localStorage.getItem('theme');
+        if (saved === 'dark') root.classList.add('dark');
+        toggle.addEventListener('click', () => {
+          root.classList.toggle('dark');
+          localStorage.setItem('theme', root.classList.contains('dark') ? 'dark' : 'light');
+        });
+      })();
+    </script>
+  </body>
+</html>

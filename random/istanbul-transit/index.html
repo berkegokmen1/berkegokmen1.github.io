@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Istanbul Rail Map · A. Berke Gökmen</title>
+    <meta name="description" content="Interactive Istanbul rail map with metro, tram, funicular, and commuter rail lines visualized with official colors." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+      :root {
+        --bg: #ffffff;
+        --surface: #f6f7fb;
+        --text: #14151b;
+        --muted: #5f626e;
+        --accent: #1c5cff;
+        --accent-soft: rgba(28, 92, 255, 0.12);
+        --border: #e1e4ed;
+        --shadow: 0 22px 48px rgba(17, 23, 52, 0.08);
+        --card-bg: #ffffff;
+        --header-bg: rgba(255, 255, 255, 0.92);
+        --max-width: 980px;
+        --radius: 18px;
+        color-scheme: light;
+      }
+      html.dark {
+        --bg: #0f1117;
+        --surface: #1a1d28;
+        --text: #e4e6ee;
+        --muted: #9ca0af;
+        --accent: #5b8aff;
+        --accent-soft: rgba(91, 138, 255, 0.15);
+        --border: #2a2d3a;
+        --shadow: 0 22px 48px rgba(0, 0, 0, 0.32);
+        --card-bg: #181b24;
+        --header-bg: rgba(15, 17, 23, 0.92);
+        color-scheme: dark;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg);
+        color: var(--text);
+        line-height: 1.7;
+        -webkit-font-smoothing: antialiased;
+        overflow: hidden;
+        height: 100vh;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover, a:focus-visible { text-decoration: underline; }
+
+      /* Header */
+      .site-header {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+        backdrop-filter: blur(16px); background: var(--header-bg);
+        border-bottom: 1px solid var(--border);
+      }
+      .site-header__inner {
+        margin: 0 auto; max-width: var(--max-width);
+        padding: 1.2rem 1.5rem;
+        display: grid; grid-template-columns: 1fr auto 1fr;
+        align-items: center; gap: 1rem;
+      }
+      .brand { font-weight: 600; letter-spacing: 0.02em; }
+      .nav-links {
+        display: flex; align-items: center; justify-content: center;
+        gap: 1.35rem; font-size: 0.96rem; font-weight: 500;
+      }
+      .nav-links a {
+        color: var(--muted); padding-bottom: 0.22rem;
+        border-bottom: 2px solid transparent;
+        transition: border-color 0.2s ease, color 0.2s ease;
+      }
+      .nav-links a:hover, .nav-links a:focus-visible {
+        color: var(--accent); border-color: var(--accent); text-decoration: none;
+      }
+      .nav-links a.active { color: var(--accent); border-color: var(--accent); }
+
+      .theme-toggle {
+        justify-self: end; display: inline-flex; align-items: center;
+        justify-content: center; width: 40px; height: 40px;
+        border: 1px solid var(--border); border-radius: 50%;
+        background: var(--surface); color: var(--muted); cursor: pointer;
+        transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+      }
+      .theme-toggle:hover { color: var(--accent); border-color: var(--accent); transform: scale(1.08); }
+      .theme-toggle svg { width: 20px; height: 20px; transition: opacity 0.25s ease, transform 0.3s ease; }
+      .theme-toggle .icon-sun { display: block; }
+      .theme-toggle .icon-moon { display: none; }
+      html.dark .theme-toggle .icon-sun { display: none; }
+      html.dark .theme-toggle .icon-moon { display: block; }
+
+      /* Map */
+      #map {
+        position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+        z-index: 1;
+      }
+
+      /* Dark mode tiles */
+      html.dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1); }
+      html.dark .leaflet-control-zoom a {
+        background: var(--card-bg); color: var(--text);
+        border-color: var(--border);
+      }
+
+      /* Legend */
+      .metro-legend {
+        position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 1001;
+        background: var(--card-bg); border: 1px solid var(--border);
+        border-radius: 14px; padding: 1rem 1.2rem;
+        font-size: 0.82rem; color: var(--muted);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+        backdrop-filter: blur(16px);
+        max-height: calc(100vh - 8rem); overflow-y: auto;
+        min-width: 200px;
+      }
+      html.dark .metro-legend { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4); }
+
+      .metro-legend h3 {
+        font-size: 0.74rem; font-weight: 700;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        color: var(--text); margin-bottom: 0.7rem;
+        cursor: pointer; user-select: none; transition: opacity 0.2s ease;
+      }
+      .metro-legend h3:hover { opacity: 0.6; }
+      .metro-legend h3.group-dimmed { opacity: 0.35; }
+
+      .legend-line {
+        display: flex; align-items: center; gap: 0.6rem;
+        padding: 0.3rem 0; cursor: pointer;
+        transition: opacity 0.2s ease;
+      }
+      .legend-line:hover { opacity: 0.75; }
+      .legend-line.dimmed { opacity: 0.3; }
+
+      .legend-swatch {
+        width: 28px; height: 4px; border-radius: 2px;
+        flex-shrink: 0;
+      }
+
+      .legend-label {
+        font-size: 0.8rem; font-weight: 500; color: var(--text);
+      }
+
+      .legend-route {
+        font-size: 0.7rem; color: var(--muted);
+        margin-left: auto; white-space: nowrap;
+      }
+
+      .legend-sep {
+        border: none; border-top: 1px solid var(--border);
+        margin: 0.5rem 0;
+      }
+
+      .legend-footer {
+        font-size: 0.72rem; color: var(--muted); line-height: 1.4;
+        margin-top: 0.3rem;
+      }
+
+      /* Custom station tooltip */
+      .station-tooltip {
+        background: var(--card-bg) !important;
+        color: var(--text) !important;
+        border: 1px solid var(--border) !important;
+        border-radius: 8px !important;
+        padding: 0.4rem 0.7rem !important;
+        font-family: "Inter", sans-serif !important;
+        font-size: 0.82rem !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important;
+        white-space: nowrap !important;
+      }
+      .station-tooltip .leaflet-tooltip-arrow { display: none; }
+      .station-tooltip .tt-line {
+        font-size: 0.7rem; font-weight: 500; opacity: 0.7;
+        display: block; margin-top: 0.1rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .site-header__inner {
+          grid-template-columns: 1fr auto; gap: 0.5rem;
+        }
+        .nav-links {
+          grid-column: 1 / -1; grid-row: 2;
+          width: 100%; justify-content: flex-start;
+        }
+        .theme-toggle { grid-column: 2; grid-row: 1; }
+        .metro-legend {
+          bottom: 0.6rem; left: 0.6rem;
+          padding: 0.6rem 0.8rem; font-size: 0.75rem;
+          max-height: calc(100vh - 6rem);
+          min-width: 170px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="/">A. Berke Gökmen</a>
+        <nav class="nav-links">
+          <a href="/">About</a>
+          <a href="/#publications">Publications</a>
+          <a href="/#experience">Experience</a>
+          <a href="/map">Map</a>
+          <a href="/random" class="active">Random</a>
+        </nav>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Legend -->
+    <div class="metro-legend" id="legend"></div>
+
+    <script>
+      /* ── Theme toggle ── */
+      (() => {
+        const toggle = document.getElementById("theme-toggle");
+        const root = document.documentElement;
+        const saved = localStorage.getItem("theme");
+        if (saved === "dark") root.classList.add("dark");
+        toggle.addEventListener("click", () => {
+          root.classList.toggle("dark");
+          localStorage.setItem("theme", root.classList.contains("dark") ? "dark" : "light");
+        });
+      })();
+
+      /* ── Istanbul Rail Network Data ── */
+      const metroLines = [
+        {
+          id: "M1A",
+          name: "M1A",
+          route: "Yenikapı – Atatürk Havalimanı",
+          color: "#EE2229",
+          stations: [
+            { name: "Yenikapı", lat: 41.0054, lng: 28.9536 },
+            { name: "Aksaray", lat: 41.0112, lng: 28.9516 },
+            { name: "Emniyet-Fatih", lat: 41.0190, lng: 28.9400 },
+            { name: "Topkapı-Ulubatlı", lat: 41.0189, lng: 28.9248 },
+            { name: "Bayrampaşa-Maltepe", lat: 41.0214, lng: 28.9101 },
+            { name: "Sağmalcılar", lat: 41.0239, lng: 28.8947 },
+            { name: "Kocatepe", lat: 41.0308, lng: 28.8860 },
+            { name: "Otogar", lat: 41.0334, lng: 28.8750 },
+            { name: "Terazidere", lat: 41.0302, lng: 28.8579 },
+            { name: "Davutpaşa-YTÜ", lat: 41.0265, lng: 28.8462 },
+            { name: "Merter", lat: 41.0216, lng: 28.8389 },
+            { name: "Zeytinburnu", lat: 41.0155, lng: 28.8300 },
+            { name: "Bakırköy-İncirli", lat: 41.0095, lng: 28.8210 },
+            { name: "Bahçelievler", lat: 41.0015, lng: 28.8090 },
+            { name: "Ataköy-Şirinevler", lat: 40.9912, lng: 28.7935 },
+            { name: "Yenibosna", lat: 40.9896, lng: 28.7790 },
+            { name: "DTM-İstanbul Fuar Merkezi", lat: 40.9868, lng: 28.7656 },
+            { name: "Atatürk Havalimanı", lat: 40.9819, lng: 28.7490 }
+          ]
+        },
+        {
+          id: "M1B",
+          name: "M1B",
+          route: "Yenikapı – Kirazlı",
+          color: "#EE2229",
+          stations: [
+            { name: "Yenikapı", lat: 41.0054, lng: 28.9536 },
+            { name: "Aksaray", lat: 41.0112, lng: 28.9516 },
+            { name: "Emniyet-Fatih", lat: 41.0190, lng: 28.9400 },
+            { name: "Topkapı-Ulubatlı", lat: 41.0189, lng: 28.9248 },
+            { name: "Bayrampaşa-Maltepe", lat: 41.0214, lng: 28.9101 },
+            { name: "Sağmalcılar", lat: 41.0239, lng: 28.8947 },
+            { name: "Kocatepe", lat: 41.0308, lng: 28.8860 },
+            { name: "Otogar", lat: 41.0334, lng: 28.8750 },
+            { name: "Terazidere", lat: 41.0302, lng: 28.8579 },
+            { name: "Davutpaşa-YTÜ", lat: 41.0265, lng: 28.8462 },
+            { name: "Merter", lat: 41.0216, lng: 28.8389 },
+            { name: "Zeytinburnu", lat: 41.0155, lng: 28.8300 },
+            { name: "Bakırköy-İncirli", lat: 41.0095, lng: 28.8210 },
+            { name: "Bahçelievler", lat: 41.0015, lng: 28.8090 },
+            { name: "Ataköy-Şirinevler", lat: 40.9912, lng: 28.7935 },
+            { name: "Yenibosna", lat: 40.9896, lng: 28.7790 },
+            { name: "Kirazlı", lat: 41.0325, lng: 28.8156 }
+          ]
+        },
+        {
+          id: "M2",
+          name: "M2",
+          route: "Yenikapı – Hacıosman",
+          color: "#059A4D",
+          stations: [
+            { name: "Yenikapı", lat: 41.0054, lng: 28.9536 },
+            { name: "Vezneciler", lat: 41.0118, lng: 28.9570 },
+            { name: "Haliç", lat: 41.0210, lng: 28.9590 },
+            { name: "Şişhane", lat: 41.0277, lng: 28.9722 },
+            { name: "Taksim", lat: 41.0368, lng: 28.9852 },
+            { name: "Osmanbey", lat: 41.0480, lng: 28.9870 },
+            { name: "Şişli-Mecidiyeköy", lat: 41.0620, lng: 28.9881 },
+            { name: "Gayrettepe", lat: 41.0732, lng: 28.9792 },
+            { name: "Levent", lat: 41.0817, lng: 28.9710 },
+            { name: "4. Levent", lat: 41.0862, lng: 28.9640 },
+            { name: "Sanayi Mahallesi", lat: 41.0972, lng: 28.9561 },
+            { name: "ITÜ-Ayazağa", lat: 41.1039, lng: 28.9456 },
+            { name: "Atatürk Oto Sanayi", lat: 41.1105, lng: 28.9341 },
+            { name: "Darüşşafaka", lat: 41.1071, lng: 28.9743 },
+            { name: "Hacıosman", lat: 41.1084, lng: 28.9858 }
+          ]
+        },
+        {
+          id: "M3",
+          name: "M3",
+          route: "Bakırköy Sahil – Kayaşehir",
+          color: "#0CA6DF",
+          stations: [
+            { name: "Bakırköy Sahil", lat: 40.9790, lng: 28.8710 },
+            { name: "Özgürlük Meydanı", lat: 40.9820, lng: 28.8710 },
+            { name: "İncirli", lat: 40.9930, lng: 28.8500 },
+            { name: "Haznedar", lat: 40.9985, lng: 28.8420 },
+            { name: "Üçyüzlü", lat: 41.0012, lng: 28.8360 },
+            { name: "Bağcılar Meydan", lat: 41.0090, lng: 28.8170 },
+            { name: "Kirazlı", lat: 41.0325, lng: 28.8156 },
+            { name: "Başak Konutları", lat: 41.0700, lng: 28.7720 },
+            { name: "Siteler", lat: 41.0800, lng: 28.7680 },
+            { name: "Turgut Özal", lat: 41.0880, lng: 28.7640 },
+            { name: "İkitelli Sanayi", lat: 41.0700, lng: 28.7870 },
+            { name: "Mahmutbey", lat: 41.0660, lng: 28.7987 },
+            { name: "İSTOÇ", lat: 41.0640, lng: 28.7700 },
+            { name: "Toplu Konutlar", lat: 41.0943, lng: 28.7530 },
+            { name: "Şehir Hastanesi", lat: 41.0987, lng: 28.7400 },
+            { name: "Kayaşehir Merkez", lat: 41.1020, lng: 28.7180 }
+          ]
+        },
+        {
+          id: "M4",
+          name: "M4",
+          route: "Kadıköy – Sabiha Gökçen",
+          color: "#E81E77",
+          stations: [
+            { name: "Kadıköy", lat: 40.9907, lng: 29.0242 },
+            { name: "Ayrılık Çeşmesi", lat: 40.9972, lng: 29.0292 },
+            { name: "Acıbadem", lat: 40.9905, lng: 29.0388 },
+            { name: "Ünalan", lat: 40.9850, lng: 29.0520 },
+            { name: "Göztepe", lat: 40.9785, lng: 29.0605 },
+            { name: "Yenisahra", lat: 40.9770, lng: 29.0718 },
+            { name: "Kozyatağı", lat: 40.9755, lng: 29.0805 },
+            { name: "Bostancı", lat: 40.9670, lng: 29.0930 },
+            { name: "Küçükyalı", lat: 40.9578, lng: 29.1052 },
+            { name: "Maltepe", lat: 40.9350, lng: 29.1300 },
+            { name: "Huzurevi", lat: 40.9210, lng: 29.1450 },
+            { name: "Gülsuyu", lat: 40.9120, lng: 29.1500 },
+            { name: "Esenkent", lat: 40.9050, lng: 29.1620 },
+            { name: "Hastane-Adliye", lat: 40.8976, lng: 29.1790 },
+            { name: "Gebze Sanayi", lat: 40.8900, lng: 29.1900 },
+            { name: "Kaynarca", lat: 40.8880, lng: 29.2080 },
+            { name: "Pendik", lat: 40.8810, lng: 29.2300 },
+            { name: "Tavşantepe", lat: 40.8710, lng: 29.2550 },
+            { name: "Fevzi Çakmak", lat: 40.8620, lng: 29.2750 },
+            { name: "Yayalar", lat: 40.8540, lng: 29.2900 },
+            { name: "Kurtköy", lat: 40.8930, lng: 29.3040 },
+            { name: "Sabiha Gökçen Havalimanı", lat: 40.8987, lng: 29.3091 }
+          ]
+        },
+        {
+          id: "M5",
+          name: "M5",
+          route: "Üsküdar – Samandıra",
+          color: "#683166",
+          stations: [
+            { name: "Üsküdar", lat: 41.0262, lng: 29.0140 },
+            { name: "Fıstıkağacı", lat: 41.0257, lng: 29.0270 },
+            { name: "Bağlarbaşı", lat: 41.0235, lng: 29.0350 },
+            { name: "Altunizade", lat: 41.0206, lng: 29.0407 },
+            { name: "Kısıklı", lat: 41.0120, lng: 29.0536 },
+            { name: "Bulgurlu", lat: 41.0060, lng: 29.0640 },
+            { name: "Çekmeköy", lat: 41.0200, lng: 29.1650 },
+            { name: "Sultanbeyli", lat: 41.0030, lng: 29.2650 },
+            { name: "Samandıra", lat: 40.9770, lng: 29.2430 },
+            { name: "Samandıra Merkez", lat: 40.9710, lng: 29.2150 }
+          ]
+        },
+        {
+          id: "M6",
+          name: "M6",
+          route: "Levent – Boğaziçi Ünv./Hisarüstü",
+          color: "#C9AA79",
+          stations: [
+            { name: "Levent", lat: 41.0817, lng: 28.9710 },
+            { name: "Nispetiye", lat: 41.0800, lng: 29.0020 },
+            { name: "Etiler", lat: 41.0790, lng: 29.0150 },
+            { name: "Boğaziçi Üniversitesi/Hisarüstü", lat: 41.0836, lng: 29.0510 }
+          ]
+        },
+        {
+          id: "M7",
+          name: "M7",
+          route: "Yıldız – Mahmutbey",
+          color: "#F490B3",
+          stations: [
+            { name: "Yıldız", lat: 41.0685, lng: 28.8670 },
+            { name: "Fulya", lat: 41.0590, lng: 28.9915 },
+            { name: "Mecidiyeköy", lat: 41.0620, lng: 28.9881 },
+            { name: "Piyalepaşa", lat: 41.0415, lng: 28.9650 },
+            { name: "Karadeniz Mahallesi", lat: 41.0680, lng: 28.9490 },
+            { name: "Alibeyköy", lat: 41.0740, lng: 28.9410 },
+            { name: "Alibeyköy Cep Otogarı", lat: 41.0760, lng: 28.9300 },
+            { name: "Veysel Karani", lat: 41.0730, lng: 28.9120 },
+            { name: "Yeşilpınar", lat: 41.0690, lng: 28.8900 },
+            { name: "Kazım Karabekir", lat: 41.0670, lng: 28.8800 },
+            { name: "Yenimahalle", lat: 41.0660, lng: 28.8630 },
+            { name: "Karadeniz Mahallesi", lat: 41.0680, lng: 28.8490 },
+            { name: "Tekstilkent Giyimkent", lat: 41.0690, lng: 28.8270 },
+            { name: "Oruç Reis", lat: 41.0665, lng: 28.8080 },
+            { name: "Göztepe Mahallesi", lat: 41.0650, lng: 28.8000 },
+            { name: "Mahmutbey", lat: 41.0660, lng: 28.7987 }
+          ]
+        },
+        {
+          id: "M8",
+          name: "M8",
+          route: "Bostancı – Parseller",
+          color: "#487ABF",
+          stations: [
+            { name: "Bostancı", lat: 40.9670, lng: 29.0930 },
+            { name: "Kozyatağı", lat: 40.9755, lng: 29.0805 },
+            { name: "Küçükbakkalköy", lat: 40.9760, lng: 29.1060 },
+            { name: "İçerenköy", lat: 40.9790, lng: 29.1180 },
+            { name: "Kayışdağı", lat: 40.9790, lng: 29.1340 },
+            { name: "İMES", lat: 40.9820, lng: 29.1570 },
+            { name: "Modoko", lat: 40.9840, lng: 29.1700 },
+            { name: "Dudullu", lat: 40.9870, lng: 29.1810 },
+            { name: "Huzur", lat: 40.9900, lng: 29.1900 },
+            { name: "Parseller", lat: 40.9937, lng: 29.1990 }
+          ]
+        },
+        {
+          id: "M9",
+          name: "M9",
+          route: "Ataköy – İkitelli",
+          color: "#FCD10D",
+          stations: [
+            { name: "Ataköy", lat: 40.9840, lng: 28.8472 },
+            { name: "Bahariye", lat: 40.9985, lng: 28.8390 },
+            { name: "Yenibosna", lat: 40.9896, lng: 28.7790 },
+            { name: "Çobançeşme", lat: 40.9960, lng: 28.8000 },
+            { name: "Kuyumcukent", lat: 41.0050, lng: 28.7930 },
+            { name: "Beşyüzevler", lat: 41.0150, lng: 28.7870 },
+            { name: "Doğu Sanayi", lat: 41.0280, lng: 28.7800 },
+            { name: "Olimpiyat", lat: 41.0430, lng: 28.7700 }
+          ]
+        },
+        {
+          id: "M11",
+          name: "M11",
+          route: "Gayrettepe – İstanbul Havalimanı",
+          color: "#A1609B",
+          stations: [
+            { name: "Gayrettepe", lat: 41.0732, lng: 28.9792 },
+            { name: "Kağıthane", lat: 41.0810, lng: 28.9640 },
+            { name: "Kemerburgaz", lat: 41.1520, lng: 28.8800 },
+            { name: "Göktürk", lat: 41.1750, lng: 28.8560 },
+            { name: "İhsaniye", lat: 41.1900, lng: 28.8400 },
+            { name: "İstanbul Havalimanı", lat: 41.2617, lng: 28.7425 }
+          ]
+        },
+        {
+          id: "Marmaray",
+          name: "Marmaray",
+          type: "commuter",
+          route: "Halkalı – Gebze",
+          color: "#E5792E",
+          stations: [
+            { name: "Halkalı", lat: 41.0280, lng: 28.7710 },
+            { name: "Mustafa Kemal", lat: 41.0220, lng: 28.7890 },
+            { name: "Küçükçekmece", lat: 41.0060, lng: 28.7800 },
+            { name: "Florya", lat: 40.9880, lng: 28.7920 },
+            { name: "Florya Akvaryum", lat: 40.9850, lng: 28.8010 },
+            { name: "Ataköy", lat: 40.9828, lng: 28.8472 },
+            { name: "Bakırköy", lat: 40.9810, lng: 28.8630 },
+            { name: "Yenimahalle", lat: 40.9943, lng: 28.8850 },
+            { name: "Zeytinburnu", lat: 41.0023, lng: 28.9025 },
+            { name: "Kazlıçeşme", lat: 41.0042, lng: 28.9177 },
+            { name: "Yenikapı", lat: 41.0054, lng: 28.9536 },
+            { name: "Sirkeci", lat: 41.0145, lng: 28.9774 },
+            { name: "Üsküdar", lat: 41.0262, lng: 29.0140 },
+            { name: "Ayrılık Çeşmesi", lat: 40.9972, lng: 29.0292 },
+            { name: "Söğütlüçeşme", lat: 40.9902, lng: 29.0375 },
+            { name: "Feneryolu", lat: 40.9850, lng: 29.0480 },
+            { name: "Göztepe", lat: 40.9785, lng: 29.0605 },
+            { name: "Erenköy", lat: 40.9700, lng: 29.0830 },
+            { name: "Suadiye", lat: 40.9580, lng: 29.0890 },
+            { name: "Bostancı", lat: 40.9620, lng: 29.0960 },
+            { name: "Kartal", lat: 40.9240, lng: 29.1880 },
+            { name: "Yunus", lat: 40.9150, lng: 29.2120 },
+            { name: "Pendik", lat: 40.8810, lng: 29.2300 },
+            { name: "Güzelyalı", lat: 40.8720, lng: 29.3190 },
+            { name: "Tuzla", lat: 40.8340, lng: 29.3020 },
+            { name: "Gebze", lat: 40.8022, lng: 29.4310 }
+          ]
+        },
+        // ── Tram Lines ──
+        {
+          id: "T1",
+          name: "T1",
+          type: "tram",
+          route: "Kabataş – Bağcılar",
+          color: "#004b86",
+          stations: [
+            { name: "Kabataş", lat: 41.0362, lng: 28.9940 },
+            { name: "Fındıklı-MSÜ", lat: 41.0343, lng: 28.9878 },
+            { name: "Tophane", lat: 41.0290, lng: 28.9810 },
+            { name: "Karaköy", lat: 41.0220, lng: 28.9770 },
+            { name: "Eminönü", lat: 41.0175, lng: 28.9700 },
+            { name: "Sirkeci", lat: 41.0145, lng: 28.9774 },
+            { name: "Gülhane", lat: 41.0120, lng: 28.9815 },
+            { name: "Sultanahmet", lat: 41.0060, lng: 28.9767 },
+            { name: "Çemberlitaş", lat: 41.0076, lng: 28.9710 },
+            { name: "Beyazıt-Kapalıçarşı", lat: 41.0102, lng: 28.9630 },
+            { name: "Laleli-İstanbul Üniversitesi", lat: 41.0106, lng: 28.9562 },
+            { name: "Aksaray", lat: 41.0112, lng: 28.9516 },
+            { name: "Yusufpaşa", lat: 41.0140, lng: 28.9440 },
+            { name: "Haseki", lat: 41.0155, lng: 28.9370 },
+            { name: "Fındıkzade", lat: 41.0164, lng: 28.9290 },
+            { name: "Çapa-Şehremini", lat: 41.0160, lng: 28.9210 },
+            { name: "Pazartekke", lat: 41.0170, lng: 28.9145 },
+            { name: "Topkapı", lat: 41.0189, lng: 28.9095 },
+            { name: "Cevizlibağ-AÖY", lat: 41.0160, lng: 28.9008 },
+            { name: "Merkezefendi", lat: 41.0138, lng: 28.8928 },
+            { name: "Seyitnizam-Akşemsettin", lat: 41.0140, lng: 28.8840 },
+            { name: "Mithatpaşa", lat: 41.0120, lng: 28.8750 },
+            { name: "Zeytinburnu", lat: 41.0155, lng: 28.8610 },
+            { name: "Mehmet Akif", lat: 41.0175, lng: 28.8530 },
+            { name: "Merter Tekstil Merkezi", lat: 41.0190, lng: 28.8430 },
+            { name: "Güngören", lat: 41.0210, lng: 28.8340 },
+            { name: "Akıncılar", lat: 41.0190, lng: 28.8260 },
+            { name: "Soğanlı", lat: 41.0160, lng: 28.8190 },
+            { name: "Yavuzselim", lat: 41.0140, lng: 28.8120 },
+            { name: "Güneştepe", lat: 41.0120, lng: 28.8050 },
+            { name: "Bağcılar", lat: 41.0100, lng: 28.7980 }
+          ]
+        },
+        {
+          id: "T2",
+          name: "T2",
+          type: "tram",
+          route: "Taksim – Tünel (Nostaljik)",
+          color: "#90aba0",
+          stations: [
+            { name: "Taksim", lat: 41.0368, lng: 28.9852 },
+            { name: "Odakule", lat: 41.0340, lng: 28.9790 },
+            { name: "Galatasaray", lat: 41.0320, lng: 28.9755 },
+            { name: "Tünel Meydanı", lat: 41.0274, lng: 28.9730 },
+            { name: "Tünel", lat: 41.0265, lng: 28.9720 }
+          ]
+        },
+        {
+          id: "T3",
+          name: "T3",
+          type: "tram",
+          route: "Kadıköy – Moda (Nostaljik)",
+          color: "#99562f",
+          stations: [
+            { name: "Kadıköy İDO", lat: 40.9907, lng: 29.0242 },
+            { name: "İskele Camii", lat: 40.9910, lng: 29.0230 },
+            { name: "Çarşı", lat: 40.9905, lng: 29.0255 },
+            { name: "Altıyol", lat: 40.9880, lng: 29.0270 },
+            { name: "Bahariye", lat: 40.9850, lng: 29.0285 },
+            { name: "Kilise", lat: 40.9810, lng: 29.0310 },
+            { name: "Moda İlkokulu", lat: 40.9790, lng: 29.0280 },
+            { name: "Moda", lat: 40.9815, lng: 29.0240 },
+            { name: "Rızapaşa", lat: 40.9870, lng: 29.0220 },
+            { name: "Mühürdar", lat: 40.9888, lng: 29.0225 },
+            { name: "Damga Sokak", lat: 40.9900, lng: 29.0235 }
+          ]
+        },
+        {
+          id: "T4",
+          name: "T4",
+          type: "tram",
+          route: "Topkapı – Mescid-i Selam",
+          color: "#ff7e42",
+          stations: [
+            { name: "Topkapı", lat: 41.0189, lng: 28.9095 },
+            { name: "Fetihkapı", lat: 41.0240, lng: 28.9250 },
+            { name: "Vatan", lat: 41.0278, lng: 28.9340 },
+            { name: "Edirnekapı", lat: 41.0320, lng: 28.9380 },
+            { name: "Şehitlik", lat: 41.0360, lng: 28.9390 },
+            { name: "Demirkapı", lat: 41.0400, lng: 28.9395 },
+            { name: "Topçular", lat: 41.0445, lng: 28.9400 },
+            { name: "Rami", lat: 41.0500, lng: 28.9380 },
+            { name: "Uluyol-Bereç", lat: 41.0540, lng: 28.9350 },
+            { name: "Sağmalcılar", lat: 41.0580, lng: 28.9320 },
+            { name: "Bosna-Çukurçeşme", lat: 41.0630, lng: 28.9290 },
+            { name: "Ali Fuat Başgil", lat: 41.0680, lng: 28.9260 },
+            { name: "Taşköprü", lat: 41.0720, lng: 28.9220 },
+            { name: "Karadeniz", lat: 41.0760, lng: 28.9170 },
+            { name: "Kiptaş-Venezia", lat: 41.0800, lng: 28.9130 },
+            { name: "Cumhuriyet Mahallesi", lat: 41.0835, lng: 28.9085 },
+            { name: "50. Yıl-Baştabya", lat: 41.0870, lng: 28.9025 },
+            { name: "Hacı Şükrü", lat: 41.0900, lng: 28.8970 },
+            { name: "Yeni Mahalle", lat: 41.0930, lng: 28.8910 },
+            { name: "Sultançiftliği", lat: 41.0960, lng: 28.8850 },
+            { name: "Cebeci", lat: 41.0990, lng: 28.8790 },
+            { name: "Mescid-i Selam", lat: 41.1020, lng: 28.8730 }
+          ]
+        },
+        {
+          id: "T5",
+          name: "T5",
+          type: "tram",
+          route: "Eminönü – Alibeyköy Cep Otogarı",
+          color: "#7b72b2",
+          stations: [
+            { name: "Eminönü", lat: 41.0175, lng: 28.9700 },
+            { name: "Küçükpazar", lat: 41.0185, lng: 28.9640 },
+            { name: "Cibali", lat: 41.0220, lng: 28.9585 },
+            { name: "Fener", lat: 41.0265, lng: 28.9515 },
+            { name: "Balat", lat: 41.0310, lng: 28.9470 },
+            { name: "Ayvansaray", lat: 41.0350, lng: 28.9440 },
+            { name: "Feshane", lat: 41.0400, lng: 28.9430 },
+            { name: "Eyüpsultan Teleferik", lat: 41.0470, lng: 28.9420 },
+            { name: "Eyüpsultan Devlet Hastanesi", lat: 41.0520, lng: 28.9415 },
+            { name: "Silahtarağa Mahallesi", lat: 41.0570, lng: 28.9400 },
+            { name: "Üniversite", lat: 41.0620, lng: 28.9390 },
+            { name: "Alibeyköy Merkez", lat: 41.0690, lng: 28.9380 },
+            { name: "Alibeyköy Metro", lat: 41.0740, lng: 28.9370 },
+            { name: "Alibeyköy Cep Otogarı", lat: 41.0760, lng: 28.9300 }
+          ]
+        },
+        // ── Funicular Lines ──
+        {
+          id: "F1",
+          name: "F1",
+          type: "funicular",
+          route: "Taksim – Kabataş",
+          color: "#7a745a",
+          stations: [
+            { name: "Taksim", lat: 41.0368, lng: 28.9852 },
+            { name: "Kabataş", lat: 41.0362, lng: 28.9940 }
+          ]
+        },
+        {
+          id: "F2",
+          name: "F2 (Tünel)",
+          type: "funicular",
+          route: "Karaköy – Beyoğlu",
+          color: "#7a745a",
+          stations: [
+            { name: "Karaköy", lat: 41.0220, lng: 28.9770 },
+            { name: "Beyoğlu", lat: 41.0265, lng: 28.9720 }
+          ]
+        }
+      ];
+
+      /* ── Build Map ── */
+      const map = L.map("map", {
+        center: [41.015, 28.979],
+        zoom: 11,
+        zoomControl: true,
+        attributionControl: true
+      });
+
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: "abcd",
+        maxZoom: 19
+      }).addTo(map);
+
+      // Layer groups per line
+      const lineLayers = {};
+
+      metroLines.forEach((line) => {
+        const group = L.layerGroup();
+
+        // Draw polyline
+        const latlngs = line.stations.map((s) => [s.lat, s.lng]);
+        const polyline = L.polyline(latlngs, {
+          color: line.color,
+          weight: 4,
+          opacity: 0.9,
+          lineJoin: "round",
+          lineCap: "round"
+        });
+        polyline.addTo(group);
+
+        // Draw station markers
+        line.stations.forEach((station) => {
+          const marker = L.circleMarker([station.lat, station.lng], {
+            radius: 4,
+            fillColor: "#ffffff",
+            fillOpacity: 1,
+            color: line.color,
+            weight: 2.5,
+            opacity: 1
+          });
+
+          marker.bindTooltip(
+            `<span>${station.name}</span><span class="tt-line">${line.name}</span>`,
+            {
+              className: "station-tooltip",
+              direction: "top",
+              offset: [0, -8]
+            }
+          );
+
+          marker.addTo(group);
+        });
+
+        group.addTo(map);
+        lineLayers[line.id] = { group, visible: true };
+      });
+
+      /* ── Legend ── */
+      const legendEl = document.getElementById("legend");
+
+      const groups = [
+        { label: "Metro", type: "metro", filter: l => l.id.startsWith("M") && l.type !== "commuter" },
+        { label: "Tram", type: "tram", filter: l => l.type === "tram" },
+        { label: "Füniküler", type: "funicular", filter: l => l.type === "funicular" },
+        { label: "Banliyö", type: "commuter", filter: l => l.type === "commuter" }
+      ];
+      let html = '';
+      groups.forEach((g, i) => {
+        const lines = metroLines.filter(g.filter);
+        if (lines.length === 0) return;
+        if (i > 0) html += '<hr class="legend-sep">';
+        html += `<h3 data-group="${g.type}" title="Click to toggle all ${g.label} lines">${g.label}</h3>`;
+        lines.forEach((line) => {
+          html += `
+            <div class="legend-line" data-line="${line.id}" data-type="${g.type}">
+              <span class="legend-swatch" style="background:${line.color}"></span>
+              <span class="legend-label">${line.name}</span>
+              <span class="legend-route">${line.route.split(" – ")[0]} – ${line.route.split(" – ")[1]}</span>
+            </div>`;
+        });
+      });
+      html += '<hr class="legend-sep">';
+      html += '<div class="legend-footer">Click a line or group header to toggle.<br>Istanbul Rail Network · 2025</div>';
+      legendEl.innerHTML = html;
+
+      // Toggle line visibility on legend click
+      legendEl.querySelectorAll(".legend-line").forEach((el) => {
+        el.addEventListener("click", () => {
+          const id = el.dataset.line;
+          const entry = lineLayers[id];
+          if (!entry) return;
+
+          if (entry.visible) {
+            map.removeLayer(entry.group);
+            el.classList.add("dimmed");
+          } else {
+            entry.group.addTo(map);
+            el.classList.remove("dimmed");
+          }
+          entry.visible = !entry.visible;
+        });
+      });
+
+      // Group toggle
+      legendEl.querySelectorAll("h3[data-group]").forEach((header) => {
+        header.addEventListener("click", () => {
+          const type = header.dataset.group;
+          const lineEls = legendEl.querySelectorAll(`.legend-line[data-type="${type}"]`);
+          const anyVisible = [...lineEls].some(el => !el.classList.contains("dimmed"));
+          lineEls.forEach((el) => {
+            const id = el.dataset.line;
+            const entry = lineLayers[id];
+            if (!entry) return;
+            if (anyVisible) {
+              map.removeLayer(entry.group);
+              el.classList.add("dimmed");
+              entry.visible = false;
+            } else {
+              entry.group.addTo(map);
+              el.classList.remove("dimmed");
+              entry.visible = true;
+            }
+          });
+          header.classList.toggle("group-dimmed", anyVisible);
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SF Bay Area Rail Map · A. Berke Gökmen</title>
+    <meta name="description" content="Interactive San Francisco Bay Area rail map with BART, Muni Metro, and Caltrain lines." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+      :root {
+        --bg: #ffffff; --surface: #f6f7fb; --text: #14151b; --muted: #5f626e;
+        --accent: #1c5cff; --accent-soft: rgba(28, 92, 255, 0.12); --border: #e1e4ed;
+        --shadow: 0 22px 48px rgba(17, 23, 52, 0.08); --card-bg: #ffffff;
+        --header-bg: rgba(255, 255, 255, 0.92); --max-width: 980px; --radius: 18px;
+        color-scheme: light;
+      }
+      html.dark {
+        --bg: #0f1117; --surface: #1a1d28; --text: #e4e6ee; --muted: #9ca0af;
+        --accent: #5b8aff; --accent-soft: rgba(91, 138, 255, 0.15); --border: #2a2d3a;
+        --shadow: 0 22px 48px rgba(0, 0, 0, 0.32); --card-bg: #181b24;
+        --header-bg: rgba(15, 17, 23, 0.92); color-scheme: dark;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg); color: var(--text); line-height: 1.7;
+        -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover, a:focus-visible { text-decoration: underline; }
+      .site-header {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+        backdrop-filter: blur(16px); background: var(--header-bg);
+        border-bottom: 1px solid var(--border);
+      }
+      .site-header__inner {
+        margin: 0 auto; max-width: var(--max-width); padding: 1.2rem 1.5rem;
+        display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem;
+      }
+      .brand { font-weight: 600; letter-spacing: 0.02em; }
+      .nav-links {
+        display: flex; align-items: center; justify-content: center;
+        gap: 1.35rem; font-size: 0.96rem; font-weight: 500;
+      }
+      .nav-links a {
+        color: var(--muted); padding-bottom: 0.22rem;
+        border-bottom: 2px solid transparent; transition: border-color 0.2s ease, color 0.2s ease;
+      }
+      .nav-links a:hover, .nav-links a:focus-visible {
+        color: var(--accent); border-color: var(--accent); text-decoration: none;
+      }
+      .nav-links a.active { color: var(--accent); border-color: var(--accent); }
+      .theme-toggle {
+        justify-self: end; display: inline-flex; align-items: center; justify-content: center;
+        width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 50%;
+        background: var(--surface); color: var(--muted); cursor: pointer;
+        transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+      }
+      .theme-toggle:hover { color: var(--accent); border-color: var(--accent); transform: scale(1.08); }
+      .theme-toggle svg { width: 20px; height: 20px; transition: opacity 0.25s ease, transform 0.3s ease; }
+      .theme-toggle .icon-sun { display: block; } .theme-toggle .icon-moon { display: none; }
+      html.dark .theme-toggle .icon-sun { display: none; } html.dark .theme-toggle .icon-moon { display: block; }
+      #map { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; }
+      html.dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1); }
+      html.dark .leaflet-control-zoom a { background: var(--card-bg); color: var(--text); border-color: var(--border); }
+      .metro-legend {
+        position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 1001;
+        background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
+        padding: 1rem 1.2rem; font-size: 0.82rem; color: var(--muted);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12); backdrop-filter: blur(16px);
+        max-height: calc(100vh - 8rem); overflow-y: auto; min-width: 200px;
+      }
+      html.dark .metro-legend { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4); }
+      .metro-legend h3 {
+        font-size: 0.74rem; font-weight: 700; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--text); margin-bottom: 0.7rem;
+        cursor: pointer; user-select: none; transition: opacity 0.2s ease;
+      }
+      .metro-legend h3:hover { opacity: 0.6; }
+      .metro-legend h3.group-dimmed { opacity: 0.35; }
+      .legend-line {
+        display: flex; align-items: center; gap: 0.6rem; padding: 0.3rem 0;
+        cursor: pointer; transition: opacity 0.2s ease;
+      }
+      .legend-line:hover { opacity: 0.75; } .legend-line.dimmed { opacity: 0.3; }
+      .legend-swatch { width: 28px; height: 4px; border-radius: 2px; flex-shrink: 0; }
+      .legend-label { font-size: 0.8rem; font-weight: 500; color: var(--text); }
+      .legend-route { font-size: 0.7rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
+      .legend-sep { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0; }
+      .legend-footer { font-size: 0.72rem; color: var(--muted); line-height: 1.4; margin-top: 0.3rem; }
+      .station-tooltip {
+        background: var(--card-bg) !important; color: var(--text) !important;
+        border: 1px solid var(--border) !important; border-radius: 8px !important;
+        padding: 0.4rem 0.7rem !important; font-family: "Inter", sans-serif !important;
+        font-size: 0.82rem !important; font-weight: 600 !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important; white-space: nowrap !important;
+      }
+      .station-tooltip .leaflet-tooltip-arrow { display: none; }
+      .station-tooltip .tt-line { font-size: 0.7rem; font-weight: 500; opacity: 0.7; display: block; margin-top: 0.1rem; }
+      @media (max-width: 600px) {
+        .site-header__inner { grid-template-columns: 1fr auto; gap: 0.5rem; }
+        .nav-links { grid-column: 1 / -1; grid-row: 2; width: 100%; justify-content: flex-start; }
+        .theme-toggle { grid-column: 2; grid-row: 1; }
+        .metro-legend { bottom: 0.6rem; left: 0.6rem; padding: 0.6rem 0.8rem; font-size: 0.75rem; max-height: calc(100vh - 6rem); min-width: 170px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="/">A. Berke Gökmen</a>
+        <nav class="nav-links">
+          <a href="/">About</a>
+          <a href="/#publications">Publications</a>
+          <a href="/#experience">Experience</a>
+          <a href="/map">Map</a>
+          <a href="/random" class="active">Random</a>
+        </nav>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </header>
+    <div id="map"></div>
+    <div class="metro-legend" id="legend"></div>
+
+    <script>
+      (() => {
+        const toggle = document.getElementById("theme-toggle");
+        const root = document.documentElement;
+        const saved = localStorage.getItem("theme");
+        if (saved === "dark") root.classList.add("dark");
+        toggle.addEventListener("click", () => {
+          root.classList.toggle("dark");
+          localStorage.setItem("theme", root.classList.contains("dark") ? "dark" : "light");
+        });
+      })();
+
+      const allLines = [
+        // ── BART ──
+        { id: "bart-red", name: "Red Line", type: "bart", route: "Richmond – Millbrae", color: "#ED1C24", stations: [
+          {name:"Richmond",lat:37.9370,lng:-122.3537},{name:"El Cerrito del Norte",lat:37.9256,lng:-122.3170},{name:"El Cerrito Plaza",lat:37.9030,lng:-122.2992},{name:"North Berkeley",lat:37.8740,lng:-122.2833},{name:"Downtown Berkeley",lat:37.8700,lng:-122.2681},{name:"Ashby",lat:37.8529,lng:-122.2700},{name:"MacArthur",lat:37.8284,lng:-122.2672},{name:"19th St/Oakland",lat:37.8089,lng:-122.2690},{name:"12th St/Oakland City Center",lat:37.8032,lng:-122.2717},{name:"West Oakland",lat:37.8046,lng:-122.2945},{name:"Embarcadero",lat:37.7929,lng:-122.3969},{name:"Montgomery St",lat:37.7894,lng:-122.4018},{name:"Powell St",lat:37.7849,lng:-122.4080},{name:"Civic Center/UN Plaza",lat:37.7796,lng:-122.4141},{name:"16th St Mission",lat:37.7650,lng:-122.4199},{name:"24th St Mission",lat:37.7525,lng:-122.4184},{name:"Glen Park",lat:37.7332,lng:-122.4343},{name:"Balboa Park",lat:37.7219,lng:-122.4474},{name:"Daly City",lat:37.7063,lng:-122.4690},{name:"Colma",lat:37.6846,lng:-122.4669},{name:"South San Francisco",lat:37.6640,lng:-122.4440},{name:"San Bruno",lat:37.6374,lng:-122.4156},{name:"SFO Airport",lat:37.6159,lng:-122.3921},{name:"Millbrae",lat:37.5996,lng:-122.3864}
+        ]},
+        { id: "bart-yellow", name: "Yellow Line", type: "bart", route: "Antioch – SFO/Millbrae", color: "#FFD204", stations: [
+          {name:"Antioch",lat:37.9959,lng:-121.7831},{name:"Pittsburg Center",lat:38.0170,lng:-121.8896},{name:"Pittsburg/Bay Point",lat:38.0189,lng:-121.9452},{name:"North Concord/Martinez",lat:38.0030,lng:-122.0246},{name:"Concord",lat:37.9739,lng:-122.0290},{name:"Pleasant Hill",lat:37.9285,lng:-122.0569},{name:"Walnut Creek",lat:37.9056,lng:-122.0674},{name:"Lafayette",lat:37.8934,lng:-122.1246},{name:"Orinda",lat:37.8784,lng:-122.1837},{name:"Rockridge",lat:37.8449,lng:-122.2516},{name:"MacArthur",lat:37.8284,lng:-122.2672},{name:"19th St/Oakland",lat:37.8089,lng:-122.2690},{name:"12th St/Oakland City Center",lat:37.8032,lng:-122.2717},{name:"West Oakland",lat:37.8046,lng:-122.2945},{name:"Embarcadero",lat:37.7929,lng:-122.3969},{name:"Montgomery St",lat:37.7894,lng:-122.4018},{name:"Powell St",lat:37.7849,lng:-122.4080},{name:"Civic Center/UN Plaza",lat:37.7796,lng:-122.4141},{name:"16th St Mission",lat:37.7650,lng:-122.4199},{name:"24th St Mission",lat:37.7525,lng:-122.4184},{name:"Glen Park",lat:37.7332,lng:-122.4343},{name:"Balboa Park",lat:37.7219,lng:-122.4474},{name:"Daly City",lat:37.7063,lng:-122.4690},{name:"Colma",lat:37.6846,lng:-122.4669},{name:"South San Francisco",lat:37.6640,lng:-122.4440},{name:"San Bruno",lat:37.6374,lng:-122.4156},{name:"SFO Airport",lat:37.6159,lng:-122.3921},{name:"Millbrae",lat:37.5996,lng:-122.3864}
+        ]},
+        { id: "bart-blue", name: "Blue Line", type: "bart", route: "Dublin/Pleasanton – Daly City", color: "#0099CC", stations: [
+          {name:"Dublin/Pleasanton",lat:37.7017,lng:-121.8993},{name:"West Dublin/Pleasanton",lat:37.6999,lng:-121.9281},{name:"Castro Valley",lat:37.6907,lng:-122.0758},{name:"Bay Fair",lat:37.6968,lng:-122.1266},{name:"San Leandro",lat:37.7226,lng:-122.1609},{name:"Coliseum",lat:37.7536,lng:-122.1969},{name:"Fruitvale",lat:37.7749,lng:-122.2241},{name:"Lake Merritt",lat:37.7975,lng:-122.2654},{name:"West Oakland",lat:37.8046,lng:-122.2945},{name:"Embarcadero",lat:37.7929,lng:-122.3969},{name:"Montgomery St",lat:37.7894,lng:-122.4018},{name:"Powell St",lat:37.7849,lng:-122.4080},{name:"Civic Center/UN Plaza",lat:37.7796,lng:-122.4141},{name:"16th St Mission",lat:37.7650,lng:-122.4199},{name:"24th St Mission",lat:37.7525,lng:-122.4184},{name:"Glen Park",lat:37.7332,lng:-122.4343},{name:"Balboa Park",lat:37.7219,lng:-122.4474},{name:"Daly City",lat:37.7063,lng:-122.4690}
+        ]},
+        { id: "bart-green", name: "Green Line", type: "bart", route: "Berryessa – Daly City", color: "#339933", stations: [
+          {name:"Berryessa/North San José",lat:37.3686,lng:-121.8746},{name:"Milpitas",lat:37.4103,lng:-121.8910},{name:"Warm Springs/South Fremont",lat:37.5027,lng:-121.9395},{name:"Fremont",lat:37.5574,lng:-121.9764},{name:"Union City",lat:37.5910,lng:-122.0172},{name:"South Hayward",lat:37.6340,lng:-122.0571},{name:"Hayward",lat:37.6700,lng:-122.0872},{name:"Bay Fair",lat:37.6968,lng:-122.1266},{name:"San Leandro",lat:37.7226,lng:-122.1609},{name:"Coliseum",lat:37.7536,lng:-122.1969},{name:"Fruitvale",lat:37.7749,lng:-122.2241},{name:"Lake Merritt",lat:37.7975,lng:-122.2654},{name:"West Oakland",lat:37.8046,lng:-122.2945},{name:"Embarcadero",lat:37.7929,lng:-122.3969},{name:"Montgomery St",lat:37.7894,lng:-122.4018},{name:"Powell St",lat:37.7849,lng:-122.4080},{name:"Civic Center/UN Plaza",lat:37.7796,lng:-122.4141},{name:"16th St Mission",lat:37.7650,lng:-122.4199},{name:"24th St Mission",lat:37.7525,lng:-122.4184},{name:"Glen Park",lat:37.7332,lng:-122.4343},{name:"Balboa Park",lat:37.7219,lng:-122.4474},{name:"Daly City",lat:37.7063,lng:-122.4690}
+        ]},
+        { id: "bart-orange", name: "Orange Line", type: "bart", route: "Richmond – Berryessa", color: "#FAA61A", stations: [
+          {name:"Richmond",lat:37.9370,lng:-122.3537},{name:"El Cerrito del Norte",lat:37.9256,lng:-122.3170},{name:"El Cerrito Plaza",lat:37.9030,lng:-122.2992},{name:"North Berkeley",lat:37.8740,lng:-122.2833},{name:"Downtown Berkeley",lat:37.8700,lng:-122.2681},{name:"Ashby",lat:37.8529,lng:-122.2700},{name:"MacArthur",lat:37.8284,lng:-122.2672},{name:"19th St/Oakland",lat:37.8089,lng:-122.2690},{name:"12th St/Oakland City Center",lat:37.8032,lng:-122.2717},{name:"Lake Merritt",lat:37.7975,lng:-122.2654},{name:"Fruitvale",lat:37.7749,lng:-122.2241},{name:"Coliseum",lat:37.7536,lng:-122.1969},{name:"San Leandro",lat:37.7226,lng:-122.1609},{name:"Bay Fair",lat:37.6968,lng:-122.1266},{name:"Hayward",lat:37.6700,lng:-122.0872},{name:"South Hayward",lat:37.6340,lng:-122.0571},{name:"Union City",lat:37.5910,lng:-122.0172},{name:"Fremont",lat:37.5574,lng:-121.9764},{name:"Warm Springs/South Fremont",lat:37.5027,lng:-121.9395},{name:"Milpitas",lat:37.4103,lng:-121.8910},{name:"Berryessa/North San José",lat:37.3686,lng:-121.8746}
+        ]},
+        // ── Muni Metro ──
+        { id: "muni-j", name: "J Church", type: "muni", route: "Embarcadero – Balboa Park", color: "#E18813", stations: [
+          {name:"Embarcadero",lat:37.7929,lng:-122.3969},{name:"Montgomery St",lat:37.7894,lng:-122.4018},{name:"Powell St",lat:37.7849,lng:-122.4080},{name:"Civic Center",lat:37.7796,lng:-122.4141},{name:"Van Ness",lat:37.7752,lng:-122.4193},{name:"Church",lat:37.7673,lng:-122.4290},{name:"18th & Church",lat:37.7615,lng:-122.4288},{name:"20th & Church",lat:37.7583,lng:-122.4270},{name:"Dolores Park",lat:37.7537,lng:-122.4268},{name:"24th & Noe",lat:37.7510,lng:-122.4320},{name:"30th & San Jose",lat:37.7420,lng:-122.4240},{name:"Glen Park",lat:37.7332,lng:-122.4343},{name:"Balboa Park",lat:37.7219,lng:-122.4474}
+        ]},
+        { id: "muni-k", name: "K Ingleside", type: "muni", route: "Embarcadero – Balboa Park", color: "#549DBF", stations: [
+          {name:"Embarcadero",lat:37.7929,lng:-122.3969},{name:"Montgomery St",lat:37.7894,lng:-122.4018},{name:"Powell St",lat:37.7849,lng:-122.4080},{name:"Civic Center",lat:37.7796,lng:-122.4141},{name:"Van Ness",lat:37.7752,lng:-122.4193},{name:"Church",lat:37.7673,lng:-122.4290},{name:"Castro",lat:37.7625,lng:-122.4350},{name:"Forest Hill",lat:37.7487,lng:-122.4590},{name:"West Portal",lat:37.7407,lng:-122.4662},{name:"St Francis Circle",lat:37.7346,lng:-122.4700},{name:"Ocean & Phelan",lat:37.7258,lng:-122.4525},{name:"Balboa Park",lat:37.7219,lng:-122.4474}
+        ]},
+        { id: "muni-l", name: "L Taraval", type: "muni", route: "Embarcadero – SF Zoo", color: "#932290", stations: [
+          {name:"Embarcadero",lat:37.7929,lng:-122.3969},{name:"Montgomery St",lat:37.7894,lng:-122.4018},{name:"Powell St",lat:37.7849,lng:-122.4080},{name:"Civic Center",lat:37.7796,lng:-122.4141},{name:"Van Ness",lat:37.7752,lng:-122.4193},{name:"Church",lat:37.7673,lng:-122.4290},{name:"Castro",lat:37.7625,lng:-122.4350},{name:"Forest Hill",lat:37.7487,lng:-122.4590},{name:"West Portal",lat:37.7407,lng:-122.4662},{name:"Ulloa & Claremont",lat:37.7380,lng:-122.4700},{name:"Taraval & 15th",lat:37.7430,lng:-122.4710},{name:"Taraval & 19th",lat:37.7430,lng:-122.4770},{name:"Taraval & 28th",lat:37.7430,lng:-122.4880},{name:"Taraval & 40th",lat:37.7430,lng:-122.5000},{name:"Wawona & 46th",lat:37.7380,lng:-122.5050},{name:"SF Zoo",lat:37.7330,lng:-122.5053}
+        ]},
+        { id: "muni-m", name: "M Ocean View", type: "muni", route: "Embarcadero – Balboa Park", color: "#008851", stations: [
+          {name:"Embarcadero",lat:37.7929,lng:-122.3969},{name:"Montgomery St",lat:37.7894,lng:-122.4018},{name:"Powell St",lat:37.7849,lng:-122.4080},{name:"Civic Center",lat:37.7796,lng:-122.4141},{name:"Van Ness",lat:37.7752,lng:-122.4193},{name:"Church",lat:37.7673,lng:-122.4290},{name:"Castro",lat:37.7625,lng:-122.4350},{name:"Forest Hill",lat:37.7487,lng:-122.4590},{name:"West Portal",lat:37.7407,lng:-122.4662},{name:"19th & Holloway",lat:37.7210,lng:-122.4748},{name:"Stonestown",lat:37.7120,lng:-122.4720},{name:"SF State",lat:37.7150,lng:-122.4750},{name:"Randolph & Arch",lat:37.7151,lng:-122.4610},{name:"Broad & San Jose",lat:37.7130,lng:-122.4520},{name:"Balboa Park",lat:37.7219,lng:-122.4474}
+        ]},
+        { id: "muni-n", name: "N Judah", type: "muni", route: "4th & King – Ocean Beach", color: "#004988", stations: [
+          {name:"4th & King (Caltrain)",lat:37.7766,lng:-122.3946},{name:"Embarcadero",lat:37.7929,lng:-122.3969},{name:"Montgomery St",lat:37.7894,lng:-122.4018},{name:"Powell St",lat:37.7849,lng:-122.4080},{name:"Civic Center",lat:37.7796,lng:-122.4141},{name:"Van Ness",lat:37.7752,lng:-122.4193},{name:"Church",lat:37.7673,lng:-122.4290},{name:"Duboce & Church",lat:37.7693,lng:-122.4340},{name:"Carl & Cole",lat:37.7659,lng:-122.4499},{name:"Carl & Hillway",lat:37.7639,lng:-122.4539},{name:"Irving & 9th",lat:37.7640,lng:-122.4660},{name:"Irving & 19th",lat:37.7637,lng:-122.4790},{name:"Judah & 28th",lat:37.7622,lng:-122.4886},{name:"Judah & 40th",lat:37.7610,lng:-122.5000},{name:"La Playa",lat:37.7601,lng:-122.5090}
+        ]},
+        { id: "muni-t", name: "T Third Street", type: "muni", route: "Chinatown – Sunnydale", color: "#D40843", stations: [
+          {name:"Chinatown",lat:37.7942,lng:-122.4070},{name:"Union Square/Market St",lat:37.7880,lng:-122.4070},{name:"Yerba Buena/Moscone",lat:37.7840,lng:-122.4040},{name:"4th & Brannan",lat:37.7780,lng:-122.3942},{name:"4th & King",lat:37.7766,lng:-122.3946},{name:"Mariposa & 3rd",lat:37.7640,lng:-122.3888},{name:"23rd & 3rd",lat:37.7550,lng:-122.3878},{name:"Evans & 3rd",lat:37.7480,lng:-122.3870},{name:"Williams & 3rd",lat:37.7370,lng:-122.3920},{name:"Bayshore & 3rd",lat:37.7300,lng:-122.3930},{name:"Arleta & 3rd",lat:37.7220,lng:-122.3950},{name:"Sunnydale",lat:37.7120,lng:-122.3985}
+        ]},
+        // ── Caltrain ──
+        { id: "caltrain", name: "Caltrain", type: "caltrain", route: "San Francisco – San Jose", color: "#E21836", stations: [
+          {name:"San Francisco (4th & King)",lat:37.7766,lng:-122.3946},{name:"22nd Street",lat:37.7577,lng:-122.3922},{name:"Bayshore",lat:37.7094,lng:-122.4012},{name:"South San Francisco",lat:37.6556,lng:-122.4049},{name:"San Bruno",lat:37.6303,lng:-122.4115},{name:"Millbrae",lat:37.5996,lng:-122.3864},{name:"Burlingame",lat:37.5800,lng:-122.3451},{name:"San Mateo",lat:37.5685,lng:-122.3232},{name:"Hillsdale",lat:37.5377,lng:-122.2870},{name:"San Carlos",lat:37.5074,lng:-122.2610},{name:"Redwood City",lat:37.4862,lng:-122.2321},{name:"Menlo Park",lat:37.4547,lng:-122.1826},{name:"Palo Alto",lat:37.4430,lng:-122.1650},{name:"Mountain View",lat:37.3946,lng:-122.0764},{name:"Sunnyvale",lat:37.3787,lng:-122.0310},{name:"Santa Clara",lat:37.3530,lng:-121.9365},{name:"San Jose Diridon",lat:37.3297,lng:-121.9021}
+        ]}
+      ];
+
+      const map = L.map("map", { center: [37.78, -122.25], zoom: 10, zoomControl: true, attributionControl: true });
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: "abcd", maxZoom: 19
+      }).addTo(map);
+
+      const lineLayers = {};
+      allLines.forEach((line) => {
+        const group = L.layerGroup();
+        const latlngs = line.stations.map((s) => [s.lat, s.lng]);
+        const isMuni = line.type === "muni";
+        const isCaltrain = line.type === "caltrain";
+        const weight = isCaltrain ? 3 : (isMuni ? 3 : 4);
+        const opacity = isMuni ? 0.8 : 0.9;
+        const dashArray = isCaltrain ? "8 6" : null;
+        L.polyline(latlngs, { color: line.color, weight, opacity, lineJoin: "round", lineCap: "round", dashArray }).addTo(group);
+        line.stations.forEach((station) => {
+          const marker = L.circleMarker([station.lat, station.lng], {
+            radius: isMuni ? 3 : 4, fillColor: "#ffffff", fillOpacity: 1,
+            color: line.color, weight: isMuni ? 2 : 2.5, opacity: 1
+          });
+          marker.bindTooltip(`<span>${station.name}</span><span class="tt-line">${line.name}</span>`, {
+            className: "station-tooltip", direction: "top", offset: [0, -8]
+          });
+          marker.addTo(group);
+        });
+        group.addTo(map);
+        lineLayers[line.id] = { group, visible: true };
+      });
+
+      /* ── Legend with group toggles ── */
+      const legendEl = document.getElementById("legend");
+      const groups = [
+        { label: "BART", type: "bart" },
+        { label: "Muni Metro", type: "muni" },
+        { label: "Caltrain", type: "caltrain" }
+      ];
+      let html = '';
+      groups.forEach((g, i) => {
+        const lines = allLines.filter(l => l.type === g.type);
+        if (lines.length === 0) return;
+        if (i > 0) html += '<hr class="legend-sep">';
+        html += `<h3 data-group="${g.type}" title="Click to toggle all ${g.label} lines">${g.label}</h3>`;
+        lines.forEach((line) => {
+          html += `<div class="legend-line" data-line="${line.id}" data-type="${g.type}">
+            <span class="legend-swatch" style="background:${line.color}"></span>
+            <span class="legend-label">${line.name}</span>
+            <span class="legend-route">${line.route}</span>
+          </div>`;
+        });
+      });
+      html += '<hr class="legend-sep">';
+      html += '<div class="legend-footer">Click a line or group header to toggle.<br>Bay Area Rail Network · 2025</div>';
+      legendEl.innerHTML = html;
+
+      // Individual line toggle
+      legendEl.querySelectorAll(".legend-line").forEach((el) => {
+        el.addEventListener("click", () => {
+          const id = el.dataset.line;
+          const entry = lineLayers[id];
+          if (!entry) return;
+          if (entry.visible) { map.removeLayer(entry.group); el.classList.add("dimmed"); }
+          else { entry.group.addTo(map); el.classList.remove("dimmed"); }
+          entry.visible = !entry.visible;
+        });
+      });
+
+      // Group toggle
+      legendEl.querySelectorAll("h3[data-group]").forEach((header) => {
+        header.addEventListener("click", () => {
+          const type = header.dataset.group;
+          const lineEls = legendEl.querySelectorAll(`.legend-line[data-type="${type}"]`);
+          const anyVisible = [...lineEls].some(el => !el.classList.contains("dimmed"));
+          lineEls.forEach((el) => {
+            const id = el.dataset.line;
+            const entry = lineLayers[id];
+            if (!entry) return;
+            if (anyVisible) { map.removeLayer(entry.group); el.classList.add("dimmed"); entry.visible = false; }
+            else { entry.group.addTo(map); el.classList.remove("dimmed"); entry.visible = true; }
+          });
+          header.classList.toggle("group-dimmed", anyVisible);
+        });
+      });
+    </script>
+  </body>
+</html>

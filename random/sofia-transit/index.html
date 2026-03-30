@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sofia Rail Map · A. Berke Gökmen</title>
+    <meta name="description" content="Interactive Sofia metro and tram map with all lines visualized." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+      :root {
+        --bg: #ffffff; --surface: #f6f7fb; --text: #14151b; --muted: #5f626e;
+        --accent: #1c5cff; --accent-soft: rgba(28, 92, 255, 0.12); --border: #e1e4ed;
+        --shadow: 0 22px 48px rgba(17, 23, 52, 0.08); --card-bg: #ffffff;
+        --header-bg: rgba(255, 255, 255, 0.92); --max-width: 980px; --radius: 18px;
+        color-scheme: light;
+      }
+      html.dark {
+        --bg: #0f1117; --surface: #1a1d28; --text: #e4e6ee; --muted: #9ca0af;
+        --accent: #5b8aff; --accent-soft: rgba(91, 138, 255, 0.15); --border: #2a2d3a;
+        --shadow: 0 22px 48px rgba(0, 0, 0, 0.32); --card-bg: #181b24;
+        --header-bg: rgba(15, 17, 23, 0.92); color-scheme: dark;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+        background: var(--bg); color: var(--text); line-height: 1.7;
+        -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh;
+      }
+      a { color: var(--accent); text-decoration: none; }
+      a:hover, a:focus-visible { text-decoration: underline; }
+      .site-header {
+        position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+        backdrop-filter: blur(16px); background: var(--header-bg);
+        border-bottom: 1px solid var(--border);
+      }
+      .site-header__inner {
+        margin: 0 auto; max-width: var(--max-width); padding: 1.2rem 1.5rem;
+        display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem;
+      }
+      .brand { font-weight: 600; letter-spacing: 0.02em; }
+      .nav-links {
+        display: flex; align-items: center; justify-content: center;
+        gap: 1.35rem; font-size: 0.96rem; font-weight: 500;
+      }
+      .nav-links a {
+        color: var(--muted); padding-bottom: 0.22rem;
+        border-bottom: 2px solid transparent; transition: border-color 0.2s ease, color 0.2s ease;
+      }
+      .nav-links a:hover, .nav-links a:focus-visible {
+        color: var(--accent); border-color: var(--accent); text-decoration: none;
+      }
+      .nav-links a.active { color: var(--accent); border-color: var(--accent); }
+      .theme-toggle {
+        justify-self: end; display: inline-flex; align-items: center; justify-content: center;
+        width: 40px; height: 40px; border: 1px solid var(--border); border-radius: 50%;
+        background: var(--surface); color: var(--muted); cursor: pointer;
+        transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease, transform 0.2s ease;
+      }
+      .theme-toggle:hover { color: var(--accent); border-color: var(--accent); transform: scale(1.08); }
+      .theme-toggle svg { width: 20px; height: 20px; transition: opacity 0.25s ease, transform 0.3s ease; }
+      .theme-toggle .icon-sun { display: block; } .theme-toggle .icon-moon { display: none; }
+      html.dark .theme-toggle .icon-sun { display: none; } html.dark .theme-toggle .icon-moon { display: block; }
+      #map { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 1; }
+      html.dark .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.85) contrast(1.1); }
+      html.dark .leaflet-control-zoom a { background: var(--card-bg); color: var(--text); border-color: var(--border); }
+      .metro-legend {
+        position: fixed; bottom: 1.5rem; left: 1.5rem; z-index: 1001;
+        background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
+        padding: 1rem 1.2rem; font-size: 0.82rem; color: var(--muted);
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12); backdrop-filter: blur(16px);
+        max-height: calc(100vh - 8rem); overflow-y: auto; min-width: 200px;
+      }
+      html.dark .metro-legend { box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4); }
+      .metro-legend h3 {
+        font-size: 0.74rem; font-weight: 700; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--text); margin-bottom: 0.7rem;
+        cursor: pointer; user-select: none; transition: opacity 0.2s ease;
+      }
+      .metro-legend h3:hover { opacity: 0.6; }
+      .metro-legend h3.group-dimmed { opacity: 0.35; }
+      .legend-line {
+        display: flex; align-items: center; gap: 0.6rem; padding: 0.3rem 0;
+        cursor: pointer; transition: opacity 0.2s ease;
+      }
+      .legend-line:hover { opacity: 0.75; } .legend-line.dimmed { opacity: 0.3; }
+      .legend-swatch { width: 28px; height: 4px; border-radius: 2px; flex-shrink: 0; }
+      .legend-label { font-size: 0.8rem; font-weight: 500; color: var(--text); }
+      .legend-route { font-size: 0.7rem; color: var(--muted); margin-left: auto; white-space: nowrap; }
+      .legend-sep { border: none; border-top: 1px solid var(--border); margin: 0.5rem 0; }
+      .legend-footer { font-size: 0.72rem; color: var(--muted); line-height: 1.4; margin-top: 0.3rem; }
+      .station-tooltip {
+        background: var(--card-bg) !important; color: var(--text) !important;
+        border: 1px solid var(--border) !important; border-radius: 8px !important;
+        padding: 0.4rem 0.7rem !important; font-family: "Inter", sans-serif !important;
+        font-size: 0.82rem !important; font-weight: 600 !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12) !important; white-space: nowrap !important;
+      }
+      .station-tooltip .leaflet-tooltip-arrow { display: none; }
+      .station-tooltip .tt-line { font-size: 0.7rem; font-weight: 500; opacity: 0.7; display: block; margin-top: 0.1rem; }
+      @media (max-width: 600px) {
+        .site-header__inner { grid-template-columns: 1fr auto; gap: 0.5rem; }
+        .nav-links { grid-column: 1 / -1; grid-row: 2; width: 100%; justify-content: flex-start; }
+        .theme-toggle { grid-column: 2; grid-row: 1; }
+        .metro-legend { bottom: 0.6rem; left: 0.6rem; padding: 0.6rem 0.8rem; font-size: 0.75rem; max-height: calc(100vh - 6rem); min-width: 170px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="brand" href="/">A. Berke Gökmen</a>
+        <nav class="nav-links">
+          <a href="/">About</a>
+          <a href="/#publications">Publications</a>
+          <a href="/#experience">Experience</a>
+          <a href="/map">Map</a>
+          <a href="/random" class="active">Random</a>
+        </nav>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" fill="currentColor"/></svg>
+        </button>
+      </div>
+    </header>
+    <div id="map"></div>
+    <div class="metro-legend" id="legend"></div>
+
+    <script>
+      (() => {
+        const toggle = document.getElementById("theme-toggle");
+        const root = document.documentElement;
+        const saved = localStorage.getItem("theme");
+        if (saved === "dark") root.classList.add("dark");
+        toggle.addEventListener("click", () => {
+          root.classList.toggle("dark");
+          localStorage.setItem("theme", root.classList.contains("dark") ? "dark" : "light");
+        });
+      })();
+
+      const metroLines = [
+        {
+          id: "M1", name: "M1", route: "Slivnitsa – Business Park Sofia", color: "#E92228",
+          stations: [
+            { name: "Slivnitsa", lat: 42.7126, lng: 23.2480 },
+            { name: "Lyulin", lat: 42.7170, lng: 23.2600 },
+            { name: "Zapaden Park", lat: 42.7120, lng: 23.2770 },
+            { name: "Vardar", lat: 42.7100, lng: 23.2880 },
+            { name: "Konstantin Velichkov", lat: 42.7080, lng: 23.2990 },
+            { name: "Opalchenska", lat: 42.7050, lng: 23.3070 },
+            { name: "Serdika", lat: 42.6985, lng: 23.3215 },
+            { name: "SU Sv. Kliment Ohridski", lat: 42.6935, lng: 23.3340 },
+            { name: "Stadion Vasil Levski", lat: 42.6890, lng: 23.3410 },
+            { name: "Joliot-Curie", lat: 42.6830, lng: 23.3505 },
+            { name: "G.M. Dimitrov", lat: 42.6780, lng: 23.3590 },
+            { name: "Musagenitsa", lat: 42.6735, lng: 23.3670 },
+            { name: "Mladost 1", lat: 42.6560, lng: 23.3720 },
+            { name: "Aleksandar Malinov", lat: 42.6470, lng: 23.3785 },
+            { name: "Akad. Al. Teodorov-Balan", lat: 42.6390, lng: 23.3850 },
+            { name: "Business Park Sofia", lat: 42.6325, lng: 23.3907 }
+          ]
+        },
+        {
+          id: "M2", name: "M2", route: "Obelya – Vitosha", color: "#1C75BB",
+          stations: [
+            { name: "Obelya", lat: 42.7330, lng: 23.2670 },
+            { name: "Lomsko Shose", lat: 42.7290, lng: 23.2800 },
+            { name: "Beli Dunav", lat: 42.7260, lng: 23.2900 },
+            { name: "Nadezhda", lat: 42.7230, lng: 23.3010 },
+            { name: "Han Kubrat", lat: 42.7185, lng: 23.3090 },
+            { name: "Knyaginya Maria Luisa", lat: 42.7100, lng: 23.3180 },
+            { name: "Central Railway Station", lat: 42.7115, lng: 23.3210 },
+            { name: "Lavov Most", lat: 42.7040, lng: 23.3230 },
+            { name: "Serdika 2", lat: 42.6985, lng: 23.3215 },
+            { name: "NDK", lat: 42.6865, lng: 23.3190 },
+            { name: "European Union", lat: 42.6780, lng: 23.3150 },
+            { name: "James Bourchier", lat: 42.6700, lng: 23.3100 },
+            { name: "Vitosha", lat: 42.6630, lng: 23.3050 }
+          ]
+        },
+        {
+          id: "M3", name: "M3", route: "Hadzhi Dimitar – Gorna Banya", color: "#41B24B",
+          stations: [
+            { name: "Hadzhi Dimitar", lat: 42.7110, lng: 23.3580 },
+            { name: "Teatralna", lat: 42.7050, lng: 23.3460 },
+            { name: "Orlov Most", lat: 42.6955, lng: 23.3315 },
+            { name: "Sv. Patriarh Evtimiy", lat: 42.6905, lng: 23.3260 },
+            { name: "NDK 2", lat: 42.6865, lng: 23.3190 },
+            { name: "Meditsinski Universitet", lat: 42.6830, lng: 23.3085 },
+            { name: "Bulgaria Blvd.", lat: 42.6790, lng: 23.2960 },
+            { name: "Krasno Selo", lat: 42.6770, lng: 23.2840 },
+            { name: "Ovcha Kupel", lat: 42.6735, lng: 23.2700 },
+            { name: "Moesia/NBU", lat: 42.6710, lng: 23.2570 },
+            { name: "Ovcha Kupel II", lat: 42.6780, lng: 23.2490 },
+            { name: "Gorna Banya", lat: 42.6830, lng: 23.2370 }
+          ]
+        },
+        {
+          id: "M4", name: "M4", route: "Obelya – Sofia Airport", color: "#FDD304",
+          stations: [
+            { name: "Obelya", lat: 42.7330, lng: 23.2670 },
+            { name: "Slivnitsa", lat: 42.7126, lng: 23.2480 },
+            { name: "Lyulin", lat: 42.7170, lng: 23.2600 },
+            { name: "Zapaden Park", lat: 42.7120, lng: 23.2770 },
+            { name: "Vardar", lat: 42.7100, lng: 23.2880 },
+            { name: "Konstantin Velichkov", lat: 42.7080, lng: 23.2990 },
+            { name: "Opalchenska", lat: 42.7050, lng: 23.3070 },
+            { name: "Serdika", lat: 42.6985, lng: 23.3215 },
+            { name: "SU Sv. Kliment Ohridski", lat: 42.6935, lng: 23.3340 },
+            { name: "Stadion Vasil Levski", lat: 42.6890, lng: 23.3410 },
+            { name: "Joliot-Curie", lat: 42.6830, lng: 23.3505 },
+            { name: "G.M. Dimitrov", lat: 42.6780, lng: 23.3590 },
+            { name: "Musagenitsa", lat: 42.6735, lng: 23.3670 },
+            { name: "Mladost 1", lat: 42.6560, lng: 23.3720 },
+            { name: "Mladost 3", lat: 42.6500, lng: 23.3790 },
+            { name: "Inter Expo Center", lat: 42.6480, lng: 23.3900 },
+            { name: "Druzhba", lat: 42.6530, lng: 23.3990 },
+            { name: "Iskarsko Shose", lat: 42.6620, lng: 23.4070 },
+            { name: "Sofiyska Sveta Gora", lat: 42.6720, lng: 23.4150 },
+            { name: "Sofia Airport", lat: 42.6952, lng: 23.4115 }
+          ]
+        },
+        // ── Tram Lines ──
+        { id: "T1", name: "T1", type: "tram", route: "Nadezhda – Ivan Vazov", color: "#F4A460", stations: [
+          { name: "Nadlez Nadezhda", lat: 42.7260, lng: 23.3100 },
+          { name: "5-ta Gradska Bolnitsa", lat: 42.7200, lng: 23.3140 },
+          { name: "Tsentralna Gara", lat: 42.7115, lng: 23.3210 },
+          { name: "Tsentralna Avtogara", lat: 42.7130, lng: 23.3140 },
+          { name: "Bul. Slivnitsa", lat: 42.7050, lng: 23.3050 },
+          { name: "Ul. Pirotska", lat: 42.6990, lng: 23.3180 },
+          { name: "Pl. Makedoniya", lat: 42.6960, lng: 23.3220 },
+          { name: "NDK", lat: 42.6865, lng: 23.3190 },
+          { name: "Bul. P. Slaveykov", lat: 42.6810, lng: 23.3180 },
+          { name: "zh.k. Ivan Vazov", lat: 42.6760, lng: 23.3095 }
+        ]},
+        { id: "T3", name: "T3", type: "tram", route: "Hadzhi Dimitar – Buxton", color: "#F4A460", stations: [
+          { name: "zh.k. Hadzhi Dimitar", lat: 42.7125, lng: 23.3600 },
+          { name: "Geo Milev", lat: 42.6990, lng: 23.3560 },
+          { name: "Orlov Most", lat: 42.6955, lng: 23.3315 },
+          { name: "Pl. Makedoniya", lat: 42.6960, lng: 23.3220 },
+          { name: "Bul. Slivnitsa", lat: 42.7050, lng: 23.3050 },
+          { name: "Opalchenska", lat: 42.7050, lng: 23.3070 },
+          { name: "zh.k. Buxton", lat: 42.6920, lng: 23.2890 }
+        ]},
+        { id: "T4", name: "T4", type: "tram", route: "Orlandovtsi – N. Petkov", color: "#F4A460", stations: [
+          { name: "kv. Orlandovtsi", lat: 42.7220, lng: 23.3350 },
+          { name: "Lavov Most", lat: 42.7040, lng: 23.3230 },
+          { name: "Serdika", lat: 42.6985, lng: 23.3215 },
+          { name: "Pl. Makedoniya", lat: 42.6960, lng: 23.3220 },
+          { name: "Bul. Vitosha", lat: 42.6890, lng: 23.3200 },
+          { name: "NDK", lat: 42.6865, lng: 23.3190 },
+          { name: "Bul. N. Petkov", lat: 42.6730, lng: 23.3160 }
+        ]},
+        { id: "T5", name: "T5", type: "tram", route: "Sydebna Palata – Knyazhevo", color: "#F4A460", stations: [
+          { name: "Sydebna Palata", lat: 42.6910, lng: 23.3180 },
+          { name: "Bul. Vitosha", lat: 42.6890, lng: 23.3200 },
+          { name: "Sv. Patriarh Evtimiy", lat: 42.6905, lng: 23.3260 },
+          { name: "Bul. P. Slaveykov", lat: 42.6810, lng: 23.3180 },
+          { name: "Ovcha Kupel", lat: 42.6735, lng: 23.2700 },
+          { name: "kv. Knyazhevo", lat: 42.6720, lng: 23.2580 }
+        ]},
+        { id: "T6", name: "T6", type: "tram", route: "Ivan Vazov – Obelya 2", color: "#F4A460", stations: [
+          { name: "zh.k. Ivan Vazov", lat: 42.6760, lng: 23.3095 },
+          { name: "NDK", lat: 42.6865, lng: 23.3190 },
+          { name: "Pl. Makedoniya", lat: 42.6960, lng: 23.3220 },
+          { name: "Bul. Slivnitsa", lat: 42.7050, lng: 23.3050 },
+          { name: "Zapaden Park", lat: 42.7120, lng: 23.2770 },
+          { name: "Lyulin", lat: 42.7170, lng: 23.2600 },
+          { name: "kv. Obelya 2", lat: 42.7330, lng: 23.2670 }
+        ]},
+        { id: "T7", name: "T7", type: "tram", route: "Han Kubrat – Manastirski Livadi", color: "#F4A460", stations: [
+          { name: "Han Kubrat", lat: 42.7185, lng: 23.3090 },
+          { name: "Tsentralna Gara", lat: 42.7115, lng: 23.3210 },
+          { name: "Lavov Most", lat: 42.7040, lng: 23.3230 },
+          { name: "Serdika", lat: 42.6985, lng: 23.3215 },
+          { name: "NDK", lat: 42.6865, lng: 23.3190 },
+          { name: "Bulgaria Blvd.", lat: 42.6790, lng: 23.2960 },
+          { name: "Manastirski Livadi", lat: 42.6650, lng: 23.2900 }
+        ]},
+        { id: "T8", name: "T8", type: "tram", route: "Lyulin 5 – Zapaden Park", color: "#F4A460", stations: [
+          { name: "Lyulin 5", lat: 42.7200, lng: 23.2480 },
+          { name: "Lyulin", lat: 42.7170, lng: 23.2600 },
+          { name: "Zapaden Park", lat: 42.7120, lng: 23.2770 },
+          { name: "K. Velichkov", lat: 42.7080, lng: 23.2990 },
+          { name: "Sydebna Palata", lat: 42.6910, lng: 23.3180 }
+        ]},
+        { id: "T10", name: "T10", type: "tram", route: "Zaharna Fabrika – Vitosha", color: "#F4A460", stations: [
+          { name: "Zaharna Fabrika", lat: 42.6940, lng: 23.2920 },
+          { name: "Opalchenska", lat: 42.7050, lng: 23.3070 },
+          { name: "Bul. Slivnitsa", lat: 42.7050, lng: 23.3050 },
+          { name: "Pl. Makedoniya", lat: 42.6960, lng: 23.3220 },
+          { name: "Bul. Vitosha", lat: 42.6890, lng: 23.3200 },
+          { name: "Vitosha Metro", lat: 42.6630, lng: 23.3050 }
+        ]},
+        { id: "T11", name: "T11", type: "tram", route: "Iliyantsi – Knyazhevo", color: "#F4A460", stations: [
+          { name: "Iliyantsi", lat: 42.7350, lng: 23.3220 },
+          { name: "Nadlez Nadezhda", lat: 42.7260, lng: 23.3100 },
+          { name: "Tsentralna Gara", lat: 42.7115, lng: 23.3210 },
+          { name: "Lavov Most", lat: 42.7040, lng: 23.3230 },
+          { name: "Serdika", lat: 42.6985, lng: 23.3215 },
+          { name: "Sv. Patriarh Evtimiy", lat: 42.6905, lng: 23.3260 },
+          { name: "Bul. P. Slaveykov", lat: 42.6810, lng: 23.3180 },
+          { name: "Ovcha Kupel", lat: 42.6735, lng: 23.2700 },
+          { name: "kv. Knyazhevo", lat: 42.6720, lng: 23.2580 }
+        ]},
+        { id: "T12", name: "T12", type: "tram", route: "Iliyantsi – Journalist", color: "#F4A460", stations: [
+          { name: "Iliyantsi", lat: 42.7350, lng: 23.3220 },
+          { name: "Nadlez Nadezhda", lat: 42.7260, lng: 23.3100 },
+          { name: "Tsentralna Gara", lat: 42.7115, lng: 23.3210 },
+          { name: "Lavov Most", lat: 42.7040, lng: 23.3230 },
+          { name: "Pl. Makedoniya", lat: 42.6960, lng: 23.3220 },
+          { name: "NDK", lat: 42.6865, lng: 23.3190 },
+          { name: "Bulgaria Blvd.", lat: 42.6790, lng: 23.2960 },
+          { name: "Journalist", lat: 42.6690, lng: 23.2830 }
+        ]},
+        { id: "T18", name: "T18", type: "tram", route: "Orlandovtsi – Buxton", color: "#F4A460", stations: [
+          { name: "kv. Orlandovtsi", lat: 42.7220, lng: 23.3350 },
+          { name: "Lavov Most", lat: 42.7040, lng: 23.3230 },
+          { name: "Serdika", lat: 42.6985, lng: 23.3215 },
+          { name: "K. Velichkov", lat: 42.7080, lng: 23.2990 },
+          { name: "zh.k. Buxton", lat: 42.6920, lng: 23.2890 }
+        ]},
+        { id: "T20", name: "T20", type: "tram", route: "Iskar Depot – Opalchenska", color: "#F4A460", stations: [
+          { name: "Iskar Tram Depot", lat: 42.7020, lng: 23.3650 },
+          { name: "Geo Milev", lat: 42.6990, lng: 23.3560 },
+          { name: "Orlov Most", lat: 42.6955, lng: 23.3315 },
+          { name: "Serdika", lat: 42.6985, lng: 23.3215 },
+          { name: "Opalchenska", lat: 42.7050, lng: 23.3070 }
+        ]},
+        { id: "T21", name: "T21", type: "tram", route: "Geo Milev – Opalchenska", color: "#F4A460", stations: [
+          { name: "Geo Milev", lat: 42.6990, lng: 23.3560 },
+          { name: "Orlov Most", lat: 42.6955, lng: 23.3315 },
+          { name: "Pl. Makedoniya", lat: 42.6960, lng: 23.3220 },
+          { name: "Bul. Slivnitsa", lat: 42.7050, lng: 23.3050 },
+          { name: "Opalchenska", lat: 42.7050, lng: 23.3070 }
+        ]},
+        { id: "T22", name: "T22", type: "tram", route: "Krasna Polyana – Tsentralna Gara", color: "#F4A460", stations: [
+          { name: "Krasna Polyana", lat: 42.7050, lng: 23.2800 },
+          { name: "Zaharna Fabrika", lat: 42.6940, lng: 23.2920 },
+          { name: "K. Velichkov", lat: 42.7080, lng: 23.2990 },
+          { name: "Bul. Slivnitsa", lat: 42.7050, lng: 23.3050 },
+          { name: "Tsentralna Gara", lat: 42.7115, lng: 23.3210 }
+        ]},
+        { id: "T23", name: "T23", type: "tram", route: "Druzhba 2 – Geo Milev", color: "#F4A460", stations: [
+          { name: "Druzhba 2", lat: 42.6650, lng: 23.3980 },
+          { name: "Druzhba", lat: 42.6530, lng: 23.3990 },
+          { name: "Mladost 1", lat: 42.6560, lng: 23.3720 },
+          { name: "G.M. Dimitrov", lat: 42.6780, lng: 23.3590 },
+          { name: "Geo Milev", lat: 42.6990, lng: 23.3560 }
+        ]},
+        { id: "T27", name: "T27", type: "tram", route: "Manastirski Livadi – Sofia Sever", color: "#F4A460", stations: [
+          { name: "Manastirski Livadi", lat: 42.6650, lng: 23.2900 },
+          { name: "Bulgaria Blvd.", lat: 42.6790, lng: 23.2960 },
+          { name: "NDK", lat: 42.6865, lng: 23.3190 },
+          { name: "Pl. Makedoniya", lat: 42.6960, lng: 23.3220 },
+          { name: "Lavov Most", lat: 42.7040, lng: 23.3230 },
+          { name: "Tsentralna Gara", lat: 42.7115, lng: 23.3210 },
+          { name: "Sofia Sever", lat: 42.7200, lng: 23.3280 }
+        ]}
+      ];
+
+      const map = L.map("map", { center: [42.698, 23.322], zoom: 13, zoomControl: true, attributionControl: true });
+      L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        subdomains: "abcd", maxZoom: 19
+      }).addTo(map);
+
+      const lineLayers = {};
+      metroLines.forEach((line) => {
+        const group = L.layerGroup();
+        const latlngs = line.stations.map((s) => [s.lat, s.lng]);
+        const isTram = line.type === "tram";
+        L.polyline(latlngs, { color: line.color, weight: isTram ? 3 : 4, opacity: isTram ? 0.7 : 0.9, lineJoin: "round", lineCap: "round" }).addTo(group);
+        line.stations.forEach((station) => {
+          const marker = L.circleMarker([station.lat, station.lng], {
+            radius: isTram ? 3 : 4, fillColor: "#ffffff", fillOpacity: 1, color: line.color, weight: isTram ? 2 : 2.5, opacity: 1
+          });
+          marker.bindTooltip(`<span>${station.name}</span><span class="tt-line">${line.name}</span>`, {
+            className: "station-tooltip", direction: "top", offset: [0, -8]
+          });
+          marker.addTo(group);
+        });
+        group.addTo(map);
+        lineLayers[line.id] = { group, visible: true };
+      });
+
+      const legendEl = document.getElementById("legend");
+      const groups = [
+        { label: "Metro", type: "metro" },
+        { label: "Tram", type: "tram" }
+      ];
+      // Tag metro lines
+      metroLines.forEach(l => { if (!l.type) l.type = "metro"; });
+      let html = '';
+      groups.forEach((g, i) => {
+        const lines = metroLines.filter(l => l.type === g.type);
+        if (lines.length === 0) return;
+        if (i > 0) html += '<hr class="legend-sep">';
+        html += `<h3 data-group="${g.type}" title="Click to toggle all ${g.label} lines">${g.label}</h3>`;
+        lines.forEach((line) => {
+          html += `<div class="legend-line" data-line="${line.id}" data-type="${g.type}">
+            <span class="legend-swatch" style="background:${line.color}"></span>
+            <span class="legend-label">${line.name}</span>
+            <span class="legend-route">${line.route}</span>
+          </div>`;
+        });
+      });
+      html += '<hr class="legend-sep">';
+      html += '<div class="legend-footer">Click a line or group header to toggle.<br>Sofia Rail Network · 2025</div>';
+      legendEl.innerHTML = html;
+
+      // Individual line toggle
+      legendEl.querySelectorAll(".legend-line").forEach((el) => {
+        el.addEventListener("click", () => {
+          const id = el.dataset.line;
+          const entry = lineLayers[id];
+          if (!entry) return;
+          if (entry.visible) { map.removeLayer(entry.group); el.classList.add("dimmed"); }
+          else { entry.group.addTo(map); el.classList.remove("dimmed"); }
+          entry.visible = !entry.visible;
+        });
+      });
+
+      // Group toggle
+      legendEl.querySelectorAll("h3[data-group]").forEach((header) => {
+        header.addEventListener("click", () => {
+          const type = header.dataset.group;
+          const lineEls = legendEl.querySelectorAll(`.legend-line[data-type="${type}"]`);
+          const anyVisible = [...lineEls].some(el => !el.classList.contains("dimmed"));
+          lineEls.forEach((el) => {
+            const id = el.dataset.line;
+            const entry = lineLayers[id];
+            if (!entry) return;
+            if (anyVisible) { map.removeLayer(entry.group); el.classList.add("dimmed"); entry.visible = false; }
+            else { entry.group.addTo(map); el.classList.remove("dimmed"); entry.visible = true; }
+          });
+          header.classList.toggle("group-dimmed", anyVisible);
+        });
+      });
+    </script>
+  </body>
+</html>
