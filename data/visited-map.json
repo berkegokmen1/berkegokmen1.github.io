@@ -1,0 +1,74 @@
+{
+  "home": {
+    "name": "Home",
+    "label": "Berkeley",
+    "lat": 37.8715,
+    "lon": -122.273
+  },
+  "countries": [
+    {
+      "id": "792",
+      "visits": [
+        { "name": "Getir - Istanbul", "logo": "../assets/logos/getir.png", "date": "2022-01-01", "lat": 41.0082, "lon": 28.9784 }
+      ]
+    },
+    {
+      "id": "756",
+      "visits": [
+        { "name": "EPFL", "logo": "../assets/logos/epfl.png", "date": "2023-01-01", "lat": 46.5191, "lon": 6.5668 },
+        { "name": "ETH Zurich CVL", "logo": "../assets/logos/eth.png", "date": "2024-01-01", "lat": 47.3769, "lon": 8.5417 }
+      ]
+    },
+    {
+      "id": "100",
+      "visits": [
+        { "name": "INSAIT", "logo": "../assets/logos/insait.png", "date": "2025-01-01", "lat": 42.6977, "lon": 23.3219 }
+      ]
+    },
+    {
+      "id": "276",
+      "visits": [
+        { "name": "CMMRS", "logo": "../assets/logos/cmmrs.jpeg", "date": "2025-01-01", "lat": 49.2402, "lon": 6.9969 }
+      ]
+    },
+    {
+      "id": "784",
+      "visits": [
+        { "name": "MBZUAI", "logo": "../assets/logos/mbzuai.png", "date": "2026-01-01", "lat": 24.4539, "lon": 54.3773 }
+      ]
+    },
+    {
+      "id": "124",
+      "visits": [
+        { "name": "NeurIPS 2024 - Vancouver", "logo": "../assets/logos/NeurIPS_logo.png", "date": "2024-01-01", "lat": 49.2827, "lon": -123.1207 }
+      ]
+    },
+    {
+      "id": "250",
+      "visits": [
+        { "name": "CVPR@Paris 2026 - Paris", "logo": "../assets/logos/logo_CVPRparis.png", "date": "2026-06-01", "lat": 48.8566, "lon": 2.3522 }
+      ]
+    }
+  ],
+  "states": [
+    {
+      "id": "06",
+      "visits": [
+        { "name": "NeurIPS 2025 - San Diego", "logo": "../assets/logos/NeurIPS_logo.png", "date": "2025-01-01", "lat": 32.7157, "lon": -117.1611 },
+        { "name": "Berkeley EECS PhD Visit Days", "logo": "../assets/logos/berkeley.png", "date": "2026-01-01", "lat": 37.8715, "lon": -122.273 }
+      ]
+    },
+    {
+      "id": "24",
+      "visits": [
+        { "name": "JHU Visit Days - Baltimore", "logo": "../assets/logos/jhu.png", "date": "2026-01-01", "lat": 39.2904, "lon": -76.6122 }
+      ]
+    },
+    {
+      "id": "08",
+      "visits": [
+        { "name": "CVPR 2026 - Denver", "logo": "../assets/logos/CVPR_Logo1_Denver 2026.png", "date": "2026-06-01", "lat": 39.7392, "lon": -104.9903 }
+      ]
+    }
+  ]
+}

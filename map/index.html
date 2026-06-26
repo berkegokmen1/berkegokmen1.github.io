@@ -743,44 +743,13 @@
         ["78", "U.S. Virgin Islands"]
       ]);
 
-      // Visited locations data
-      const visitedCountriesRawData = new Map([
-        ["792", [
-          { name: "Getir — Istanbul", logo: "../assets/logos/getir.png", date: "2022-01-01" }
-        ]],
-        ["756", [
-          { name: "EPFL", logo: "../assets/logos/epfl.png", date: "2023-01-01" },
-          { name: "ETH Zürich CVL", logo: "../assets/logos/eth.png", date: "2024-01-01" }
-        ]],
-        ["100", [
-          { name: "INSAIT", logo: "../assets/logos/insait.png", date: "2025-01-01" }
-        ]],
-        ["276", [
-          { name: "CMMRS", logo: "../assets/logos/cmmrs.jpeg", date: "2025-01-01" }
-        ]],
-        ["784", [
-          { name: "MBZUAI", logo: "../assets/logos/mbzuai.png", date: "2026-01-01" }
-        ]],
-        ["124", [
-          { name: "NeurIPS 2024 — Vancouver", logo: "../assets/logos/NeurIPS_logo.png", date: "2024-01-01" }
-        ]],
-        ["250", [
-          { name: "CVPR@Paris 2026 — Paris", logo: "../assets/logos/logo_CVPRparis.png", date: "2026-06-01" }
-        ]]
-      ]);
-
-      const visitedStatesRawData = new Map([
-        ["06", [
-          { name: "NeurIPS 2025 — San Diego", logo: "../assets/logos/NeurIPS_logo.png", date: "2025-01-01" },
-          { name: "Berkeley EECS PhD Visit Days", logo: "../assets/logos/berkeley.png", date: "2026-01-01" }
-        ]],
-        ["24", [
-          { name: "JHU Visit Days — Baltimore", logo: "../assets/logos/jhu.png", date: "2026-01-01" }
-        ]],
-        ["08", [
-          { name: "CVPR 2026 — Denver", logo: "../assets/logos/CVPR_Logo1_Denver 2026.png", date: "2026-06-01" }
-        ]]
-      ]);
+      const visitedMap = await d3.json("../data/visited-map.json");
+      const visitedCountriesRawData = new Map(
+        visitedMap.countries.map((entry) => [entry.id, entry.visits])
+      );
+      const visitedStatesRawData = new Map(
+        visitedMap.states.map((entry) => [entry.id, entry.visits])
+      );
 
       function visitYear(visit) {
         return Number(String(visit.date).slice(0, 4));

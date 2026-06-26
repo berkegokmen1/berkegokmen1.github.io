@@ -1,0 +1,82 @@
+[
+  {
+    "id": "com4d",
+    "venue": "CVPR 2026",
+    "venueKey": "cvpr",
+    "title": "Inferring Compositional 4D Scenes without Ever Seeing One",
+    "shortTitle": "COM4D",
+    "authors": "Ahmet Berke Gokmen, Ajad Chattkuli, Luc Van Gool, Danda Pani Paudel",
+    "featuredAuthor": "Ahmet Berke Gokmen",
+    "media": { "type": "image", "src": "assets/teaser/com4d.png", "alt": "Compositional 4D scenes teaser" },
+    "links": [
+      { "label": "Paper", "href": "https://arxiv.org/abs/2512.05272" },
+      { "label": "Project", "href": "com4d/" },
+      { "label": "Code", "href": "https://github.com/insait-institute/COM4D" }
+    ],
+    "world": { "color": "#4fd1ff", "position": [-8, 1.9, -8] }
+  },
+  {
+    "id": "ropecraft",
+    "venue": "NeurIPS 2025",
+    "venueKey": "neurips",
+    "title": "RoPECraft: Training-Free Motion Transfer with Trajectory Guided Optimization on DiTs",
+    "shortTitle": "RoPECraft",
+    "authors": "Ahmet Berke Gokmen*, Yigit Ekin*, Bahri Batuhan Bilecen*, Aysegul Dundar (* joint first authors)",
+    "featuredAuthor": "Ahmet Berke Gokmen*",
+    "media": { "type": "video", "src": "assets/teaser/ropecraft.mp4", "poster": "RoPECraft/results/ftd/1/img/4.png", "alt": "RoPECraft teaser" },
+    "links": [
+      { "label": "Paper", "href": "https://arxiv.org/abs/2505.13344" },
+      { "label": "Project", "href": "RoPECraft/" },
+      { "label": "Code", "href": "https://github.com/berkegokmen1/RoPECraft" }
+    ],
+    "world": { "color": "#9f7aea", "position": [-3, 2.1, -13] }
+  },
+  {
+    "id": "dual-encoder",
+    "venue": "NeurIPS 2024",
+    "venueKey": "neurips",
+    "title": "Dual Encoder GAN Inversion for High-fidelity 3D Head Reconstruction from Single Images",
+    "shortTitle": "Dual Encoder GAN Inversion",
+    "authors": "Ahmet Berke Gokmen*, Bahri Batuhan Bilecen*, Aysegul Dundar (* joint first authors)",
+    "featuredAuthor": "Ahmet Berke Gokmen*",
+    "media": { "type": "video", "src": "assets/teaser/dualenc.mp4", "poster": "dual-enc-3d-gan-inv/static/images/dual_enc.png", "alt": "Dual Encoder GAN Inversion teaser" },
+    "links": [
+      { "label": "Paper", "href": "https://arxiv.org/abs/2409.20530" },
+      { "label": "Project", "href": "dual-enc-3d-gan-inv/" },
+      { "label": "Code", "href": "https://github.com/berkegokmen1/dual-enc-3d-gan-inversion" }
+    ],
+    "world": { "color": "#38f2a6", "position": [3.4, 2, -13] }
+  },
+  {
+    "id": "identity-head-stylization",
+    "venue": "ICCV 2025",
+    "venueKey": "iccv",
+    "title": "Identity Preserving 3D Head Stylization with Multiview Score Distillation",
+    "shortTitle": "Identity Preserving 3D Head Stylization",
+    "authors": "Bahri Batuhan Bilecen, Ahmet Berke Gokmen, Furkan Guzelant, Aysegul Dundar",
+    "featuredAuthor": "Ahmet Berke Gokmen",
+    "media": { "type": "video", "src": "assets/teaser/identity.mp4", "alt": "Identity Preserving 3D Head Stylization teaser" },
+    "links": [
+      { "label": "Paper", "href": "https://arxiv.org/abs/2411.13536" },
+      { "label": "Project", "href": "https://three-bee.github.io/head_stylization/" },
+      { "label": "Code", "href": "https://github.com/three-bee/3d_head_stylization" }
+    ],
+    "world": { "color": "#ff6b9d", "position": [8, 1.9, -8] }
+  },
+  {
+    "id": "counterfactual-disease",
+    "venue": "arXiv 2025",
+    "venueKey": "arxiv",
+    "title": "Counterfactual Disease Removal and Generation in Chest X-Rays Using Diffusion Models",
+    "shortTitle": "Counterfactual Disease Removal",
+    "authors": "Ahmet Berke Gokmen, Ender Konukoglu",
+    "featuredAuthor": "Ahmet Berke Gokmen",
+    "media": { "type": "image", "src": "assets/teaser/counterfactual.png", "alt": "Counterfactual disease removal comparison" },
+    "links": [
+      { "label": "Paper", "href": "counterfactual-disease-removal-and-generation-chest-xray/static/paper.pdf" },
+      { "label": "Project", "href": "counterfactual-disease-removal-and-generation-chest-xray/" },
+      { "label": "Code", "href": "https://github.com/berkegokmen1/counterfactual-chexray-disease-editing" }
+    ],
+    "world": { "color": "#f59e0b", "position": [0, 1.75, -5] }
+  }
+]

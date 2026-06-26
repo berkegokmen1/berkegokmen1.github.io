@@ -14,10 +14,20 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231c5cff'/%3E%3Cpath d='M8 22V10h8.2c3.2 0 5.2 1.5 5.2 4 0 1.4-.7 2.5-1.9 3.1 1.6.5 2.5 1.7 2.5 3.3 0 2.7-2.2 4.4-5.6 4.4H8Zm3.5-7h4.1c1.4 0 2.2-.6 2.2-1.7 0-1-.8-1.6-2.2-1.6h-4.1V15Zm0 7h4.7c1.5 0 2.3-.6 2.3-1.8s-.8-1.8-2.4-1.8h-4.6V22Z' fill='white'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <canvas id="particle-canvas" aria-hidden="true"></canvas>
+    <canvas id="world-canvas" aria-hidden="true"></canvas>
+    <div id="world-ui" aria-hidden="true">
+      <button id="world-exit" class="world-exit" aria-label="Exit 3D world" title="Exit 3D world">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M18.3 5.7a1 1 0 0 0-1.4 0L12 10.6 7.1 5.7a1 1 0 0 0-1.4 1.4l4.9 4.9-4.9 4.9a1 1 0 1 0 1.4 1.4l4.9-4.9 4.9 4.9a1 1 0 0 0 1.4-1.4L13.4 12l4.9-4.9a1 1 0 0 0 0-1.4Z" />
+        </svg>
+      </button>
+      <div id="world-status" class="world-status" aria-live="polite">Explore</div>
+    </div>
     <script src="https://www.w3counter.com/tracker.js?id=156379"></script>
     <header class="site-header">
       <div class="site-header__inner">
@@ -29,10 +39,17 @@
           <a href="map/index.html">Map</a>
           <a href="random/index.html">Random</a>
         </nav>
-        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
-          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
-          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" fill="currentColor"/></svg>
-        </button>
+        <div class="header-actions">
+          <button id="world-toggle" class="icon-toggle world-toggle" aria-label="Toggle 3D world" aria-pressed="false" title="Toggle 3D world">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2 3.5 6.75v10.5L12 22l8.5-4.75V6.75L12 2Zm0 2.3 5.95 3.32L12 10.94 6.05 7.62 12 4.3Zm-6.5 5.05 5.5 3.07v6.66l-5.5-3.07V9.35Zm7.5 9.73v-6.66l5.5-3.07v6.66L13 19.08Z" />
+            </svg>
+          </button>
+          <button id="theme-toggle" class="icon-toggle theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" fill="currentColor"/></svg>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -92,7 +109,7 @@
 
       <section id="publications" class="section">
         <h2>Publications</h2>
-        <ul class="pub-list">
+        <ul id="pub-list" class="pub-list">
           <li class="pub" data-venue="cvpr">
             <div class="pub-media">
               <img class="pub-image" src="assets/teaser/com4d.png" alt="Compositional 4D scenes teaser" loading="lazy" />
@@ -179,7 +196,6 @@
                 playsinline
                 autoplay
                 preload="none"
-                poster="assets/img/learning_by_example.png"
               >
                 <p>Your browser does not support the video tag.</p>
               </video>
@@ -409,6 +425,70 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
+        const pubList = document.getElementById('pub-list');
+        const escapeHtml = (value) =>
+          String(value)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+
+        const renderAuthors = (authors, featuredAuthor) => {
+          const safeAuthors = escapeHtml(authors);
+          if (!featuredAuthor) return safeAuthors;
+          return safeAuthors.replace(escapeHtml(featuredAuthor), `<strong>${escapeHtml(featuredAuthor)}</strong>`);
+        };
+
+        const renderPublicationMedia = (publication) => {
+          const media = publication.media || {};
+          if (media.type === 'video') {
+            const poster = media.poster ? ` poster="${escapeHtml(media.poster)}"` : '';
+            return `
+              <video class="pub-video" src="${escapeHtml(media.src)}" muted loop playsinline autoplay preload="none"${poster}>
+                <p>Your browser does not support the video tag.</p>
+              </video>
+            `;
+          }
+          return `<img class="pub-image" src="${escapeHtml(media.src)}" alt="${escapeHtml(media.alt || publication.title)}" loading="lazy" />`;
+        };
+
+        const renderPublicationLinks = (links = []) =>
+          links
+            .map((link) => {
+              const external = /^https?:\/\//.test(link.href);
+              return `<a href="${escapeHtml(link.href)}"${external ? ' target="_blank" rel="noopener"' : ''}>${escapeHtml(link.label)}</a>`;
+            })
+            .join('');
+
+        fetch('data/publications.json')
+          .then((response) => response.json())
+          .then((publications) => {
+            if (!pubList) return;
+            pubList.innerHTML = publications
+              .map(
+                (publication) => `
+                  <li class="pub" data-venue="${escapeHtml(publication.venueKey)}">
+                    <div class="pub-media">
+                      ${renderPublicationMedia(publication)}
+                    </div>
+                    <div class="pub-body">
+                      <div class="pub-header">
+                        <span class="pub-badge">${escapeHtml(publication.venue)}</span>
+                        <span class="pub-title">${escapeHtml(publication.title)}</span>
+                      </div>
+                      <p class="pub-authors">${renderAuthors(publication.authors, publication.featuredAuthor)}</p>
+                      <div class="pub-links">
+                        ${renderPublicationLinks(publication.links)}
+                      </div>
+                    </div>
+                  </li>
+                `
+              )
+              .join('');
+          })
+          .catch(() => {});
+
         const lazyVideos = document.querySelectorAll('video[data-src]');
 
         if ('IntersectionObserver' in window) {
@@ -481,5 +561,7 @@
         });
       })();
     </script>
+
+    <script type="module" src="world.js"></script>
   </body>
 </html>
