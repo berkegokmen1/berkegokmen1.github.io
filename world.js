@@ -521,7 +521,7 @@ import { feature } from 'https://cdn.jsdelivr.net/npm/topojson-client@3/+esm';
 
   const latLngToVector = (lat, lon, radius) => {
     const latRad = THREE.MathUtils.degToRad(lat);
-    const lonRad = THREE.MathUtils.degToRad(lon + 122);
+    const lonRad = THREE.MathUtils.degToRad(lon + 90);
     return new THREE.Vector3(
       radius * Math.cos(latRad) * Math.sin(lonRad),
       radius * Math.sin(latRad),
