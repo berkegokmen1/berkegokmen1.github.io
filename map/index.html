@@ -114,43 +114,14 @@
       margin: 0 auto;
       max-width: var(--max-width);
       padding: 1.2rem 1.5rem;
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
+      display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 1rem;
     }
 
     .brand {
       font-weight: 600;
       letter-spacing: 0.02em;
-    }
-
-    .nav-links {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 1.35rem;
-      font-size: 0.96rem;
-      font-weight: 500;
-    }
-
-    .nav-links a {
-      color: var(--muted);
-      padding-bottom: 0.22rem;
-      border-bottom: 2px solid transparent;
-      transition: border-color 0.2s ease, color 0.2s ease;
-    }
-
-    .nav-links a:hover,
-    .nav-links a:focus-visible {
-      color: var(--accent);
-      border-color: var(--accent);
-      text-decoration: none;
-    }
-
-    .nav-links a.active {
-      color: var(--accent);
-      border-color: var(--accent);
     }
 
     .theme-toggle {
@@ -478,23 +449,6 @@
 
     /* ── Responsive ── */
     @media (max-width: 600px) {
-      .site-header__inner {
-        grid-template-columns: 1fr auto;
-        gap: 0.5rem;
-      }
-
-      .nav-links {
-        grid-column: 1 / -1;
-        grid-row: 2;
-        width: 100%;
-        justify-content: flex-start;
-      }
-
-      .theme-toggle {
-        grid-column: 2;
-        grid-row: 1;
-      }
-
       .map-legend {
         bottom: 0.8rem;
         left: 0.8rem;
@@ -534,14 +488,7 @@
   <!-- Header -->
   <header class="site-header">
     <div class="site-header__inner">
-      <a class="brand" href="/">A. Berke Gökmen</a>
-      <nav class="nav-links">
-        <a href="/">About</a>
-        <a href="/#publications">Publications</a>
-        <a href="/#experience">Experience</a>
-        <a href="/map" class="active">Map</a>
-        <a href="/random">Random</a>
-      </nav>
+      <a class="brand" href="../index.html">A. Berke Gökmen</a>
       <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="5" />

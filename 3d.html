@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" class="world-3d">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>A. Berke Gökmen - 3D Portfolio World</title>
+    <meta name="description" content="3D interactive world to explore A. Berke Gökmen's publications and research." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231c5cff'/%3E%3Cpath d='M8 22V10h8.2c3.2 0 5.2 1.5 5.2 4 0 1.4-.7 2.5-1.9 3.1 1.6.5 2.5 1.7 2.5 3.3 0 2.7-2.2 4.4-5.6 4.4H8Zm3.5-7h4.1c1.4 0 2.2-.6 2.2-1.7 0-1-.8-1.6-2.2-1.6h-4.1V15Zm0 7h4.7c1.5 0 2.3-.6 2.3-1.8s-.8-1.8-2.4-1.8h-4.6V22Z' fill='white'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* Extra 3D page styles */
+      body {
+        background: #050813;
+        overflow: hidden;
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+      }
+      
+      #world-canvas {
+        opacity: 1 !important;
+        z-index: 10;
+        pointer-events: auto !important;
+      }
+
+      /* Translucent overlay panel for navigation */
+      .world-exit-panel {
+        position: absolute;
+        top: 1.25rem;
+        right: 1.25rem;
+        display: flex;
+        gap: 0.75rem;
+        z-index: 100;
+        pointer-events: auto;
+      }
+
+      .world-nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.65rem 1.1rem;
+        border: 1px solid rgba(160, 190, 255, 0.24);
+        border-radius: 999px;
+        background: rgba(7, 10, 18, 0.72);
+        color: #eef5ff;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.88rem;
+        font-weight: 600;
+        text-decoration: none;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        transition: all 0.2s ease;
+      }
+
+      .world-nav-link:hover {
+        border-color: rgba(255, 255, 255, 0.8);
+        background: rgba(28, 92, 255, 0.85);
+        color: #ffffff;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 32px rgba(28, 92, 255, 0.3);
+      }
+
+      /* Desktop instruction note */
+      .desktop-controls-hint {
+        position: absolute;
+        left: 1.25rem;
+        top: 1.25rem;
+        color: rgba(255, 255, 255, 0.6);
+        background: rgba(7, 10, 18, 0.5);
+        padding: 0.65rem 1rem;
+        border-radius: 8px;
+        font-size: 0.85rem;
+        pointer-events: none;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 3D Canvas -->
+    <canvas id="world-canvas" aria-hidden="true"></canvas>
+
+    <!-- Controls hint -->
+    <div class="desktop-controls-hint">
+      Controls: WASD to Move · Mouse to Look · Space to Jump · E to Interact
+    </div>
+
+    <!-- 3D UI Overlay -->
+    <div id="world-ui">
+      <!-- Instead of exit button, we have the dual navigation buttons -->
+      <div class="world-exit-panel">
+        <a href="index.html" class="world-nav-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Simple Site
+        </a>
+        <a href="fancy.html" class="world-nav-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          Fancy Site
+        </a>
+      </div>
+      <div id="world-status" class="world-status" aria-live="polite">Loading 3D World...</div>
+      <!-- Hidden dummy world exit button to satisfy world.js selector if needed -->
+      <button id="world-exit" style="display: none;"></button>
+    </div>
+
+    <script type="module" src="world.js"></script>
+  </body>
+</html>

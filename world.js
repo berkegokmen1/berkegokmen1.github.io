@@ -9,11 +9,14 @@ import { feature } from 'https://cdn.jsdelivr.net/npm/topojson-client@3/+esm';
   const worldUi = document.getElementById('world-ui');
   const root = document.documentElement;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const is3DPage = window.location.pathname.endsWith('3d.html') || window.location.href.includes('3d.html');
 
-  if (!canvas || !toggle || !exitButton || !status || !worldUi) return;
+  if (!canvas || !exitButton || !status || !worldUi) return;
   if (reducedMotion) {
-    toggle.disabled = true;
-    toggle.title = '3D world disabled by reduced-motion preference';
+    if (toggle) {
+      toggle.disabled = true;
+      toggle.title = '3D world disabled by reduced-motion preference';
+    }
     return;
   }
 
@@ -930,7 +933,7 @@ import { feature } from 'https://cdn.jsdelivr.net/npm/topojson-client@3/+esm';
   const setWorldMode = async (enabled) => {
     active = enabled;
     root.classList.toggle('world-3d', active);
-    toggle.setAttribute('aria-pressed', String(active));
+    if (toggle) toggle.setAttribute('aria-pressed', String(active));
     worldUi.setAttribute('aria-hidden', String(!active));
 
     if (active) {
@@ -961,7 +964,13 @@ import { feature } from 'https://cdn.jsdelivr.net/npm/topojson-client@3/+esm';
     }
     keys.add(event.code);
     if (event.code === 'KeyE' || event.code === 'Enter') interact();
-    if (event.code === 'KeyX') setWorldMode(false);
+    if (event.code === 'KeyX') {
+      if (is3DPage) {
+        window.location.href = 'index.html';
+      } else {
+        setWorldMode(false);
+      }
+    }
   });
   window.addEventListener('keyup', (event) => keys.delete(event.code));
   window.addEventListener('mousemove', (event) => {
@@ -992,6 +1001,17 @@ import { feature } from 'https://cdn.jsdelivr.net/npm/topojson-client@3/+esm';
     globeGroup.rotation.x = Math.max(-0.9, Math.min(0.9, globeGroup.rotation.x));
     lastPointer = { x: event.clientX, y: event.clientY };
   });
-  exitButton.addEventListener('click', () => setWorldMode(false));
-  toggle.addEventListener('click', () => setWorldMode(!active));
+  exitButton.addEventListener('click', () => {
+    if (is3DPage) {
+      window.location.href = 'index.html';
+    } else {
+      setWorldMode(false);
+    }
+  });
+  if (toggle) {
+    toggle.addEventListener('click', () => setWorldMode(!active));
+  }
+  if (is3DPage) {
+    setWorldMode(true);
+  }
 })();

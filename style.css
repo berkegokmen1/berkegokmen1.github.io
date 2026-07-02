@@ -703,3 +703,30 @@ html.world-3d #world-ui {
     right: 0.9rem;
   }
 }
+
+/* Mode Selector Buttons in Navigation */
+.nav-links a.nav-mode-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.35rem 0.9rem !important;
+  border: 1.5px solid var(--accent) !important;
+  border-bottom: 1.5px solid var(--accent) !important;
+  border-radius: 999px;
+  color: var(--accent) !important;
+  font-weight: 600 !important;
+  transition: all 0.25s ease-in-out;
+  line-height: 1;
+}
+
+.nav-links a.nav-mode-link:hover,
+.nav-links a.nav-mode-link:focus-visible {
+  background: var(--accent) !important;
+  color: #ffffff !important;
+  border-color: var(--accent) !important;
+  text-decoration: none !important;
+  box-shadow: 0 4px 12px var(--accent-soft);
+  transform: translateY(-1px);
+}
+
+

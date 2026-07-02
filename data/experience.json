@@ -1,0 +1,71 @@
+{
+  "roles": [
+    {
+      "logo": "assets/logos/insait.png",
+      "name": "INSAIT",
+      "title": "Researcher",
+      "date": "Aug 2025 – Present",
+      "location": "Sofia"
+    },
+    {
+      "logo": "assets/logos/eth.png",
+      "name": "ETH Zürich CVL",
+      "title": "Research Intern",
+      "date": "Jul 2024 – Nov 2024",
+      "location": "Zürich"
+    },
+    {
+      "logo": "assets/logos/bilkent-dlr.png",
+      "name": "Bilkent DLR",
+      "title": "Undergraduate Researcher",
+      "date": "Jan 2024 – Aug 2025",
+      "location": "Ankara"
+    },
+    {
+      "logo": "assets/logos/getir.png",
+      "name": "Getir",
+      "title": "Software Engineer",
+      "date": "Sep 2022 – Jan 2024",
+      "location": "Istanbul"
+    }
+  ],
+  "education": [
+    {
+      "logo": "assets/logos/bilkent.png",
+      "name": "Bilkent University",
+      "title": "B.E. Computer Science",
+      "date": "2020 – 2025",
+      "location": "Ankara"
+    },
+    {
+      "logo": "assets/logos/epfl.png",
+      "name": "EPFL",
+      "title": "Exchange, Computer Science",
+      "date": "2023 – 2024",
+      "location": "Lausanne"
+    },
+    {
+      "logo": "assets/logos/canakkale.png",
+      "name": "Çanakkale Özel Fen Lisesi",
+      "title": "Math & Science Diploma",
+      "date": "Çanakkale",
+      "location": ""
+    }
+  ],
+  "schools": [
+    {
+      "logo": "assets/logos/mbzuai.png",
+      "name": "MBZUAI Winter School on Generative AI and Representation Learning",
+      "title": "",
+      "date": "Feb 2026",
+      "location": "Abu Dhabi"
+    },
+    {
+      "logo": "assets/logos/cmmrs.jpeg",
+      "name": "Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science",
+      "title": "",
+      "date": "Aug 2025",
+      "location": "Saarbrücken"
+    }
+  ]
+}

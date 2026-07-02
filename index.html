@@ -4,428 +4,252 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>A. Berke Gökmen</title>
-    <meta
-      name="description"
-      content="Ahmet Berke Gökmen · Incoming PhD Student at Berkeley EECS, currently a Researcher at INSAIT."
-    />
+    <meta name="description" content="A. Berke Gökmen · Incoming PhD Student at Berkeley EECS, currently a Researcher at INSAIT." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231c5cff'/%3E%3Cpath d='M8 22V10h8.2c3.2 0 5.2 1.5 5.2 4 0 1.4-.7 2.5-1.9 3.1 1.6.5 2.5 1.7 2.5 3.3 0 2.7-2.2 4.4-5.6 4.4H8Zm3.5-7h4.1c1.4 0 2.2-.6 2.2-1.7 0-1-.8-1.6-2.2-1.6h-4.1V15Zm0 7h4.7c1.5 0 2.3-.6 2.3-1.8s-.8-1.8-2.4-1.8h-4.6V22Z' fill='white'/%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="simple.css" />
+    <script>
+      (function() {
+        const saved = localStorage.getItem('theme');
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (saved === 'dark' || (!saved && systemDark)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
-    <canvas id="particle-canvas" aria-hidden="true"></canvas>
-    <canvas id="world-canvas" aria-hidden="true"></canvas>
-    <div id="world-ui" aria-hidden="true">
-      <button id="world-exit" class="world-exit" aria-label="Exit 3D world" title="Exit 3D world">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M18.3 5.7a1 1 0 0 0-1.4 0L12 10.6 7.1 5.7a1 1 0 0 0-1.4 1.4l4.9 4.9-4.9 4.9a1 1 0 1 0 1.4 1.4l4.9-4.9 4.9 4.9a1 1 0 0 0 1.4-1.4L13.4 12l4.9-4.9a1 1 0 0 0 0-1.4Z" />
-        </svg>
-      </button>
-      <div id="world-status" class="world-status" aria-live="polite">Explore</div>
-    </div>
     <script src="https://www.w3counter.com/tracker.js?id=156379"></script>
-    <header class="site-header">
-      <div class="site-header__inner">
-        <a class="brand" href="#about">A. Berke Gökmen</a>
-        <nav class="nav-links">
-          <a href="#about">About</a>
-          <a href="#publications">Publications</a>
-          <a href="#experience">Experience</a>
-          <a href="map/index.html">Map</a>
-          <a href="random/index.html">Random</a>
-        </nav>
-        <div class="header-actions">
-          <button id="world-toggle" class="icon-toggle world-toggle" aria-label="Toggle 3D world" aria-pressed="false" title="Toggle 3D world">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 2 3.5 6.75v10.5L12 22l8.5-4.75V6.75L12 2Zm0 2.3 5.95 3.32L12 10.94 6.05 7.62 12 4.3Zm-6.5 5.05 5.5 3.07v6.66l-5.5-3.07V9.35Zm7.5 9.73v-6.66l5.5-3.07v6.66L13 19.08Z" />
-            </svg>
-          </button>
-          <button id="theme-toggle" class="icon-toggle theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
-            <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>
-            <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" fill="currentColor"/></svg>
-          </button>
-        </div>
+    <!-- Header -->
+    <header class="header-container">
+      <div class="logo">
+        <a href="#">A. Berke Gökmen</a>
       </div>
+      <nav class="nav">
+        <ul>
+          <li><a href="fancy.html" class="nav-mode-btn fancy-btn">Fancy Mode</a></li>
+          <li><a href="3d.html" class="nav-mode-btn extra-fancy-btn">3D Mode</a></li>
+          <li>
+            <button id="theme-toggle" class="theme-toggle-simple" aria-label="Toggle dark mode" title="Toggle dark mode">
+              <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+              <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" stroke="none"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path></svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
     </header>
 
-    <main>
-      <section id="about" class="hero">
-        <div class="hero-card">
-          <div class="hero-media">
-            <img src="assets/img/me.jpeg" alt="Ahmet Berke Gökmen" />
-          </div>
-          <div class="hero-text">
-            <!-- <span class="eyebrow">Generative Modeling &amp; 3D Perception</span> -->
-            <p class="lead">
-              Incoming PhD Student at Berkeley EECS, currently a Researcher at <a href="https://insait.ai/" target="_blank" rel="noopener">INSAIT</a>.
-            </p>
-            <p>
-              
-            </p>
-            <div class="hero-links">
-              <a href="mailto:berke.gokmen@insait.ai" aria-label="Email">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 2v.01L12 13 4 6.01V6h16zM4 18V8l8 7 8-7v10H4z" />
-                </svg>
-                <span class="sr-only">Email</span>
-              </a>
-              <a
-                href="https://scholar.google.com.tr/citations?user=rg7Vk-gAAAAJ"
-                target="_blank"
-                rel="noopener"
-                aria-label="Google Scholar"
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M11.552 0L0 6.902l3.257 1.881v7.73l8.295 4.487 8.39-4.539V8.748L23.104 6.9 11.552 0zm0 2.447l7.098 4.248-7.098 4.248-7.099-4.248 7.099-4.248zM4.635 9.77l6.065 3.671v5.327l-6.065-3.28V9.77zm14.086-.014v5.298l-6.065 3.28V13.44l6.065-3.685z" />
-                </svg>
-                <span class="sr-only">Google Scholar</span>
-              </a>
-              <a
-                href="https://www.linkedin.com/in/berkegokmen/"
-                target="_blank"
-                rel="noopener"
-                aria-label="LinkedIn"
-              >
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M22.225 0H1.771C.792 0 0 .771 0 1.723v20.549C0 23.229.792 24 1.771 24h20.451C23.2 24 24 23.229 24 22.271V1.723C24 .771 23.2 0 22.222 0h.003zM6.558 20.452H3.116V9h3.442v11.452zM4.837 7.433a1.986 1.986 0 111.986-1.985 1.986 1.986 0 01-1.986 1.985zM20.447 20.452h-3.557v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.447-2.136 2.942v5.664H9.338V9h3.415v1.561h.049c.476-.9 1.637-1.852 3.369-1.852 3.601 0 4.268 2.371 4.268 5.455v6.288z" />
-                </svg>
-                <span class="sr-only">LinkedIn</span>
-              </a>
-              <a href="https://github.com/berkegokmen1" target="_blank" rel="noopener" aria-label="GitHub">
-                <svg viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M12 0C5.37 0 0 5.373 0 12c0 5.303 3.438 9.8 8.205 11.387.6.113.82-.258.82-.577 0-.285-.01-1.04-.016-2.04-3.338.726-4.042-1.61-4.042-1.61-.546-1.386-1.333-1.756-1.333-1.756-1.089-.745.084-.73.084-.73 1.205.085 1.84 1.236 1.84 1.236 1.07 1.834 2.809 1.304 3.495.997.108-.795.418-1.304.762-1.604-2.665-.305-5.467-1.334-5.467-5.933 0-1.31.468-2.381 1.236-3.221-.124-.303-.536-1.524.117-3.176 0 0 1.008-.322 3.301 1.23a11.52 11.52 0 013.004-.404c1.02.005 2.047.138 3.003.404 2.291-1.552 3.297-1.23 3.297-1.23.655 1.653.243 2.874.12 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.37.823 1.102.823 2.222 0 1.604-.015 2.896-.015 3.286 0 .322.216.697.825.576C20.565 21.796 24 17.298 24 12c0-6.627-5.373-12-12-12z" />
-                </svg>
-                <span class="sr-only">GitHub</span>
-              </a>
-            </div>
-          </div>
+    <!-- Main Content -->
+    <main class="main-container">
+      <!-- Bio / Profile Section -->
+      <section class="profile-section">
+        <div class="profile-description" id="bio-container">
+          <h1 class="profile-name">A. Berke Gökmen</h1>
+          <!-- BIO_FALLBACK_START -->
+          <p class="profile-bio">
+            Hi! I am an incoming PhD student at <strong>UC Berkeley EECS</strong>. Currently, I work as a Researcher at <strong>INSAIT</strong>.
+          </p>
+          <p class="profile-bio">
+            Previously, I was a Research Intern at <strong>ETH Zürich CVL</strong>, and an Undergraduate Researcher at <strong>Bilkent University</strong>.
+          </p>
+<!-- BIO_FALLBACK_END -->
+          <p class="profile-links" id="profile-links">
+            <a href="mailto:a.berke[at]berkeley.edu" id="email-link">Email</a> &nbsp;/&nbsp;
+            <a href="https://scholar.google.com.tr/citations?user=rg7Vk-gAAAAJ" target="_blank" rel="noopener">Google Scholar</a> &nbsp;/&nbsp;
+            <a href="https://www.linkedin.com/in/berkegokmen/" target="_blank" rel="noopener">LinkedIn</a> &nbsp;/&nbsp;
+            <a href="https://github.com/berkegokmen1" target="_blank" rel="noopener">GitHub</a> &nbsp;/&nbsp;
+            <a href="map/index.html">Map</a>
+          </p>
+        </div>
+        <div class="prof-image-container">
+          <img class="prof-image" src="assets/img/me.jpeg" alt="A. Berke Gökmen" />
         </div>
       </section>
 
-      <section id="publications" class="section">
-        <h2>Publications</h2>
-        <ul id="pub-list" class="pub-list">
-          <li class="pub" data-venue="cvpr">
-            <div class="pub-media">
-              <img class="pub-image" src="assets/teaser/com4d.png" alt="Compositional 4D scenes teaser" loading="lazy" />
-            </div>
-            <div class="pub-body">
-              <div class="pub-header">
-                <span class="pub-badge">CVPR 2026</span>
-                <span class="pub-title">Inferring Compositional 4D Scenes without Ever Seeing One</span>
-              </div>
-              <p class="pub-authors"><strong>Ahmet Berke Gökmen</strong>, Ajad Chattkuli, Luc Van Gool, Danda Pani Paudel</p>
-              <div class="pub-links">
-                <a href="https://arxiv.org/abs/2512.05272" target="_blank" rel="noopener">Paper</a>
-                <a href="https://berkegokmen1.github.io/com4d/" target="_blank" rel="noopener">Project</a>
-                <a href="https://github.com/insait-institute/COM4D" target="_blank" rel="noopener">Code</a>
-              </div>
-            </div>
+      <!-- News Section -->
+      <section>
+        <h2 class="section-heading">News</h2>
+        <ul id="news-list" class="news-list">
+          <!-- NEWS_FALLBACK_START -->
+          <li class="news-item">
+            <span class="news-date">[2026.07]</span>
+            <span class="news-text">Heading to UC Berkeley EECS for my PhD!</span>
           </li>
-
-          <li class="pub" data-venue="neurips">
-            <div class="pub-media">
-              <video
-                class="pub-video"
-                data-src="assets/teaser/ropecraft.mp4"
-                muted
-                loop
-                playsinline
-                autoplay
-                preload="none"
-                poster="RoPECraft/results/ftd/1/img/4.png"
-              >
-                <p>Your browser does not support the video tag.</p>
-              </video>
-            </div>
-            <div class="pub-body">
-              <div class="pub-header">
-                <span class="pub-badge">NeurIPS 2025</span>
-                <span class="pub-title">RoPECraft: Training-Free Motion Transfer with Trajectory Guided Optimization on DiTs</span>
-              </div>
-              <p class="pub-authors"><strong>Ahmet Berke Gökmen*</strong>, Yiğit Ekin*, Bahri Batuhan Bilecen*, Ayşegül Dündar (* joint first authors)</p>
-              <div class="pub-links">
-                <a href="https://arxiv.org/abs/2505.13344" target="_blank" rel="noopener">Paper</a>
-                <a href="https://berkegokmen1.github.io/RoPECraft/" target="_blank" rel="noopener">Project</a>
-                <a href="https://github.com/berkegokmen1/RoPECraft" target="_blank" rel="noopener">Code</a>
-              </div>
-            </div>
+          <li class="news-item">
+            <span class="news-date">[2026.03]</span>
+            <span class="news-text">Our work <a href="https://berkegokmen1.github.io/com4d/">COM4D</a> is accepted to CVPR 2026! Check out the <a href="https://arxiv.org/abs/2512.05272">paper</a>.</span>
           </li>
-
-          <li class="pub" data-venue="neurips">
-            <div class="pub-media">
-              <video
-                class="pub-video"
-                data-src="assets/teaser/dualenc.mp4"
-                muted
-                loop
-                playsinline
-                autoplay
-                preload="none"
-                poster="dual-enc-3d-gan-inv/static/images/dual_enc.png"
-              >
-                <p>Your browser does not support the video tag.</p>
-              </video>
-            </div>
-            <div class="pub-body">
-              <div class="pub-header">
-                <span class="pub-badge">NeurIPS 2024</span>
-                <span class="pub-title">Dual Encoder GAN Inversion for High-fidelity 3D Head Reconstruction from Single Images</span>
-              </div>
-              <p class="pub-authors"><strong>Ahmet Berke Gökmen*</strong>, Bahri Batuhan Bilecen*, Ayşegül Dündar (* joint first authors)</p>
-              <div class="pub-links">
-                <a href="https://arxiv.org/abs/2409.20530" target="_blank" rel="noopener">Paper</a>
-                <a href="https://berkegokmen1.github.io/dual-enc-3d-gan-inv/" target="_blank" rel="noopener">Project</a>
-                <a href="https://github.com/berkegokmen1/dual-enc-3d-gan-inversion" target="_blank" rel="noopener">Code</a>
-              </div>
-            </div>
+          <li class="news-item">
+            <span class="news-date">[2025.12]</span>
+            <span class="news-text">Our work <a href="https://berkegokmen1.github.io/com4d/">COM4D</a> is on arXiv!</span>
           </li>
-
-          <li class="pub" data-venue="iccv">
-            <div class="pub-media">
-              <video
-                class="pub-video"
-                data-src="assets/teaser/identity.mp4"
-                muted
-                loop
-                playsinline
-                autoplay
-                preload="none"
-              >
-                <p>Your browser does not support the video tag.</p>
-              </video>
-            </div>
-            <div class="pub-body">
-              <div class="pub-header">
-                <span class="pub-badge">ICCV 2025</span>
-                <span class="pub-title">Identity Preserving 3D Head Stylization with Multiview Score Distillation</span>
-              </div>
-              <p class="pub-authors">Bahri Batuhan Bilecen, <strong>Ahmet Berke Gökmen</strong>, Furkan Güzelant, Ayşegül Dündar</p>
-              <div class="pub-links">
-                <a href="https://arxiv.org/abs/2411.13536" target="_blank" rel="noopener">Paper</a>
-                <a href="https://three-bee.github.io/head_stylization/" target="_blank" rel="noopener">Project</a>
-                <a href="https://github.com/three-bee/3d_head_stylization" target="_blank" rel="noopener">Code</a>
-              </div>
-            </div>
+          <li class="news-item">
+            <span class="news-date">[2025.09]</span>
+            <span class="news-text">Joined INSAIT as a Researcher in Sofia, Bulgaria.</span>
           </li>
-
-          <li class="pub" data-venue="arxiv">
-            <div class="pub-media">
-              <img
-                class="pub-image"
-                src="assets/teaser/counterfactual.png"
-                alt="Counterfactual disease removal comparison"
-                loading="lazy"
-              />
-            </div>
-            <div class="pub-body">
-              <div class="pub-header">
-                <span class="pub-badge">arXiv 2025</span>
-                <span class="pub-title">Counterfactual Disease Removal and Generation in Chest X-Rays Using Diffusion Models</span>
-              </div>
-              <p class="pub-authors"><strong>Ahmet Berke Gökmen</strong>, Ender Konukoğlu</p>
-              <div class="pub-links">
-                <a href="https://berkegokmen1.github.io/counterfactual-disease-removal-and-generation-chest-xray/static/paper.pdf" target="_blank" rel="noopener">Paper</a>
-                <a href="https://berkegokmen1.github.io/counterfactual-disease-removal-and-generation-chest-xray/" target="_blank" rel="noopener">Project</a>
-                <a href="https://github.com/berkegokmen1/counterfactual-chexray-disease-editing" target="_blank" rel="noopener">Code</a>
-              </div>
-            </div>
+          <li class="news-item">
+            <span class="news-date">[2025.05]</span>
+            <span class="news-text">Our work <a href="https://berkegokmen1.github.io/RoPECraft/">RoPECraft</a> is accepted to NeurIPS 2025!</span>
           </li>
+          <li class="news-item">
+            <span class="news-date">[2024.09]</span>
+            <span class="news-text">Our work <a href="https://berkegokmen1.github.io/dual-enc-3d-gan-inv/">Dual Encoder GAN Inversion</a> is accepted to NeurIPS 2024!</span>
+          </li>
+          <li class="news-item">
+            <span class="news-date">[2024.07]</span>
+            <span class="news-text">Started as a Research Intern at ETH Zürich Computer Vision Lab (CVL).</span>
+          </li>
+          <li class="news-item">
+            <span class="news-date">[2024.01]</span>
+            <span class="news-text">Started as an Undergraduate Researcher at Bilkent University DLR.</span>
+          </li>
+<!-- NEWS_FALLBACK_END -->
         </ul>
       </section>
 
-      <section id="experience" class="section">
-        <h2>Experience</h2>
-        <div class="experience-wrap">
-          <div class="experience-group">
-            <h3>Roles</h3>
-            <ul class="experience-list">
-              <li class="xp-item">
-                <img src="assets/logos/insait.png" alt="INSAIT" />
-                <span class="xp-text">INSAIT — Researcher · Aug 2025 – Present · Sofia</span>
-              </li>
-              <li class="xp-item">
-                <img src="assets/logos/eth.png" alt="ETH Zürich" />
-                <span class="xp-text">ETH Zürich CVL — Research Intern · Jul 2024 – Nov 2024 · Zürich</span>
-              </li>
-              <li class="xp-item">
-                <img src="assets/logos/bilkent-dlr.png" alt="Bilkent University" />
-                <span class="xp-text">Bilkent DLR — Undergraduate Researcher · Jan 2024 – Aug 2025 · Ankara</span>
-              </li>
-              <li class="xp-item">
-                <img src="assets/logos/getir.png" alt="Getir" />
-                <span class="xp-text">Getir — Software Engineer · Sep 2022 – Jan 2024 · Istanbul</span>
-              </li>
+      <!-- Publications Section -->
+      <section id="publications">
+        <h2 class="section-heading">Publications</h2>
+        <ul id="pub-list" class="pub-list">
+          <!-- PUB_FALLBACK_START -->
+          <li class="pub-item">
+            <div class="pub-media">
+              <img class="pub-image" src="assets/teaser/com4d.png" alt="Compositional 4D scenes teaser" loading="lazy" />
+            </div>
+            <div class="pub-info">
+              <div class="pub-title">Inferring Compositional 4D Scenes without Ever Seeing One</div>
+              <div class="pub-authors"><strong>Ahmet Berke Gokmen</strong>, Ajad Chattkuli, Luc Van Gool, Danda Pani Paudel</div>
+              <div class="pub-venue">CVPR 2026</div>
+              <div class="pub-links">
+                <a href="https://arxiv.org/abs/2512.05272" target="_blank" rel="noopener">Paper</a> &nbsp;/&nbsp; <a href="com4d/">Project</a> &nbsp;/&nbsp; <a href="https://github.com/insait-institute/COM4D" target="_blank" rel="noopener">Code</a>
+              </div>
+            </div>
+          </li>
+          <li class="pub-item">
+            <div class="pub-media">
+              <video class="pub-video" src="assets/teaser/ropecraft.mp4" muted loop playsinline autoplay preload="none" poster="RoPECraft/results/ftd/1/img/4.png"><p>Your browser does not support the video tag.</p></video>
+            </div>
+            <div class="pub-info">
+              <div class="pub-title">RoPECraft: Training-Free Motion Transfer with Trajectory Guided Optimization on DiTs</div>
+              <div class="pub-authors"><strong>Ahmet Berke Gokmen*</strong>, Yigit Ekin*, Bahri Batuhan Bilecen*, Aysegul Dundar (* joint first authors)</div>
+              <div class="pub-venue">NeurIPS 2025</div>
+              <div class="pub-links">
+                <a href="https://arxiv.org/abs/2505.13344" target="_blank" rel="noopener">Paper</a> &nbsp;/&nbsp; <a href="RoPECraft/">Project</a> &nbsp;/&nbsp; <a href="https://github.com/berkegokmen1/RoPECraft" target="_blank" rel="noopener">Code</a>
+              </div>
+            </div>
+          </li>
+          <li class="pub-item">
+            <div class="pub-media">
+              <video class="pub-video" src="assets/teaser/dualenc.mp4" muted loop playsinline autoplay preload="none" poster="dual-enc-3d-gan-inv/static/images/dual_enc.png"><p>Your browser does not support the video tag.</p></video>
+            </div>
+            <div class="pub-info">
+              <div class="pub-title">Dual Encoder GAN Inversion for High-fidelity 3D Head Reconstruction from Single Images</div>
+              <div class="pub-authors"><strong>Ahmet Berke Gokmen*</strong>, Bahri Batuhan Bilecen*, Aysegul Dundar (* joint first authors)</div>
+              <div class="pub-venue">NeurIPS 2024</div>
+              <div class="pub-links">
+                <a href="https://arxiv.org/abs/2409.20530" target="_blank" rel="noopener">Paper</a> &nbsp;/&nbsp; <a href="dual-enc-3d-gan-inv/">Project</a> &nbsp;/&nbsp; <a href="https://github.com/berkegokmen1/dual-enc-3d-gan-inversion" target="_blank" rel="noopener">Code</a>
+              </div>
+            </div>
+          </li>
+          <li class="pub-item">
+            <div class="pub-media">
+              <video class="pub-video" src="assets/teaser/identity.mp4" muted loop playsinline autoplay preload="none"><p>Your browser does not support the video tag.</p></video>
+            </div>
+            <div class="pub-info">
+              <div class="pub-title">Identity Preserving 3D Head Stylization with Multiview Score Distillation</div>
+              <div class="pub-authors">Bahri Batuhan Bilecen, <strong>Ahmet Berke Gokmen</strong>, Furkan Guzelant, Aysegul Dundar</div>
+              <div class="pub-venue">ICCV 2025</div>
+              <div class="pub-links">
+                <a href="https://arxiv.org/abs/2411.13536" target="_blank" rel="noopener">Paper</a> &nbsp;/&nbsp; <a href="https://three-bee.github.io/head_stylization/" target="_blank" rel="noopener">Project</a> &nbsp;/&nbsp; <a href="https://github.com/three-bee/3d_head_stylization" target="_blank" rel="noopener">Code</a>
+              </div>
+            </div>
+          </li>
+          <li class="pub-item">
+            <div class="pub-media">
+              <img class="pub-image" src="assets/teaser/counterfactual.png" alt="Counterfactual disease removal comparison" loading="lazy" />
+            </div>
+            <div class="pub-info">
+              <div class="pub-title">Counterfactual Disease Removal and Generation in Chest X-Rays Using Diffusion Models</div>
+              <div class="pub-authors"><strong>Ahmet Berke Gokmen</strong>, Ender Konukoglu</div>
+              <div class="pub-venue">arXiv 2025</div>
+              <div class="pub-links">
+                <a href="counterfactual-disease-removal-and-generation-chest-xray/static/paper.pdf" target="_blank" rel="noopener">Paper</a> &nbsp;/&nbsp; <a href="counterfactual-disease-removal-and-generation-chest-xray/">Project</a> &nbsp;/&nbsp; <a href="https://github.com/berkegokmen1/counterfactual-chexray-disease-editing" target="_blank" rel="noopener">Code</a>
+              </div>
+            </div>
+          </li>
+<!-- PUB_FALLBACK_END -->
+        </ul>
+      </section>
 
-            </ul>
-          </div>
-
-          <div class="experience-group">
-            <h3>Education</h3>
-            <ul class="experience-list">
-              <li class="xp-item">
-                <img src="assets/logos/bilkent.png" alt="Bilkent University" />
-                <span class="xp-text">Bilkent University — B.E. Computer Science · 2020 – 2025 · Ankara</span>
-              </li>
-              <li class="xp-item">
-                <img src="assets/logos/epfl.png" alt="EPFL" />
-                <span class="xp-text">EPFL — Exchange, Computer Science · 2023 – 2024 · Lausanne</span>
-              </li>
-              <li class="xp-item">
-                <img src="assets/logos/canakkale.png" alt="Çanakkale Özel Fen Lisesi" />
-                <span class="xp-text">Çanakkale Özel Fen Lisesi — Math &amp; Science Diploma · Çanakkale</span>
-              </li>
-            </ul>
-          </div>
-
-          <div class="experience-group">
-            <h3>Short-term Schools</h3>
-            <ul class="experience-list">
-              <li class="xp-item">
-                <img src="assets/logos/mbzuai.png" alt="MBZUAI" />
-                <span class="xp-text">MBZUAI Winter School on Generative AI and Representation Learning — Feb 2026 · Abu Dhabi</span>
-              </li>
-              <li class="xp-item">
-                <img src="assets/logos/cmmrs.jpeg" alt="CMMRS" />
-                <span class="xp-text">Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science — Aug 2025 · Saarbrücken</span>
-              </li>
-            </ul>
-          </div>
+      <!-- Experience & Education Section -->
+      <section id="experience">
+        <h2 class="section-heading">Experience &amp; Education</h2>
+        <!-- XP_FALLBACK_START -->
+        <div class="xp-group">
+          <h3 class="xp-group-title">Roles</h3>
+          <ul class="xp-list">
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/insait.png" alt="INSAIT" />
+              <span class="xp-text"><strong>INSAIT</strong> — Researcher · Aug 2025 – Present · Sofia</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/eth.png" alt="ETH Zürich CVL" />
+              <span class="xp-text"><strong>ETH Zürich CVL</strong> — Research Intern · Jul 2024 – Nov 2024 · Zürich</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/bilkent-dlr.png" alt="Bilkent DLR" />
+              <span class="xp-text"><strong>Bilkent DLR</strong> — Undergraduate Researcher · Jan 2024 – Aug 2025 · Ankara</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/getir.png" alt="Getir" />
+              <span class="xp-text"><strong>Getir</strong> — Software Engineer · Sep 2022 – Jan 2024 · Istanbul</span>
+            </li>
+          </ul>
         </div>
+        <div class="xp-group">
+          <h3 class="xp-group-title">Education</h3>
+          <ul class="xp-list">
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/bilkent.png" alt="Bilkent University" />
+              <span class="xp-text"><strong>Bilkent University</strong> — B.E. Computer Science · 2020 – 2025 · Ankara</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/epfl.png" alt="EPFL" />
+              <span class="xp-text"><strong>EPFL</strong> — Exchange, Computer Science · 2023 – 2024 · Lausanne</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/canakkale.png" alt="Çanakkale Özel Fen Lisesi" />
+              <span class="xp-text"><strong>Çanakkale Özel Fen Lisesi</strong> — Math &amp; Science Diploma · Çanakkale</span>
+            </li>
+          </ul>
+        </div>
+        <div class="xp-group">
+          <h3 class="xp-group-title">Short-term Schools</h3>
+          <ul class="xp-list">
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/mbzuai.png" alt="MBZUAI Winter School on Generative AI and Representation Learning" />
+              <span class="xp-text"><strong>MBZUAI Winter School on Generative AI and Representation Learning</strong> — Feb 2026 · Abu Dhabi</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/cmmrs.jpeg" alt="Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science" />
+              <span class="xp-text"><strong>Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science</strong> — Aug 2025 · Saarbrücken</span>
+            </li>
+          </ul>
+        </div>
+<!-- XP_FALLBACK_END -->
       </section>
     </main>
 
-    <footer id="contact">
-      <div class="footer-inner">
-        <strong>Get in touch</strong>
-        <span>berke.gokmen@insait.ai</span>
-        <span>Or connect via <a href="https://www.linkedin.com/in/berkegokmen/">LinkedIn</a>.</span>
-        <span>© <script>document.write(new Date().getFullYear());</script> A. Berke Gökmen.</span>
-      </div>
-    </footer>
-
-    <script>
-      (() => {
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas?.getContext('2d');
-        if (!canvas || !ctx) return;
-
-        const particles = [];
-        const particleCount = 520;
-        const pointer = {
-          x: window.innerWidth / 2,
-          y: window.innerHeight / 2,
-          lastMove: performance.now()
-        };
-        let width = window.innerWidth;
-        let height = window.innerHeight;
-
-        const resize = () => {
-          const dpr = window.devicePixelRatio || 1;
-          width = window.innerWidth;
-          height = window.innerHeight;
-          canvas.width = width * dpr;
-          canvas.height = height * dpr;
-          canvas.style.width = '100%';
-          canvas.style.height = '100%';
-          ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-        };
-
-        const makeParticle = () => ({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.7,
-          vy: (Math.random() - 0.5) * 0.7,
-          size: 1.2 + Math.random() * 2.6,
-          tone: 205 + Math.random() * 28
-        });
-
-        const init = () => {
-          resize();
-          for (let i = 0; i < particleCount; i += 1) {
-            particles.push(makeParticle());
-          }
-          requestAnimationFrame(tick);
-        };
-
-        window.addEventListener('resize', resize);
-        window.addEventListener('pointermove', (event) => {
-          pointer.x = event.clientX;
-          pointer.y = event.clientY;
-          pointer.lastMove = performance.now();
-        });
-
-        const tick = () => {
-          const now = performance.now();
-          const moving = now - pointer.lastMove < 260;
-          const avoidRadius = 260;
-          const returnRadius = 220;
-          const jitter = moving ? 0.08 : 0.06;
-          const repel = moving ? 0.0022 : 0.0006;
-          const attract = moving ? 0.0008 : 0.0038;
-          const maxSpeed = moving ? 6.2 : 3.1;
-
-          ctx.clearRect(0, 0, width, height);
-
-          for (const particle of particles) {
-            const dx = pointer.x - particle.x;
-            const dy = pointer.y - particle.y;
-            const dist = Math.hypot(dx, dy) || 1;
-
-            if (moving && dist < avoidRadius) {
-              const push = 1 - dist / avoidRadius;
-              particle.vx -= dx * repel * push;
-              particle.vy -= dy * repel * push;
-            }
-
-            if (!moving && dist < returnRadius) {
-              const pull = 1 - dist / returnRadius;
-              particle.vx += dx * attract * pull;
-              particle.vy += dy * attract * pull;
-            }
-
-            particle.vx += (Math.random() - 0.5) * jitter;
-            particle.vy += (Math.random() - 0.5) * jitter;
-
-            particle.vx *= 0.94;
-            particle.vy *= 0.94;
-
-            const speed = Math.hypot(particle.vx, particle.vy);
-            if (speed > maxSpeed) {
-              const scale = maxSpeed / speed;
-              particle.vx *= scale;
-              particle.vy *= scale;
-            }
-
-            particle.x += particle.vx;
-            particle.y += particle.vy;
-
-            if (particle.x < 0) particle.x = width;
-            if (particle.x > width) particle.x = 0;
-            if (particle.y < 0) particle.y = height;
-            if (particle.y > height) particle.y = 0;
-
-            ctx.beginPath();
-            ctx.fillStyle = `hsla(${particle.tone}, 85%, 56%, 0.32)`;
-            ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-            ctx.fill();
-          }
-
-          requestAnimationFrame(tick);
-        };
-
-        init();
-      })();
-    </script>
-
+    <!-- Dynamic Fetch Scripts -->
     <script>
       document.addEventListener('DOMContentLoaded', () => {
         const pubList = document.getElementById('pub-list');
+        const newsList = document.getElementById('news-list');
+        
         const escapeHtml = (value) =>
           String(value)
             .replace(/&/g, '&amp;')
@@ -437,7 +261,10 @@
         const renderAuthors = (authors, featuredAuthor) => {
           const safeAuthors = escapeHtml(authors);
           if (!featuredAuthor) return safeAuthors;
-          return safeAuthors.replace(escapeHtml(featuredAuthor), `<strong>${escapeHtml(featuredAuthor)}</strong>`);
+          // Support * in joint first authors
+          const cleanFeatured = escapeHtml(featuredAuthor).replace('*', '\\*');
+          const regex = new RegExp(cleanFeatured, 'g');
+          return safeAuthors.replace(regex, `<strong>${escapeHtml(featuredAuthor)}</strong>`);
         };
 
         const renderPublicationMedia = (publication) => {
@@ -459,8 +286,9 @@
               const external = /^https?:\/\//.test(link.href);
               return `<a href="${escapeHtml(link.href)}"${external ? ' target="_blank" rel="noopener"' : ''}>${escapeHtml(link.label)}</a>`;
             })
-            .join('');
+            .join(' &nbsp;/&nbsp; ');
 
+        // Fetch & render publications
         fetch('data/publications.json')
           .then((response) => response.json())
           .then((publications) => {
@@ -468,16 +296,14 @@
             pubList.innerHTML = publications
               .map(
                 (publication) => `
-                  <li class="pub" data-venue="${escapeHtml(publication.venueKey)}">
+                  <li class="pub-item">
                     <div class="pub-media">
                       ${renderPublicationMedia(publication)}
                     </div>
-                    <div class="pub-body">
-                      <div class="pub-header">
-                        <span class="pub-badge">${escapeHtml(publication.venue)}</span>
-                        <span class="pub-title">${escapeHtml(publication.title)}</span>
-                      </div>
-                      <p class="pub-authors">${renderAuthors(publication.authors, publication.featuredAuthor)}</p>
+                    <div class="pub-info">
+                      <div class="pub-title">${escapeHtml(publication.title)}</div>
+                      <div class="pub-authors">${renderAuthors(publication.authors, publication.featuredAuthor)}</div>
+                      <div class="pub-venue">${escapeHtml(publication.venue)}</div>
                       <div class="pub-links">
                         ${renderPublicationLinks(publication.links)}
                       </div>
@@ -489,79 +315,167 @@
           })
           .catch(() => {});
 
-        const lazyVideos = document.querySelectorAll('video[data-src]');
+        // Fetch & render news
+        fetch('data/news.json')
+          .then((response) => response.json())
+          .then((news) => {
+            if (!newsList) return;
+            newsList.innerHTML = news
+              .map(
+                (item) => `
+                  <li class="news-item">
+                    <span class="news-date">[${escapeHtml(item.date)}]</span>
+                    <span class="news-text">${item.text}</span>
+                  </li>
+                `
+              )
+              .join('');
+          })
+          .catch(() => {});
 
-        if ('IntersectionObserver' in window) {
-          const videoObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                const video = entry.target;
-                const source = video.getAttribute('data-src');
-                if (source) {
-                  video.src = source;
-                  video.autoplay = true;
-                  video.addEventListener(
-                    'loadeddata',
-                    () => {
-                      video.removeAttribute('poster');
-                    },
-                    { once: true }
-                  );
-                  video.load();
-                  const playPromise = video.play();
-                  if (playPromise !== undefined) {
-                    playPromise.catch(() => {});
+        // Fetch & render bio
+        fetch('data/bio.json')
+          .then((response) => response.json())
+          .then((bio) => {
+            const bioContainer = document.getElementById('bio-container');
+            const linksPara = document.getElementById('profile-links');
+            if (!bioContainer || !linksPara) return;
+
+            // Clear static fallback bio paragraphs first
+            const oldBios = bioContainer.querySelectorAll('.profile-bio');
+            oldBios.forEach(p => p.remove());
+
+            const leadPara = document.createElement('p');
+            leadPara.className = 'profile-bio';
+            leadPara.innerHTML = bio.lead;
+            bioContainer.insertBefore(leadPara, linksPara);
+
+            const secPara = document.createElement('p');
+            secPara.className = 'profile-bio';
+            secPara.innerHTML = bio.secondary;
+            bioContainer.insertBefore(secPara, linksPara);
+          })
+          .catch(() => {});
+
+        // Fetch & render email
+        fetch('data/email.json')
+          .then((response) => response.json())
+          .then((data) => {
+            const emailLink = document.getElementById('email-link');
+            const footerEmail = document.getElementById('footer-email');
+
+            if (emailLink) {
+              emailLink.textContent = "Email";
+              emailLink.href = 'mailto:' + data.email.replace('[at]', '@');
+            }
+            if (footerEmail) {
+              footerEmail.textContent = data.email;
+            }
+          })
+          .catch(() => {});
+
+        // Toggle dark mode
+        (() => {
+          const toggle = document.getElementById('theme-toggle');
+          const root = document.documentElement;
+          if (toggle) {
+            toggle.addEventListener('click', () => {
+              root.classList.toggle('dark');
+              const isDark = root.classList.contains('dark');
+              localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+          }
+        })();
+
+        // Fetch & render experience
+        fetch('data/experience.json')
+          .then((response) => response.json())
+          .then((data) => {
+            const xpContainer = document.getElementById('experience');
+            if (!xpContainer) return;
+            
+            const renderList = (items) => {
+              return items.map(item => {
+                let detailsText = `<strong>${escapeHtml(item.name)}</strong>`;
+                if (item.title) detailsText += ` — ${escapeHtml(item.title)}`;
+                let dateLoc = [item.date, item.location].filter(Boolean).map(escapeHtml).join(' · ');
+                if (dateLoc) {
+                  if (item.title) {
+                    detailsText += ` · ${dateLoc}`;
+                  } else {
+                    detailsText += ` — ${dateLoc}`;
                   }
                 }
-                videoObserver.unobserve(video);
-              }
-            });
-          }, { rootMargin: '200px 0px' });
 
-          lazyVideos.forEach((video) => videoObserver.observe(video));
-        } else {
-          lazyVideos.forEach((video) => {
-            const source = video.getAttribute('data-src');
-            if (source) {
-              video.src = source;
-              video.autoplay = true;
-              video.addEventListener(
-                'loadeddata',
-                () => {
-                  video.removeAttribute('poster');
-                },
-                { once: true }
-              );
-              video.load();
-              const playPromise = video.play();
-              if (playPromise !== undefined) {
-                playPromise.catch(() => {});
-              }
-            }
-          });
-        }
+                return `
+                  <li class="xp-item">
+                    <img class="xp-logo" src="${escapeHtml(item.logo)}" alt="${escapeHtml(item.name)}" />
+                    <span class="xp-text">${detailsText}</span>
+                  </li>
+                `;
+              }).join('');
+            };
+
+            const html = `
+              <h2 class="section-heading">Experience &amp; Education</h2>
+              <!-- XP_FALLBACK_START -->
+        <div class="xp-group">
+          <h3 class="xp-group-title">Roles</h3>
+          <ul class="xp-list">
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/insait.png" alt="INSAIT" />
+              <span class="xp-text"><strong>INSAIT</strong> — Researcher · Aug 2025 – Present · Sofia</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/eth.png" alt="ETH Zürich CVL" />
+              <span class="xp-text"><strong>ETH Zürich CVL</strong> — Research Intern · Jul 2024 – Nov 2024 · Zürich</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/bilkent-dlr.png" alt="Bilkent DLR" />
+              <span class="xp-text"><strong>Bilkent DLR</strong> — Undergraduate Researcher · Jan 2024 – Aug 2025 · Ankara</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/getir.png" alt="Getir" />
+              <span class="xp-text"><strong>Getir</strong> — Software Engineer · Sep 2022 – Jan 2024 · Istanbul</span>
+            </li>
+          </ul>
+        </div>
+        <div class="xp-group">
+          <h3 class="xp-group-title">Education</h3>
+          <ul class="xp-list">
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/bilkent.png" alt="Bilkent University" />
+              <span class="xp-text"><strong>Bilkent University</strong> — B.E. Computer Science · 2020 – 2025 · Ankara</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/epfl.png" alt="EPFL" />
+              <span class="xp-text"><strong>EPFL</strong> — Exchange, Computer Science · 2023 – 2024 · Lausanne</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/canakkale.png" alt="Çanakkale Özel Fen Lisesi" />
+              <span class="xp-text"><strong>Çanakkale Özel Fen Lisesi</strong> — Math &amp; Science Diploma · Çanakkale</span>
+            </li>
+          </ul>
+        </div>
+        <div class="xp-group">
+          <h3 class="xp-group-title">Short-term Schools</h3>
+          <ul class="xp-list">
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/mbzuai.png" alt="MBZUAI Winter School on Generative AI and Representation Learning" />
+              <span class="xp-text"><strong>MBZUAI Winter School on Generative AI and Representation Learning</strong> — Feb 2026 · Abu Dhabi</span>
+            </li>
+            <li class="xp-item">
+              <img class="xp-logo" src="assets/logos/cmmrs.jpeg" alt="Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science" />
+              <span class="xp-text"><strong>Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science</strong> — Aug 2025 · Saarbrücken</span>
+            </li>
+          </ul>
+        </div>
+<!-- XP_FALLBACK_END -->
+            `;
+            xpContainer.innerHTML = html;
+          })
+          .catch(() => {});
       });
     </script>
-
-    <script>
-      (() => {
-        const toggle = document.getElementById('theme-toggle');
-        const root = document.documentElement;
-
-        // Check saved preference, default to light (day)
-        const saved = localStorage.getItem('theme');
-        if (saved === 'dark') {
-          root.classList.add('dark');
-        }
-
-        toggle.addEventListener('click', () => {
-          root.classList.toggle('dark');
-          const isDark = root.classList.contains('dark');
-          localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        });
-      })();
-    </script>
-
-    <script type="module" src="world.js"></script>
   </body>
 </html>
