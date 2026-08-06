@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Travel Log · A. Berke Gökmen</title>
+  <meta name="description" content="An animated map of my trips — flights, trains, buses and drives, drawn one leg at a time." />
+  <meta name="theme-color" content="#111114" />
+  <meta property="og:title" content="Travel Log · A. Berke Gökmen" />
+  <meta property="og:description" content="An animated map of my trips — flights, trains, buses and drives, drawn one leg at a time." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231c5cff'/%3E%3Cpath d='M8 22V10h8.2c3.2 0 5.2 1.5 5.2 4 0 1.4-.7 2.5-1.9 3.1 1.6.5 2.5 1.7 2.5 3.3 0 2.7-2.2 4.4-5.6 4.4H8Zm3.5-7h4.1c1.4 0 2.2-.6 2.2-1.7 0-1-.8-1.6-2.2-1.6h-4.1V15Zm0 7h4.7c1.5 0 2.3-.6 2.3-1.8s-.8-1.8-2.4-1.8h-4.6V22Z' fill='white'/%3E%3C/svg%3E" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      overflow: hidden;
+      background: #0b0c10;
+      color: #fff;
+      font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Background: the animation itself, playing on loop ── */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .backdrop iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+      pointer-events: none;
+      /* barely dimmed — the scrim below does the work of keeping copy readable */
+      filter: brightness(0.95) saturate(1.05);
+      transform: scale(1.02);
+    }
+
+    /* Vignette + scrim over the animation */
+    .scrim {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse 62% 46% at 50% 48%, rgba(6, 8, 14, 0.62) 0%, rgba(6, 8, 14, 0.28) 60%, rgba(6, 8, 14, 0) 100%),
+        linear-gradient(to bottom, rgba(6, 8, 14, 0.45) 0%, rgba(6, 8, 14, 0.05) 30%, rgba(6, 8, 14, 0.05) 70%, rgba(6, 8, 14, 0.45) 100%);
+    }
+
+    /* ── Overlay content ── */
+    .hero {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1.5rem;
+      gap: 1.5rem;
+    }
+
+    .hero-text {
+      max-width: 44rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    h1 {
+      font-size: clamp(1.9rem, 5.5vw, 3.4rem);
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      line-height: 1.08;
+      text-shadow: 0 2px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .sub {
+      font-size: clamp(0.95rem, 1.5vw, 1.1rem);
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.78);
+      text-shadow: 0 1px 16px rgba(0, 0, 0, 0.7);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.7rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.35rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: rgba(17, 20, 28, 0.6);
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-decoration: none;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      border-color: rgba(255, 255, 255, 0.7);
+      background: rgba(30, 36, 50, 0.8);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      border-color: transparent;
+      background: #1c5cff;
+      color: #fff;
+    }
+
+    .btn-primary:hover,
+    .btn-primary:focus-visible {
+      background: #2f6bff;
+      border-color: transparent;
+    }
+
+    /* Back to the site, kept out of the way */
+    .site-link {
+      position: fixed;
+      z-index: 3;
+      top: 1.15rem;
+      left: 1.25rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.6);
+      text-decoration: none;
+      text-shadow: 0 1px 12px rgba(0, 0, 0, 0.8);
+    }
+
+    .site-link:hover,
+    .site-link:focus-visible {
+      color: #fff;
+    }
+
+    @media (max-width: 640px) {
+      .hero {
+        gap: 1.25rem;
+      }
+
+      .btn {
+        padding: 0.65rem 1.15rem;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+  <!-- The animation, playing behind the copy. src is set by the script below so the
+       frame shape matches the viewport and the theme follows the site's light/dark
+       setting. Deliberately left empty here: setting it twice would fetch the 1.3 MB
+       document twice. -->
+  <div class="backdrop">
+    <iframe id="trip-frame" title="Animated map of my travels" tabindex="-1"></iframe>
+    <noscript>
+      <iframe src="app/?embed=1&amp;bare=1" title="Animated map of my travels" tabindex="-1"></iframe>
+    </noscript>
+  </div>
+  <div class="scrim"></div>
+
+  <a class="site-link" href="../index.html">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+      stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+    A. Berke Gökmen
+  </a>
+
+  <main class="hero">
+    <div class="hero-text">
+      <h1>Every trip, drawn on a globe</h1>
+      <p class="sub">
+        Flights, trains, buses and drives from the past year, animated one leg at a time.
+      </p>
+    </div>
+
+    <div class="actions">
+      <a class="btn btn-primary" id="editor-link" href="app/">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 20h9"></path>
+          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+        </svg>
+        Open the editor
+      </a>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      const frame = document.getElementById('trip-frame');
+      const editor = document.getElementById('editor-link');
+
+      // Follow the site's light/dark preference, and fit the frame to the viewport so a
+      // landscape window is not letterboxed by the 9:16 trip.
+      const saved = localStorage.getItem('theme');
+      const dark = saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const theme = dark ? 'night' : 'day';
+      const aspect = window.innerWidth / window.innerHeight >= 1.2 ? '16:9' : '9:16';
+
+      // Hold on the first frame for anyone who asked the OS for less motion.
+      const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? '&autoplay=0' : '';
+
+      frame.src = 'app/?embed=1&bare=1&aspect=' + aspect + '&theme=' + theme + still;
+      editor.href = 'app/?theme=' + theme;
+    })();
+  </script>
+</body>
+
+</html>

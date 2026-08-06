@@ -1,0 +1,509 @@
+{
+ "version": 2,
+ "revision": 1,
+ "text": {
+  "kicker": "Travel log",
+  "title": "A year of\ngoing places",
+  "subtitle": "{legs} journeys · {cities} cities · {modes} ways to move",
+  "endTitle": "Still moving",
+  "credit": ""
+ },
+ "theme": "night",
+ "aspect": "9:16",
+ "timing": {
+  "speed": 1,
+  "intro": 3.4,
+  "outro": 7,
+  "tail": 2.6,
+  "camBase": 380,
+  "camSpan": 300,
+  "drawBase": 430,
+  "drawSpan": 560,
+  "hold": 190
+ },
+ "camera": {
+  "zoomEnabled": true,
+  "dip": 1,
+  "startLat": 18,
+  "startLon": 34,
+  "endLat": 32,
+  "endLon": -6,
+  "endSpin": 9
+ },
+ "look": {
+  "globeScale": 1,
+  "arcWidth": 1,
+  "arcHeight": 1,
+  "arcBow": 1,
+  "glow": true,
+  "graticule": true,
+  "borders": true,
+  "atmosphere": true,
+  "scrims": true,
+  "showLabels": true,
+  "showLegend": true,
+  "showFooter": true,
+  "showCaption": true,
+  "showSummary": true,
+  "showStats": true,
+  "labelScale": 1,
+  "cityDotScale": 1
+ },
+ "vehicle": {
+  "style": "silhouette",
+  "scale": 1,
+  "tilt": 1
+ },
+ "network": {
+  "allow": false
+ },
+ "roads": {
+  "enabled": true,
+  "trainAsRoad": false,
+  "provider": "osrm",
+  "modes": [
+   "car",
+   "bus",
+   "motorcycle",
+   "bicycle",
+   "walk"
+  ]
+ },
+ "exportCfg": {
+  "fps": 30,
+  "resolution": 1,
+  "format": "auto",
+  "bitrateMbps": 12,
+  "loop": true
+ },
+ "stops": [
+  {
+   "id": "s1j1fl",
+   "name": "Çanakkale",
+   "label": "Çanakkale",
+   "country": "TR",
+   "lat": 40.1555,
+   "lon": 26.4127,
+   "hub": false
+  },
+  {
+   "id": "s2ee08",
+   "name": "Istanbul",
+   "label": "Istanbul",
+   "country": "TR",
+   "lat": 41.0138,
+   "lon": 28.9497,
+   "hub": true
+  },
+  {
+   "id": "s4bxz3",
+   "name": "Frankfurt am Main",
+   "label": "Frankfurt am Main",
+   "country": "DE",
+   "lat": 50.1155,
+   "lon": 8.6842,
+   "hub": false
+  },
+  {
+   "id": "s64vdm",
+   "name": "Saarbrücken",
+   "label": "Saarbrücken",
+   "country": "DE",
+   "lat": 49.2326,
+   "lon": 7.0098,
+   "hub": false
+  },
+  {
+   "id": "s12axn2",
+   "name": "Sofia",
+   "label": "Sofia",
+   "country": "BG",
+   "lat": 42.6975,
+   "lon": 23.3242,
+   "hub": true
+  },
+  {
+   "id": "s140y9c",
+   "name": "Burgas",
+   "label": "Burgas",
+   "country": "BG",
+   "lat": 42.5061,
+   "lon": 27.4678,
+   "hub": false
+  },
+  {
+   "id": "s19e2du",
+   "name": "San Diego",
+   "label": "San Diego",
+   "country": "US",
+   "lat": 32.7157,
+   "lon": -117.1647,
+   "hub": false
+  },
+  {
+   "id": "s23vtw5",
+   "name": "Ankara",
+   "label": "Ankara",
+   "country": "TR",
+   "lat": 39.9199,
+   "lon": 32.8543,
+   "hub": false
+  },
+  {
+   "id": "s26ib2m",
+   "name": "Abu Dhabi",
+   "label": "Abu Dhabi",
+   "country": "AE",
+   "lat": 24.4512,
+   "lon": 54.397,
+   "hub": false
+  },
+  {
+   "id": "s30d1v2",
+   "name": "Baltimore",
+   "label": "Baltimore",
+   "country": "US",
+   "lat": 39.2904,
+   "lon": -76.6122,
+   "hub": false
+  },
+  {
+   "id": "s33hzjt",
+   "name": "San Francisco",
+   "label": "San Francisco",
+   "country": "US",
+   "lat": 37.7749,
+   "lon": -122.4194,
+   "hub": false
+  },
+  {
+   "id": "s36fnsy",
+   "name": "Plovdiv",
+   "label": "Plovdiv",
+   "country": "BG",
+   "lat": 42.15,
+   "lon": 24.75,
+   "hub": false
+  },
+  {
+   "id": "s39irbk",
+   "name": "Paris",
+   "label": "Paris",
+   "country": "FR",
+   "lat": 48.8534,
+   "lon": 2.3488,
+   "hub": false
+  },
+  {
+   "id": "s4137r9",
+   "name": "Denver",
+   "label": "Denver",
+   "country": "US",
+   "lat": 39.7392,
+   "lon": -104.9847,
+   "hub": false
+  },
+  {
+   "id": "s44013r",
+   "name": "Rome",
+   "label": "Rome",
+   "country": "IT",
+   "lat": 41.8919,
+   "lon": 12.5113,
+   "hub": false
+  },
+  {
+   "id": "s48f686",
+   "name": "İzmir",
+   "label": "İzmir",
+   "country": "TR",
+   "lat": 38.4127,
+   "lon": 27.1384,
+   "hub": false
+  },
+  {
+   "id": "s51invm",
+   "name": "Skopje",
+   "label": "Skopje",
+   "country": "MK",
+   "lat": 41.9965,
+   "lon": 21.4314,
+   "hub": false
+  }
+ ],
+ "legs": [
+  {
+   "id": "s3kxij",
+   "fromId": "s1j1fl",
+   "toId": "s2ee08",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s59o49",
+   "fromId": "s2ee08",
+   "toId": "s4bxz3",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s7tcih",
+   "fromId": "s4bxz3",
+   "toId": "s64vdm",
+   "mode": "train",
+   "note": ""
+  },
+  {
+   "id": "s87ms9",
+   "fromId": "s64vdm",
+   "toId": "s4bxz3",
+   "mode": "car",
+   "note": ""
+  },
+  {
+   "id": "s9k7u0",
+   "fromId": "s4bxz3",
+   "toId": "s2ee08",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s106rkv",
+   "fromId": "s2ee08",
+   "toId": "s1j1fl",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s1190oj",
+   "fromId": "s1j1fl",
+   "toId": "s2ee08",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s13o572",
+   "fromId": "s2ee08",
+   "toId": "s12axn2",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s15gnfn",
+   "fromId": "s12axn2",
+   "toId": "s140y9c",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s16h2o7",
+   "fromId": "s140y9c",
+   "toId": "s12axn2",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s17fx7t",
+   "fromId": "s12axn2",
+   "toId": "s2ee08",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s18w6mc",
+   "fromId": "s2ee08",
+   "toId": "s12axn2",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s20zjad",
+   "fromId": "s12axn2",
+   "toId": "s19e2du",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s217k37",
+   "fromId": "s19e2du",
+   "toId": "s12axn2",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s22y6le",
+   "fromId": "s12axn2",
+   "toId": "s2ee08",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s24uq58",
+   "fromId": "s2ee08",
+   "toId": "s23vtw5",
+   "mode": "train",
+   "note": ""
+  },
+  {
+   "id": "s25dwht",
+   "fromId": "s23vtw5",
+   "toId": "s2ee08",
+   "mode": "train",
+   "note": ""
+  },
+  {
+   "id": "s27clew",
+   "fromId": "s2ee08",
+   "toId": "s26ib2m",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s2846fn",
+   "fromId": "s26ib2m",
+   "toId": "s2ee08",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s29z513",
+   "fromId": "s2ee08",
+   "toId": "s12axn2",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s310hvk",
+   "fromId": "s12axn2",
+   "toId": "s30d1v2",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s3293vp",
+   "fromId": "s30d1v2",
+   "toId": "s12axn2",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s34xwtv",
+   "fromId": "s12axn2",
+   "toId": "s33hzjt",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s35i5pe",
+   "fromId": "s33hzjt",
+   "toId": "s12axn2",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s37t1ly",
+   "fromId": "s12axn2",
+   "toId": "s36fnsy",
+   "mode": "car",
+   "note": ""
+  },
+  {
+   "id": "s38w1un",
+   "fromId": "s36fnsy",
+   "toId": "s12axn2",
+   "mode": "car",
+   "note": ""
+  },
+  {
+   "id": "s40gux8",
+   "fromId": "s12axn2",
+   "toId": "s39irbk",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s42ksj2",
+   "fromId": "s39irbk",
+   "toId": "s4137r9",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s43bpdq",
+   "fromId": "s4137r9",
+   "toId": "s12axn2",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s4587mh",
+   "fromId": "s12axn2",
+   "toId": "s44013r",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s46gq3d",
+   "fromId": "s44013r",
+   "toId": "s12axn2",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s47v4re",
+   "fromId": "s12axn2",
+   "toId": "s1j1fl",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s49ebuf",
+   "fromId": "s1j1fl",
+   "toId": "s48f686",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s5010d2",
+   "fromId": "s48f686",
+   "toId": "s23vtw5",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s522hoe",
+   "fromId": "s23vtw5",
+   "toId": "s51invm",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s53brb8",
+   "fromId": "s51invm",
+   "toId": "s2ee08",
+   "mode": "plane",
+   "note": ""
+  },
+  {
+   "id": "s54301i",
+   "fromId": "s2ee08",
+   "toId": "s1j1fl",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s55rzdr",
+   "fromId": "s1j1fl",
+   "toId": "s2ee08",
+   "mode": "bus",
+   "note": ""
+  },
+  {
+   "id": "s56vyqf",
+   "fromId": "s2ee08",
+   "toId": "s33hzjt",
+   "mode": "plane",
+   "note": ""
+  }
+ ]
+}

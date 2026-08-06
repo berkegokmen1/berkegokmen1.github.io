@@ -124,6 +124,23 @@
       letter-spacing: 0.02em;
     }
 
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+    }
+
+    .header-link {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .header-link:hover {
+      color: var(--text);
+      text-decoration: none;
+    }
+
     .theme-toggle {
       justify-self: end;
       display: inline-flex;
@@ -489,7 +506,9 @@
   <header class="site-header">
     <div class="site-header__inner">
       <a class="brand" href="../index.html">A. Berke Gökmen</a>
-      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <div class="header-actions">
+        <a class="header-link" href="../trip/">Travel Log</a>
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
         <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="12" cy="12" r="5" />
           <path
@@ -499,7 +518,8 @@
         <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" fill="currentColor" />
         </svg>
-      </button>
+        </button>
+      </div>
     </div>
   </header>
 
