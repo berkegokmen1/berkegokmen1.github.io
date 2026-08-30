@@ -4,7 +4,7 @@
       "logo": "assets/logos/berkeley.png",
       "name": "UC Berkeley EECS",
       "title": "PhD Student",
-      "date": "Aug 2025 – Aug 2026",
+      "date": "Aug 2026 - Present",
       "location": "Berkeley, CA"
     },
     {
@@ -37,6 +37,13 @@
     }
   ],
   "education": [
+    {
+      "logo": "assets/logos/berkeley.png",
+      "name": "UC Berkeley EECS",
+      "title": "PhD Student",
+      "date": "Aug 2026 - Present",
+      "location": "Berkeley, CA"
+    },
     {
       "logo": "assets/logos/bilkent.png",
       "name": "Bilkent University",
