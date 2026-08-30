@@ -1,10 +1,17 @@
 {
   "roles": [
     {
+      "logo": "assets/logos/berkeley.png",
+      "name": "UC Berkeley EECS",
+      "title": "PhD Student",
+      "date": "Aug 2025 – Aug 2026",
+      "location": "Berkeley, CA"
+    },
+    {
       "logo": "assets/logos/insait.png",
       "name": "INSAIT",
       "title": "Researcher",
-      "date": "Aug 2025 – Present",
+      "date": "Aug 2025 – Aug 2026",
       "location": "Sofia"
     },
     {
