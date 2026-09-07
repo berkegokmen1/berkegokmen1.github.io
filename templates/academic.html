@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  {{metadata}}
+  <link rel="stylesheet" href="assets/css/academic.css">
+  <script src="assets/js/academic.js" defer></script>
+</head>
+<body>
+  <main id="main">
+    <header class="profile">
+      <div>
+        <h1>A. Berke Gökmen</h1>
+        <div id="bio">{{bio}}</div>
+        <p id="email">{{email}}</p>
+        <nav class="contact" aria-label="Contact and profiles">
+          <a href="https://scholar.google.com.tr/citations?user=rg7Vk-gAAAAJ">Google Scholar</a>
+          <a href="https://github.com/berkegokmen1">GitHub</a>
+          <a href="https://www.linkedin.com/in/berkegokmen/">LinkedIn</a>
+        </nav>
+      </div>
+      <figure class="profile-photo">
+        <img class="portrait" src="assets/img/profile.jpeg" alt="A. Berke Gökmen" width="275" height="275" fetchpriority="high" decoding="async">
+        <figcaption id="photo-caption" hidden aria-live="polite"></figcaption>
+      </figure>
+    </header>
+    <section aria-labelledby="news-heading">
+      <h2 id="news-heading">News</h2>
+      <div id="news-content"><ul class="news">{{news}}</ul>
+      {{older_news}}</div>
+    </section>
+    <section aria-labelledby="research-heading">
+      <h2 id="research-heading">Publications</h2>
+      <ol class="publications">{{publications}}</ol>
+    </section>
+    <section aria-label="Experience and education">
+      <details class="experience">
+        <summary>Experience &amp; education</summary>
+        <div id="experience-content">{{experience}}</div>
+      </details>
+    </section>
+    <section aria-labelledby="undergraduates-heading">
+      <h2 id="undergraduates-heading">For undergraduates</h2>
+      <div id="undergraduates-content">{{undergraduates}}</div>
+    </section>
+    <footer><a href="explore/">Explore</a><span>Travel, maps, and other experiments.</span></footer>
+  </main>
+</body>
+</html>

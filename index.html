@@ -1,499 +1,108 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>A. Berke Gökmen</title>
-    <meta name="description" content="A. Berke Gökmen · Incoming PhD Student at Berkeley EECS, currently a Researcher at INSAIT." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231c5cff'/%3E%3Cpath d='M8 22V10h8.2c3.2 0 5.2 1.5 5.2 4 0 1.4-.7 2.5-1.9 3.1 1.6.5 2.5 1.7 2.5 3.3 0 2.7-2.2 4.4-5.6 4.4H8Zm3.5-7h4.1c1.4 0 2.2-.6 2.2-1.7 0-1-.8-1.6-2.2-1.6h-4.1V15Zm0 7h4.7c1.5 0 2.3-.6 2.3-1.8s-.8-1.8-2.4-1.8h-4.6V22Z' fill='white'/%3E%3C/svg%3E" />
-    <link rel="stylesheet" href="simple.css" />
-    <script>
-      (function() {
-        const saved = localStorage.getItem('theme');
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        if (saved === 'dark' || (!saved && systemDark)) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
-      })();
-    </script>
-  </head>
-  <body>
-    <script src="https://www.w3counter.com/tracker.js?id=156379"></script>
-    <!-- Header -->
-    <header class="header-container">
-      <div class="logo">
-        <a href="#">A. Berke Gökmen</a>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>A. Berke Gökmen | Computer Vision · UC Berkeley</title>
+<meta name="description" content="A. Berke Gökmen is a first-year PhD student at UC Berkeley EECS researching computer vision, machine learning, and robotics. Publications, research, and academic experience.">
+<link rel="canonical" href="https://berkegokmen1.github.io/">
+<meta property="og:type" content="profile">
+<meta property="og:title" content="A. Berke Gökmen | Computer Vision · UC Berkeley">
+<meta property="og:description" content="A. Berke Gökmen is a first-year PhD student at UC Berkeley EECS researching computer vision, machine learning, and robotics. Publications, research, and academic experience.">
+<meta property="og:url" content="https://berkegokmen1.github.io/">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="A. Berke Gökmen | Computer Vision · UC Berkeley">
+<meta name="twitter:description" content="A. Berke Gökmen is a first-year PhD student at UC Berkeley EECS researching computer vision, machine learning, and robotics. Publications, research, and academic experience.">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "ProfilePage", "@id": "https://berkegokmen1.github.io/#profile", "url": "https://berkegokmen1.github.io/", "name": "A. Berke Gökmen | Computer Vision · UC Berkeley", "mainEntity": {"@type": "Person", "@id": "https://berkegokmen1.github.io/#person", "name": "A. Berke Gökmen", "alternateName": "Ahmet Berke Gokmen", "url": "https://berkegokmen1.github.io/", "image": "https://berkegokmen1.github.io/assets/img/profile.jpeg", "description": "A. Berke Gökmen is a first-year PhD student at UC Berkeley EECS researching computer vision, machine learning, and robotics. Publications, research, and academic experience.", "sameAs": ["https://scholar.google.com.tr/citations?user=rg7Vk-gAAAAJ", "https://github.com/berkegokmen1", "https://www.linkedin.com/in/berkegokmen/"]}}</script>
+  <link rel="stylesheet" href="assets/css/academic.css">
+  <script src="assets/js/academic.js" defer></script>
+</head>
+<body>
+  <main id="main">
+    <header class="profile">
+      <div>
+        <h1>A. Berke Gökmen</h1>
+        <div id="bio"><p>Hi! I am a first-year PhD student at <strong>UC Berkeley EECS</strong> advised by <strong>Prof. Trevor Darrell</strong>.</p><p>I am interested in computer vision, machine learning, and robotics. My research focuses on developing algorithms for visual perception and understanding in autonomous systems.</p></div>
+        <p id="email">E-mail: a.berke<strong>[at]</strong>berkeley<strong>[dot]</strong>edu</p>
+        <nav class="contact" aria-label="Contact and profiles">
+          <a href="https://scholar.google.com.tr/citations?user=rg7Vk-gAAAAJ">Google Scholar</a>
+          <a href="https://github.com/berkegokmen1">GitHub</a>
+          <a href="https://www.linkedin.com/in/berkegokmen/">LinkedIn</a>
+        </nav>
       </div>
-      <nav class="nav">
-        <ul>
-          <li><a href="trip/" class="nav-mode-btn trip-btn">Travel Log</a></li>
-          <li><a href="fancy.html" class="nav-mode-btn fancy-btn">Fancy Mode</a></li>
-          <li><a href="3d.html" class="nav-mode-btn extra-fancy-btn">3D Mode</a></li>
-          <li>
-            <button id="theme-toggle" class="theme-toggle-simple" aria-label="Toggle dark mode" title="Toggle dark mode">
-              <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-              <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor" stroke="none"><path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z"></path></svg>
-            </button>
-          </li>
-        </ul>
-      </nav>
+      <figure class="profile-photo">
+        <img class="portrait" src="assets/img/profile.jpeg" alt="A. Berke Gökmen" width="275" height="275" fetchpriority="high" decoding="async">
+        <figcaption id="photo-caption" hidden aria-live="polite"></figcaption>
+      </figure>
     </header>
-
-    <!-- Main Content -->
-    <main class="main-container">
-      <!-- Bio / Profile Section -->
-      <section class="profile-section">
-        <div class="profile-description" id="bio-container">
-          <h1 class="profile-name">A. Berke Gökmen</h1>
-          <!-- BIO_FALLBACK_START -->
-          <p class="profile-bio">
-            Hi! I am a PhD student at <strong>UC Berkeley EECS</strong> advised by <strong>Prof. Trevor Darrell</strong>.
-          </p>
-          <p class="profile-bio">
-            I am interested in computer vision, machine learning, and robotics. My research focuses on developing algorithms for visual perception and understanding in autonomous systems.
-          </p>
-<!-- BIO_FALLBACK_END -->
-          <p class="profile-links" id="profile-links">
-            <a href="mailto:a.berke[at]berkeley.edu" id="email-link">Email</a> &nbsp;/&nbsp;
-            <a href="https://scholar.google.com.tr/citations?user=rg7Vk-gAAAAJ" target="_blank" rel="noopener">Google Scholar</a> &nbsp;/&nbsp;
-            <a href="https://www.linkedin.com/in/berkegokmen/" target="_blank" rel="noopener">LinkedIn</a> &nbsp;/&nbsp;
-            <a href="https://github.com/berkegokmen1" target="_blank" rel="noopener">GitHub</a> &nbsp;/&nbsp;
-            <a href="map/index.html">Map</a> &nbsp;/&nbsp;
-            <a href="trip/">Travel Log</a>
-          </p>
-        </div>
-        <div class="prof-image-container">
-          <img class="prof-image" src="assets/img/me.jpeg" alt="A. Berke Gökmen" />
-        </div>
-      </section>
-
-      <!-- News Section -->
-      <section>
-        <h2 class="section-heading">News</h2>
-        <ul id="news-list" class="news-list">
-          <!-- NEWS_FALLBACK_START -->
-          <li class="news-item">
-            <span class="news-date">[2026.08]</span>
-            <span class="news-text">Heading to UC Berkeley EECS for my PhD!</span>
-          </li>
-          <li class="news-item">
-            <span class="news-date">[2026.03]</span>
-            <span class="news-text">Our work <a href="https://berkegokmen1.github.io/com4d/">COM4D</a> is accepted to CVPR 2026! Check out the <a href="https://arxiv.org/abs/2512.05272">paper</a>.</span>
-          </li>
-          <li class="news-item">
-            <span class="news-date">[2025.12]</span>
-            <span class="news-text">Our work <a href="https://berkegokmen1.github.io/com4d/">COM4D</a> is on arXiv!</span>
-          </li>
-          <li class="news-item">
-            <span class="news-date">[2025.08]</span>
-            <span class="news-text">Joined INSAIT as a Researcher in Sofia, Bulgaria.</span>
-          </li>
-          <li class="news-item">
-            <span class="news-date">[2025.05]</span>
-            <span class="news-text">Our work <a href="https://berkegokmen1.github.io/RoPECraft/">RoPECraft</a> is accepted to NeurIPS 2025!</span>
-          </li>
-          <li class="news-item">
-            <span class="news-date">[2024.09]</span>
-            <span class="news-text">Our work <a href="https://berkegokmen1.github.io/dual-enc-3d-gan-inv/">Dual Encoder GAN Inversion</a> is accepted to NeurIPS 2024!</span>
-          </li>
-          <li class="news-item">
-            <span class="news-date">[2024.07]</span>
-            <span class="news-text">Started as a Research Intern at ETH Zürich Computer Vision Lab (CVL).</span>
-          </li>
-          <li class="news-item">
-            <span class="news-date">[2024.01]</span>
-            <span class="news-text">Started as an Undergraduate Researcher at Bilkent University DLR.</span>
-          </li>
-<!-- NEWS_FALLBACK_END -->
-        </ul>
-      </section>
-
-      <!-- Publications Section -->
-      <section id="publications">
-        <h2 class="section-heading">Publications</h2>
-        <ul id="pub-list" class="pub-list">
-          <!-- PUB_FALLBACK_START -->
-          <li class="pub-item">
-            <div class="pub-media">
-              <img class="pub-image" src="assets/teaser/com4d.png" alt="Compositional 4D scenes teaser" loading="lazy" />
-            </div>
-            <div class="pub-info">
-              <div class="pub-title">Inferring Compositional 4D Scenes without Ever Seeing One</div>
-              <div class="pub-authors"><strong>Ahmet Berke Gokmen</strong>, Ajad Chattkuli, Luc Van Gool, Danda Pani Paudel</div>
-              <div class="pub-venue">CVPR 2026</div>
-              <div class="pub-links">
-                <a href="https://arxiv.org/abs/2512.05272" target="_blank" rel="noopener">Paper</a> &nbsp;/&nbsp; <a href="com4d/">Project</a> &nbsp;/&nbsp; <a href="https://github.com/insait-institute/COM4D" target="_blank" rel="noopener">Code</a>
-              </div>
-            </div>
-          </li>
-          <li class="pub-item">
-            <div class="pub-media">
-              <video class="pub-video" src="assets/teaser/ropecraft.mp4" muted loop playsinline autoplay preload="none" poster="RoPECraft/results/ftd/1/img/4.png"><p>Your browser does not support the video tag.</p></video>
-            </div>
-            <div class="pub-info">
-              <div class="pub-title">RoPECraft: Training-Free Motion Transfer with Trajectory Guided Optimization on DiTs</div>
-              <div class="pub-authors"><strong>Ahmet Berke Gokmen*</strong>, Yigit Ekin*, Bahri Batuhan Bilecen*, Aysegul Dundar (* joint first authors)</div>
-              <div class="pub-venue">NeurIPS 2025</div>
-              <div class="pub-links">
-                <a href="https://arxiv.org/abs/2505.13344" target="_blank" rel="noopener">Paper</a> &nbsp;/&nbsp; <a href="RoPECraft/">Project</a> &nbsp;/&nbsp; <a href="https://github.com/berkegokmen1/RoPECraft" target="_blank" rel="noopener">Code</a>
-              </div>
-            </div>
-          </li>
-          <li class="pub-item">
-            <div class="pub-media">
-              <video class="pub-video" src="assets/teaser/dualenc.mp4" muted loop playsinline autoplay preload="none" poster="dual-enc-3d-gan-inv/static/images/dual_enc.png"><p>Your browser does not support the video tag.</p></video>
-            </div>
-            <div class="pub-info">
-              <div class="pub-title">Dual Encoder GAN Inversion for High-fidelity 3D Head Reconstruction from Single Images</div>
-              <div class="pub-authors"><strong>Ahmet Berke Gokmen*</strong>, Bahri Batuhan Bilecen*, Aysegul Dundar (* joint first authors)</div>
-              <div class="pub-venue">NeurIPS 2024</div>
-              <div class="pub-links">
-                <a href="https://arxiv.org/abs/2409.20530" target="_blank" rel="noopener">Paper</a> &nbsp;/&nbsp; <a href="dual-enc-3d-gan-inv/">Project</a> &nbsp;/&nbsp; <a href="https://github.com/berkegokmen1/dual-enc-3d-gan-inversion" target="_blank" rel="noopener">Code</a>
-              </div>
-            </div>
-          </li>
-          <li class="pub-item">
-            <div class="pub-media">
-              <video class="pub-video" src="assets/teaser/identity.mp4" muted loop playsinline autoplay preload="none"><p>Your browser does not support the video tag.</p></video>
-            </div>
-            <div class="pub-info">
-              <div class="pub-title">Identity Preserving 3D Head Stylization with Multiview Score Distillation</div>
-              <div class="pub-authors">Bahri Batuhan Bilecen, <strong>Ahmet Berke Gokmen</strong>, Furkan Guzelant, Aysegul Dundar</div>
-              <div class="pub-venue">ICCV 2025</div>
-              <div class="pub-links">
-                <a href="https://arxiv.org/abs/2411.13536" target="_blank" rel="noopener">Paper</a> &nbsp;/&nbsp; <a href="https://three-bee.github.io/head_stylization/" target="_blank" rel="noopener">Project</a> &nbsp;/&nbsp; <a href="https://github.com/three-bee/3d_head_stylization" target="_blank" rel="noopener">Code</a>
-              </div>
-            </div>
-          </li>
-          <li class="pub-item">
-            <div class="pub-media">
-              <img class="pub-image" src="assets/teaser/counterfactual.png" alt="Counterfactual disease removal comparison" loading="lazy" />
-            </div>
-            <div class="pub-info">
-              <div class="pub-title">Counterfactual Disease Removal and Generation in Chest X-Rays Using Diffusion Models</div>
-              <div class="pub-authors"><strong>Ahmet Berke Gokmen</strong>, Ender Konukoglu</div>
-              <div class="pub-venue">arXiv 2025</div>
-              <div class="pub-links">
-                <a href="counterfactual-disease-removal-and-generation-chest-xray/static/paper.pdf" target="_blank" rel="noopener">Paper</a> &nbsp;/&nbsp; <a href="counterfactual-disease-removal-and-generation-chest-xray/">Project</a> &nbsp;/&nbsp; <a href="https://github.com/berkegokmen1/counterfactual-chexray-disease-editing" target="_blank" rel="noopener">Code</a>
-              </div>
-            </div>
-          </li>
-<!-- PUB_FALLBACK_END -->
-        </ul>
-      </section>
-
-      <!-- Experience & Education Section -->
-      <section id="experience">
-        <h2 class="section-heading">Experience &amp; Education</h2>
-        <!-- XP_FALLBACK_START -->
-        <div class="xp-group">
-          <h3 class="xp-group-title">Roles</h3>
-          <ul class="xp-list">
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/berkeley.png" alt="UC Berkeley EECS" />
-              <span class="xp-text"><strong>UC Berkeley EECS</strong> — PhD Student · Aug 2026 - Present · Berkeley, CA</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/insait.png" alt="INSAIT" />
-              <span class="xp-text"><strong>INSAIT</strong> — Researcher · Aug 2025 – Aug 2026 · Sofia</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/eth.png" alt="ETH Zürich CVL" />
-              <span class="xp-text"><strong>ETH Zürich CVL</strong> — Research Intern · Jul 2024 – Nov 2024 · Zürich</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/bilkent-dlr.png" alt="Bilkent DLR" />
-              <span class="xp-text"><strong>Bilkent DLR</strong> — Undergraduate Researcher · Jan 2024 – Aug 2025 · Ankara</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/getir.png" alt="Getir" />
-              <span class="xp-text"><strong>Getir</strong> — Software Engineer · Sep 2022 – Jan 2024 · Istanbul</span>
-            </li>
-          </ul>
-        </div>
-        <div class="xp-group">
-          <h3 class="xp-group-title">Education</h3>
-          <ul class="xp-list">
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/berkeley.png" alt="UC Berkeley EECS" />
-              <span class="xp-text"><strong>UC Berkeley EECS</strong> — PhD Student · Aug 2026 - Present · Berkeley, CA</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/bilkent.png" alt="Bilkent University" />
-              <span class="xp-text"><strong>Bilkent University</strong> — B.E. Computer Science · 2020 – 2025 · Ankara</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/epfl.png" alt="EPFL" />
-              <span class="xp-text"><strong>EPFL</strong> — Exchange, Computer Science · 2023 – 2024 · Lausanne</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/canakkale.png" alt="Çanakkale Özel Fen Lisesi" />
-              <span class="xp-text"><strong>Çanakkale Özel Fen Lisesi</strong> — Math &amp; Science Diploma · Çanakkale</span>
-            </li>
-          </ul>
-        </div>
-        <div class="xp-group">
-          <h3 class="xp-group-title">Short-term Schools</h3>
-          <ul class="xp-list">
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/mbzuai.png" alt="MBZUAI Winter School on Generative AI and Representation Learning" />
-              <span class="xp-text"><strong>MBZUAI Winter School on Generative AI and Representation Learning</strong> — Feb 2026 · Abu Dhabi</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/cmmrs.jpeg" alt="Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science" />
-              <span class="xp-text"><strong>Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science</strong> — Aug 2025 · Saarbrücken</span>
-            </li>
-          </ul>
-        </div>
-<!-- XP_FALLBACK_END -->
-      </section>
-    </main>
-
-    <!-- Dynamic Fetch Scripts -->
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const pubList = document.getElementById('pub-list');
-        const newsList = document.getElementById('news-list');
-        
-        const escapeHtml = (value) =>
-          String(value)
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;')
-            .replace(/"/g, '&quot;')
-            .replace(/'/g, '&#039;');
-
-        const renderAuthors = (authors, featuredAuthor) => {
-          const safeAuthors = escapeHtml(authors);
-          if (!featuredAuthor) return safeAuthors;
-          // Support * in joint first authors
-          const cleanFeatured = escapeHtml(featuredAuthor).replace('*', '\\*');
-          const regex = new RegExp(cleanFeatured, 'g');
-          return safeAuthors.replace(regex, `<strong>${escapeHtml(featuredAuthor)}</strong>`);
-        };
-
-        const renderPublicationMedia = (publication) => {
-          const media = publication.media || {};
-          if (media.type === 'video') {
-            const poster = media.poster ? ` poster="${escapeHtml(media.poster)}"` : '';
-            return `
-              <video class="pub-video" src="${escapeHtml(media.src)}" muted loop playsinline autoplay preload="none"${poster}>
-                <p>Your browser does not support the video tag.</p>
-              </video>
-            `;
-          }
-          return `<img class="pub-image" src="${escapeHtml(media.src)}" alt="${escapeHtml(media.alt || publication.title)}" loading="lazy" />`;
-        };
-
-        const renderPublicationLinks = (links = []) =>
-          links
-            .map((link) => {
-              const external = /^https?:\/\//.test(link.href);
-              return `<a href="${escapeHtml(link.href)}"${external ? ' target="_blank" rel="noopener"' : ''}>${escapeHtml(link.label)}</a>`;
-            })
-            .join(' &nbsp;/&nbsp; ');
-
-        // Fetch & render publications
-        fetch('data/publications.json')
-          .then((response) => response.json())
-          .then((publications) => {
-            if (!pubList) return;
-            pubList.innerHTML = publications
-              .map(
-                (publication) => `
-                  <li class="pub-item">
-                    <div class="pub-media">
-                      ${renderPublicationMedia(publication)}
-                    </div>
-                    <div class="pub-info">
-                      <div class="pub-title">${escapeHtml(publication.title)}</div>
-                      <div class="pub-authors">${renderAuthors(publication.authors, publication.featuredAuthor)}</div>
-                      <div class="pub-venue">${escapeHtml(publication.venue)}</div>
-                      <div class="pub-links">
-                        ${renderPublicationLinks(publication.links)}
-                      </div>
-                    </div>
-                  </li>
-                `
-              )
-              .join('');
-          })
-          .catch(() => {});
-
-        // Fetch & render news
-        fetch('data/news.json')
-          .then((response) => response.json())
-          .then((news) => {
-            if (!newsList) return;
-            newsList.innerHTML = news
-              .map(
-                (item) => `
-                  <li class="news-item">
-                    <span class="news-date">[${escapeHtml(item.date)}]</span>
-                    <span class="news-text">${item.text}</span>
-                  </li>
-                `
-              )
-              .join('');
-          })
-          .catch(() => {});
-
-        // Fetch & render bio
-        fetch('data/bio.json')
-          .then((response) => response.json())
-          .then((bio) => {
-            const bioContainer = document.getElementById('bio-container');
-            const linksPara = document.getElementById('profile-links');
-            if (!bioContainer || !linksPara) return;
-
-            // Clear static fallback bio paragraphs first
-            const oldBios = bioContainer.querySelectorAll('.profile-bio');
-            oldBios.forEach(p => p.remove());
-
-            const leadPara = document.createElement('p');
-            leadPara.className = 'profile-bio';
-            leadPara.innerHTML = bio.lead;
-            bioContainer.insertBefore(leadPara, linksPara);
-
-            const secPara = document.createElement('p');
-            secPara.className = 'profile-bio';
-            secPara.innerHTML = bio.secondary;
-            bioContainer.insertBefore(secPara, linksPara);
-          })
-          .catch(() => {});
-
-        // Fetch & render email
-        fetch('data/email.json')
-          .then((response) => response.json())
-          .then((data) => {
-            const emailLink = document.getElementById('email-link');
-            const footerEmail = document.getElementById('footer-email');
-
-            if (emailLink) {
-              emailLink.textContent = "Email";
-              emailLink.href = 'mailto:' + data.email.replace('[at]', '@');
-            }
-            if (footerEmail) {
-              footerEmail.textContent = data.email;
-            }
-          })
-          .catch(() => {});
-
-        // Toggle dark mode
-        (() => {
-          const toggle = document.getElementById('theme-toggle');
-          const root = document.documentElement;
-          if (toggle) {
-            toggle.addEventListener('click', () => {
-              root.classList.toggle('dark');
-              const isDark = root.classList.contains('dark');
-              localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            });
-          }
-        })();
-
-        // Fetch & render experience
-        fetch('data/experience.json')
-          .then((response) => response.json())
-          .then((data) => {
-            const xpContainer = document.getElementById('experience');
-            if (!xpContainer) return;
-            
-            const renderList = (items) => {
-              return items.map(item => {
-                let detailsText = `<strong>${escapeHtml(item.name)}</strong>`;
-                if (item.title) detailsText += ` — ${escapeHtml(item.title)}`;
-                let dateLoc = [item.date, item.location].filter(Boolean).map(escapeHtml).join(' · ');
-                if (dateLoc) {
-                  if (item.title) {
-                    detailsText += ` · ${dateLoc}`;
-                  } else {
-                    detailsText += ` — ${dateLoc}`;
-                  }
-                }
-
-                return `
-                  <li class="xp-item">
-                    <img class="xp-logo" src="${escapeHtml(item.logo)}" alt="${escapeHtml(item.name)}" />
-                    <span class="xp-text">${detailsText}</span>
-                  </li>
-                `;
-              }).join('');
-            };
-
-            const html = `
-              <h2 class="section-heading">Experience &amp; Education</h2>
-              <!-- XP_FALLBACK_START -->
-        <div class="xp-group">
-          <h3 class="xp-group-title">Roles</h3>
-          <ul class="xp-list">
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/berkeley.png" alt="UC Berkeley EECS" />
-              <span class="xp-text"><strong>UC Berkeley EECS</strong> — PhD Student · Aug 2026 - Present · Berkeley, CA</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/insait.png" alt="INSAIT" />
-              <span class="xp-text"><strong>INSAIT</strong> — Researcher · Aug 2025 – Aug 2026 · Sofia</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/eth.png" alt="ETH Zürich CVL" />
-              <span class="xp-text"><strong>ETH Zürich CVL</strong> — Research Intern · Jul 2024 – Nov 2024 · Zürich</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/bilkent-dlr.png" alt="Bilkent DLR" />
-              <span class="xp-text"><strong>Bilkent DLR</strong> — Undergraduate Researcher · Jan 2024 – Aug 2025 · Ankara</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/getir.png" alt="Getir" />
-              <span class="xp-text"><strong>Getir</strong> — Software Engineer · Sep 2022 – Jan 2024 · Istanbul</span>
-            </li>
-          </ul>
-        </div>
-        <div class="xp-group">
-          <h3 class="xp-group-title">Education</h3>
-          <ul class="xp-list">
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/berkeley.png" alt="UC Berkeley EECS" />
-              <span class="xp-text"><strong>UC Berkeley EECS</strong> — PhD Student · Aug 2026 - Present · Berkeley, CA</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/bilkent.png" alt="Bilkent University" />
-              <span class="xp-text"><strong>Bilkent University</strong> — B.E. Computer Science · 2020 – 2025 · Ankara</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/epfl.png" alt="EPFL" />
-              <span class="xp-text"><strong>EPFL</strong> — Exchange, Computer Science · 2023 – 2024 · Lausanne</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/canakkale.png" alt="Çanakkale Özel Fen Lisesi" />
-              <span class="xp-text"><strong>Çanakkale Özel Fen Lisesi</strong> — Math &amp; Science Diploma · Çanakkale</span>
-            </li>
-          </ul>
-        </div>
-        <div class="xp-group">
-          <h3 class="xp-group-title">Short-term Schools</h3>
-          <ul class="xp-list">
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/mbzuai.png" alt="MBZUAI Winter School on Generative AI and Representation Learning" />
-              <span class="xp-text"><strong>MBZUAI Winter School on Generative AI and Representation Learning</strong> — Feb 2026 · Abu Dhabi</span>
-            </li>
-            <li class="xp-item">
-              <img class="xp-logo" src="assets/logos/cmmrs.jpeg" alt="Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science" />
-              <span class="xp-text"><strong>Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science</strong> — Aug 2025 · Saarbrücken</span>
-            </li>
-          </ul>
-        </div>
-<!-- XP_FALLBACK_END -->
-            `;
-            xpContainer.innerHTML = html;
-          })
-          .catch(() => {});
-      });
-    </script>
-  </body>
+    <section aria-labelledby="news-heading">
+      <h2 id="news-heading">News</h2>
+      <div id="news-content"><ul class="news"><li><time datetime="2026-08">2026.08</time><span>Heading to UC Berkeley EECS for my PhD!</span></li>
+<li><time datetime="2026-03">2026.03</time><span>Our work <a href="https://berkegokmen1.github.io/com4d/">COM4D</a> is accepted to CVPR 2026! Check out the <a href="https://arxiv.org/abs/2512.05272">paper</a>.</span></li>
+<li><time datetime="2025-12">2025.12</time><span>Our work <a href="https://berkegokmen1.github.io/com4d/">COM4D</a> is on arXiv!</span></li></ul>
+      <details class="news-archive"><summary>Older news</summary><ul class="news"><li><time datetime="2025-08">2025.08</time><span>Joined INSAIT as a Researcher in Sofia, Bulgaria.</span></li>
+<li><time datetime="2025-05">2025.05</time><span>Our work <a href="https://berkegokmen1.github.io/RoPECraft/">RoPECraft</a> is accepted to NeurIPS 2025!</span></li>
+<li><time datetime="2024-09">2024.09</time><span>Our work <a href="https://berkegokmen1.github.io/dual-enc-3d-gan-inv/">Dual Encoder GAN Inversion</a> is accepted to NeurIPS 2024!</span></li>
+<li><time datetime="2024-07">2024.07</time><span>Started as a Research Intern at ETH Zürich Computer Vision Lab (CVL).</span></li>
+<li><time datetime="2024-01">2024.01</time><span>Started as an Undergraduate Researcher at Bilkent University DLR.</span></li></ul></details></div>
+    </section>
+    <section aria-labelledby="research-heading">
+      <h2 id="research-heading">Publications</h2>
+      <ol class="publications"><li class="has-preview">
+          <img class="pub-preview" src="assets/teaser/com4d.png" alt="Compositional 4D scenes teaser" width="144" height="108" loading="lazy" decoding="async">
+          <div class="pub-info">
+          <h3 class="pub-title">Inferring Compositional 4D Scenes without Ever Seeing One</h3>
+          <p class="pub-authors"><strong>Ahmet Berke Gokmen</strong>, Ajad Chattkuli, Luc Van Gool, Danda Pani Paudel</p>
+          <div class="pub-meta"><span class="pub-venue">CVPR 2026</span><span class="pub-links"><a href="https://arxiv.org/abs/2512.05272">Paper</a><a href="com4d/">Project</a><a href="https://github.com/insait-institute/COM4D">Code</a></span></div>
+          </div>
+        </li>
+<li class="has-preview">
+          <video class="pub-preview" data-src="assets/teaser/ropecraft.mp4" aria-label="RoPECraft teaser" width="144" height="108" muted loop autoplay playsinline preload="none" poster="RoPECraft/results/ftd/1/img/4.png">Your browser does not support this video.</video>
+          <div class="pub-info">
+          <h3 class="pub-title">RoPECraft: Training-Free Motion Transfer with Trajectory Guided Optimization on DiTs</h3>
+          <p class="pub-authors"><strong>Ahmet Berke Gokmen*</strong>, Yigit Ekin*, Bahri Batuhan Bilecen*, Aysegul Dundar (* joint first authors)</p>
+          <div class="pub-meta"><span class="pub-venue">NeurIPS 2025</span><span class="pub-links"><a href="https://arxiv.org/abs/2505.13344">Paper</a><a href="RoPECraft/">Project</a><a href="https://github.com/berkegokmen1/RoPECraft">Code</a></span></div>
+          </div>
+        </li>
+<li class="has-preview">
+          <video class="pub-preview" data-src="assets/teaser/dualenc.mp4" aria-label="Dual Encoder GAN Inversion teaser" width="144" height="108" muted loop autoplay playsinline preload="none" poster="dual-enc-3d-gan-inv/static/images/dual_enc.png">Your browser does not support this video.</video>
+          <div class="pub-info">
+          <h3 class="pub-title">Dual Encoder GAN Inversion for High-fidelity 3D Head Reconstruction from Single Images</h3>
+          <p class="pub-authors"><strong>Ahmet Berke Gokmen*</strong>, Bahri Batuhan Bilecen*, Aysegul Dundar (* joint first authors)</p>
+          <div class="pub-meta"><span class="pub-venue">NeurIPS 2024</span><span class="pub-links"><a href="https://arxiv.org/abs/2409.20530">Paper</a><a href="dual-enc-3d-gan-inv/">Project</a><a href="https://github.com/berkegokmen1/dual-enc-3d-gan-inversion">Code</a></span></div>
+          </div>
+        </li>
+<li class="has-preview">
+          <video class="pub-preview" data-src="assets/teaser/identity.mp4" aria-label="Identity Preserving 3D Head Stylization teaser" width="144" height="108" muted loop autoplay playsinline preload="none">Your browser does not support this video.</video>
+          <div class="pub-info">
+          <h3 class="pub-title">Identity Preserving 3D Head Stylization with Multiview Score Distillation</h3>
+          <p class="pub-authors">Bahri Batuhan Bilecen, <strong>Ahmet Berke Gokmen</strong>, Furkan Guzelant, Aysegul Dundar</p>
+          <div class="pub-meta"><span class="pub-venue">ICCV 2025</span><span class="pub-links"><a href="https://arxiv.org/abs/2411.13536">Paper</a><a href="https://three-bee.github.io/head_stylization/">Project</a><a href="https://github.com/three-bee/3d_head_stylization">Code</a></span></div>
+          </div>
+        </li>
+<li class="has-preview">
+          <img class="pub-preview" src="assets/teaser/counterfactual.png" alt="Counterfactual disease removal comparison" width="144" height="108" loading="lazy" decoding="async">
+          <div class="pub-info">
+          <h3 class="pub-title">Counterfactual Disease Removal and Generation in Chest X-Rays Using Diffusion Models</h3>
+          <p class="pub-authors"><strong>Ahmet Berke Gokmen</strong>, Ender Konukoglu</p>
+          <div class="pub-meta"><span class="pub-venue">arXiv 2025</span><span class="pub-links"><a href="counterfactual-disease-removal-and-generation-chest-xray/static/paper.pdf">Paper</a><a href="counterfactual-disease-removal-and-generation-chest-xray/">Project</a><a href="https://github.com/berkegokmen1/counterfactual-chexray-disease-editing">Code</a></span></div>
+          </div>
+        </li></ol>
+    </section>
+    <section aria-label="Experience and education">
+      <details class="experience">
+        <summary>Experience &amp; education</summary>
+        <div id="experience-content"><h3>Research & work</h3><ul><li><img class="institution-logo" src="assets/logos/berkeley.png" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>UC Berkeley EECS</strong> · PhD Student<span class="dates">Aug 2026 - Present · Berkeley, CA</span></div></li><li><img class="institution-logo" src="assets/logos/insait.png" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>INSAIT</strong> · Researcher<span class="dates">Aug 2025 – Aug 2026 · Sofia</span></div></li><li><img class="institution-logo" src="assets/logos/eth.png" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>ETH Zürich CVL</strong> · Research Intern<span class="dates">Jul 2024 – Nov 2024 · Zürich</span></div></li><li><img class="institution-logo" src="assets/logos/bilkent-dlr.png" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>Bilkent DLR</strong> · Undergraduate Researcher<span class="dates">Jan 2024 – Aug 2025 · Ankara</span></div></li><li><img class="institution-logo" src="assets/logos/getir.png" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>Getir</strong> · Software Engineer<span class="dates">Sep 2022 – Jan 2024 · Istanbul</span></div></li></ul>
+<h3>Education</h3><ul><li><img class="institution-logo" src="assets/logos/berkeley.png" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>UC Berkeley EECS</strong> · PhD Student<span class="dates">Aug 2026 - Present · Berkeley, CA</span></div></li><li><img class="institution-logo" src="assets/logos/bilkent.png" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>Bilkent University</strong> · B.E. Computer Science<span class="dates">2020 – 2025 · Ankara</span></div></li><li><img class="institution-logo" src="assets/logos/epfl.png" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>EPFL</strong> · Exchange, Computer Science<span class="dates">2023 – 2024 · Lausanne</span></div></li><li><img class="institution-logo" src="assets/logos/canakkale.png" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>Çanakkale Özel Fen Lisesi</strong> · Math &amp; Science Diploma<span class="dates">Çanakkale</span></div></li></ul>
+<h3>Short-term schools</h3><ul><li><img class="institution-logo" src="assets/logos/mbzuai.png" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>MBZUAI Winter School on Generative AI and Representation Learning</strong><span class="dates">Feb 2026 · Abu Dhabi</span></div></li><li><img class="institution-logo" src="assets/logos/cmmrs.jpeg" alt="" width="40" height="40" loading="lazy" decoding="async"><div><strong>Cornell, Maryland, Max Planck Pre-doctoral Research School in Computer Science</strong><span class="dates">Aug 2025 · Saarbrücken</span></div></li></ul></div>
+      </details>
+    </section>
+    <section aria-labelledby="undergraduates-heading">
+      <h2 id="undergraduates-heading">For undergraduates</h2>
+      <div id="undergraduates-content"><p lang="en">If you’re an undergraduate at UC Berkeley interested in research opportunities, feel free to reach out to me by email.</p>
+<p lang="tr">Türkiye’deki lisans öğrencileri: Sorularınız için bana e-posta gönderebilirsiniz.</p></div>
+    </section>
+    <footer><a href="explore/">Explore</a><span>Travel, maps, and other experiments.</span></footer>
+  </main>
+</body>
 </html>
