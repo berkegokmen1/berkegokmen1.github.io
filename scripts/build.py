@@ -95,7 +95,7 @@ def build():
             raise ValueError(f'Missing template field: {key}')
         page = page.replace(token, value)
     (ROOT / 'index.html').write_text(page, encoding='utf-8')
-    routes = ['', 'explore/', 'trip/', 'map/']
+    routes = ['', 'explore/', 'trip/', 'map/', 'software/']
     for pub in pubs:
         for link in pub['links']:
             if link['label'] == 'Project' and not urlparse(link['href']).scheme:

@@ -1,0 +1,15 @@
+.software-header { margin-bottom: 42px; }
+.software-header p { color: #666; max-width: 560px; }
+.software-project { padding-top: 28px; margin-bottom: 36px; border-top: 1px solid #e5e5e5; }
+.software-project h2 { margin-bottom: 10px; }
+.software-project > p { max-width: 660px; margin-bottom: 10px; }
+.software-project > a { font-size: 15px; }
+.software-project figure { margin: 22px 0 0; }
+.software-project figure a { display: block; }
+.software-project img { display: block; width: 100%; height: auto; border-radius: 5px; border: 1px solid #e5e5e5; }
+.software-project figcaption { margin-top: 8px; color: #737373; font-size: 12px; }
+.software-project .heic-preview { max-width: 380px; }
+@media (max-width: 600px) {
+  .software-header { margin-bottom: 30px; }
+  .software-project { padding-top: 24px; }
+}
