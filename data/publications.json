@@ -4,7 +4,7 @@
     "venue": "In submission",
     "venueKey": "preprint",
     "title": "Unlocking Hidden Skills of Generalist Robot Policies by Steering Them in the Right Direction",
-    "shortTitle": "Unlocking Hidden Skills",
+    "shortTitle": "Contrastive Direction Steering",
     "authors": "Ahmet Berke Gökmen, Atakan Topcu, Fiona Ryan, Yutong Bai, Sergey Levine, Trevor Darrell",
     "featuredAuthor": "Ahmet Berke Gökmen",
     "media": {
@@ -15,11 +15,11 @@
     "links": [
       {
         "label": "Paper",
-        "href": "#"
+        "href": "https://berkegokmen1.github.io/contrastive-direction-steering/"
       },
       {
         "label": "Project",
-        "href": "#"
+        "href": "https://berkegokmen1.github.io/contrastive-direction-steering/"
       },
       {
         "label": "Code",
