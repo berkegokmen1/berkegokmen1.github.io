@@ -98,7 +98,7 @@ def build():
     routes = ['', 'explore/', 'trip/', 'map/', 'software/']
     for pub in pubs:
         for link in pub['links']:
-            if link['label'] == 'Project' and not urlparse(link['href']).scheme:
+            if link['label'] == 'Project' and not urlparse(link['href']).scheme and not link['href'].startswith('#'):
                 routes.append(link['href'])
     locations = '\n'.join(f'  <url><loc>{escape(urljoin(site["url"], route))}</loc></url>' for route in dict.fromkeys(routes))
     (ROOT / 'sitemap.xml').write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + locations + '\n</urlset>\n', encoding='utf-8')

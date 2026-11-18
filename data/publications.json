@@ -1,5 +1,41 @@
 [
   {
+    "id": "hidden-skills",
+    "venue": "In submission",
+    "venueKey": "preprint",
+    "title": "Unlocking Hidden Skills of Generalist Robot Policies by Steering Them in the Right Direction",
+    "shortTitle": "Unlocking Hidden Skills",
+    "authors": "Ahmet Berke Gökmen, Atakan Topcu, Fiona Ryan, Yutong Bai, Sergey Levine, Trevor Darrell",
+    "featuredAuthor": "Ahmet Berke Gökmen",
+    "media": {
+      "type": "image",
+      "src": "assets/teaser/hidden-skills.gif",
+      "alt": "Generalist robot policies teaser"
+    },
+    "links": [
+      {
+        "label": "Paper",
+        "href": "#"
+      },
+      {
+        "label": "Project",
+        "href": "#"
+      },
+      {
+        "label": "Code",
+        "href": "#"
+      }
+    ],
+    "world": {
+      "color": "#60a5fa",
+      "position": [
+        -8,
+        1.9,
+        -3
+      ]
+    }
+  },
+  {
     "id": "com4d",
     "venue": "CVPR 2026",
     "venueKey": "cvpr",
